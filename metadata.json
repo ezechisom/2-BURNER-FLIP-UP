@@ -1,0 +1,6 @@
+{
+  "name": "2-Flip-Up Double Gas Burner With Timer",
+  "description": "Get the 2-Flip-Up Double Gas Burner with built-in timer. Buy 1 for ₦170,000, 2 for ₦165,000 each or 3+ for ₦160,000 each.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

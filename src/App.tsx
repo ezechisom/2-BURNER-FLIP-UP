@@ -1,0 +1,249 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import React, { useState, useEffect } from 'react';
+import { Settings, ShieldCheck, Flame, Phone, MessageCircle } from 'lucide-react';
+import { INITIAL_CONFIG, generateWhatsAppLink } from './config';
+import { LandingPageConfig } from './types';
+
+import { TopUrgencyBar } from './components/TopUrgencyBar';
+import { HeroSection } from './components/HeroSection';
+import { PriceOfferCards } from './components/PriceOfferCards';
+import { ProblemHookSection } from './components/ProblemHookSection';
+import { ProductBenefitsSection } from './components/ProductBenefitsSection';
+import { ProductShowcaseSection } from './components/ProductShowcaseSection';
+import { HowItWorksSection } from './components/HowItWorksSection';
+import { PerfectForSection } from './components/PerfectForSection';
+import { ProductValueSection } from './components/ProductValueSection';
+import { CustomerReviewsSection } from './components/CustomerReviewsSection';
+import { OfferUrgencySection } from './components/OfferUrgencySection';
+import { TrustDeliverySection } from './components/TrustDeliverySection';
+import { FAQSection } from './components/FAQSection';
+import { FinalSalesCTASection } from './components/FinalSalesCTASection';
+import { OrderFormSection } from './components/OrderFormSection';
+import { StickyMobileCTA } from './components/StickyMobileCTA';
+import { SellerConfigModal } from './components/SellerConfigModal';
+
+export default function App() {
+  const [config, setConfig] = useState<LandingPageConfig>(() => {
+    try {
+      const saved = localStorage.getItem('burner_store_config');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.PHONE_NUMBER === '+2348123456789' || !parsed.PHONE_NUMBER) {
+          parsed.PHONE_NUMBER = INITIAL_CONFIG.PHONE_NUMBER;
+        }
+        if (parsed.WHATSAPP_NUMBER === '+2348123456789' || !parsed.WHATSAPP_NUMBER) {
+          parsed.WHATSAPP_NUMBER = INITIAL_CONFIG.WHATSAPP_NUMBER;
+        }
+        if (!parsed.FORMSPREE_ENDPOINT) {
+          parsed.FORMSPREE_ENDPOINT = INITIAL_CONFIG.FORMSPREE_ENDPOINT;
+        }
+        if (!parsed.META_PIXEL_ID) {
+          parsed.META_PIXEL_ID = INITIAL_CONFIG.META_PIXEL_ID;
+        }
+        if (
+          !parsed.PRODUCT_IMAGES ||
+          parsed.PRODUCT_IMAGES[0]?.url !== INITIAL_CONFIG.PRODUCT_IMAGES[0]?.url ||
+          parsed.PRODUCT_IMAGES[0]?.title !== INITIAL_CONFIG.PRODUCT_IMAGES[0]?.title ||
+          parsed.PRODUCT_IMAGES[1]?.title !== INITIAL_CONFIG.PRODUCT_IMAGES[1]?.title ||
+          parsed.PRODUCT_IMAGES[2]?.title !== INITIAL_CONFIG.PRODUCT_IMAGES[2]?.title ||
+          parsed.PRODUCT_IMAGES[3]?.title !== INITIAL_CONFIG.PRODUCT_IMAGES[3]?.title ||
+          parsed.PRODUCT_IMAGES[5]?.title !== INITIAL_CONFIG.PRODUCT_IMAGES[5]?.title ||
+          parsed.PRODUCT_IMAGES.some((img: { url?: string }) => img.url?.includes('flip_burner_unit') || img.url?.includes('flip_burner_detail'))
+        ) {
+          parsed.PRODUCT_IMAGES = INITIAL_CONFIG.PRODUCT_IMAGES;
+        }
+        if (
+          !parsed.REVIEWS ||
+          parsed.REVIEWS.length < 3 ||
+          parsed.REVIEWS.some(
+            (rev: { content?: string; author?: string }) =>
+              rev.content?.includes('INSERT REAL CUSTOMER') ||
+              rev.author?.includes('CUSTOMER NAME')
+          )
+        ) {
+          parsed.REVIEWS = INITIAL_CONFIG.REVIEWS;
+        }
+        return { ...INITIAL_CONFIG, ...parsed };
+      }
+    } catch {
+      // ignore
+    }
+    return INITIAL_CONFIG;
+  });
+
+  const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
+  const [isConfigModalOpen, setIsConfigModalOpen] = useState<boolean>(false);
+
+  const handleSaveConfig = (newConfig: LandingPageConfig) => {
+    setConfig(newConfig);
+    try {
+      localStorage.setItem('burner_store_config', JSON.stringify(newConfig));
+    } catch {
+      // ignore
+    }
+  };
+
+  const scrollToOrderForm = (qty?: number) => {
+    if (qty) {
+      setSelectedQuantity(qty);
+    }
+    const target = document.getElementById('order-form-section');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const whatsappGeneralUrl = generateWhatsAppLink(
+    config.WHATSAPP_NUMBER,
+    config.PRODUCT_NAME,
+    selectedQuantity
+  );
+
+  return (
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans antialiased selection:bg-blue-600 selection:text-white pb-16 sm:pb-0">
+      
+      {/* SECTION 1 — TOP URGENCY BAR */}
+      <TopUrgencyBar
+        countdownEndDate={config.COUNTDOWN_END_DATE}
+        countdownHours={config.COUNTDOWN_HOURS}
+      />
+
+      {/* BRAND / NAVIGATION HEADER */}
+      <header className="bg-white border-b border-blue-100 px-4 py-3 sticky top-9 z-40 backdrop-blur-md bg-opacity-95 shadow-xs">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-black shadow-sm">
+              <Flame className="w-5 h-5 fill-current" />
+            </span>
+            <div>
+              <span className="font-extrabold tracking-tight text-slate-900 text-sm sm:text-base uppercase block leading-tight">
+                2-FLIP-UP COOKER
+              </span>
+              <span className="text-[10px] text-blue-600 font-mono tracking-widest hidden sm:block font-bold">
+                OFFICIAL PROMOTIONAL STORE
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 sm:gap-4">
+            <a
+              href={`tel:${config.PHONE_NUMBER}`}
+              className="hidden md:flex items-center gap-1.5 text-xs text-slate-600 hover:text-blue-700 transition-colors font-medium"
+            >
+              <Phone className="w-3.5 h-3.5 text-blue-600" />
+              <span>{config.PHONE_NUMBER}</span>
+            </a>
+
+            <a
+              href={whatsappGeneralUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors shadow-sm"
+            >
+              <MessageCircle className="w-3.5 h-3.5 fill-current" />
+              <span>WhatsApp</span>
+            </a>
+
+            <button
+              onClick={() => scrollToOrderForm(1)}
+              className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-black px-4 py-2 rounded-lg cursor-pointer transition-colors shadow-sm"
+            >
+              ORDER NOW
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* MAIN SALES CONTENT FLOW */}
+      <main>
+        {/* SECTION 2 — HERO SECTION */}
+        <HeroSection config={config} onOrderClick={scrollToOrderForm} />
+
+        {/* SECTION 3 — PRICE OFFER CARDS */}
+        <PriceOfferCards config={config} onSelectTier={scrollToOrderForm} />
+
+        {/* SECTION 4 — PROBLEM / EMOTIONAL HOOK */}
+        <ProblemHookSection />
+
+        {/* SECTION 5 — PRODUCT BENEFITS */}
+        <ProductBenefitsSection />
+
+        {/* SECTION 6 — PRODUCT IMAGE SHOWCASE */}
+        <ProductShowcaseSection images={config.PRODUCT_IMAGES} />
+
+        {/* SECTION 7 — HOW THE PRODUCT WORKS */}
+        <HowItWorksSection />
+
+        {/* SECTION 8 — PERFECT FOR */}
+        <PerfectForSection />
+
+        {/* SECTION 9 — PRODUCT VALUE */}
+        <ProductValueSection config={config} onOrderClick={scrollToOrderForm} />
+
+        {/* SECTION 10 — CUSTOMER REVIEWS */}
+        <CustomerReviewsSection reviews={config.REVIEWS} />
+
+        {/* SECTION 11 — OFFER URGENCY */}
+        <OfferUrgencySection config={config} onClaimOffer={() => scrollToOrderForm(1)} />
+
+        {/* SECTION 12 — TRUST & DELIVERY */}
+        <TrustDeliverySection config={config} />
+
+        {/* SECTION 13 — FAQ */}
+        <FAQSection faqs={config.FAQS} />
+
+        {/* SECTION 14 — FINAL SALES CTA */}
+        <FinalSalesCTASection config={config} onOrderClick={() => scrollToOrderForm(1)} />
+
+        {/* SECTION 15 — ORDER FORM */}
+        <OrderFormSection config={config} initialQuantity={selectedQuantity} />
+      </main>
+
+      {/* FOOTER */}
+      <footer className="bg-white text-slate-600 text-xs py-10 px-4 border-t border-blue-200 text-center">
+        <div className="max-w-4xl mx-auto space-y-4">
+          <div className="flex items-center justify-center gap-2 text-slate-900 font-bold">
+            <Flame className="w-4 h-4 text-blue-600 fill-current" />
+            <span>2-FLIP-UP DOUBLE GAS BURNER WITH TIMER</span>
+          </div>
+
+          <p className="text-slate-500 max-w-md mx-auto leading-relaxed">
+            Direct-response promotional landing page. Nationwide delivery across Nigeria.
+          </p>
+
+          <div className="flex flex-wrap items-center justify-center gap-4 text-slate-500 pt-2">
+            <span>© {new Date().getFullYear()} All Rights Reserved.</span>
+            <span>•</span>
+            <button
+              onClick={() => setIsConfigModalOpen(true)}
+              className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium transition-colors cursor-pointer"
+              title="Seller Settings: Edit prices, phone, and policies"
+            >
+              <Settings className="w-3.5 h-3.5" />
+              <span>Seller Configuration</span>
+            </button>
+          </div>
+        </div>
+      </footer>
+
+      {/* STICKY MOBILE CTA BAR */}
+      <StickyMobileCTA
+        priceFor3Plus={config.PRICE_FOR_3_PLUS}
+        onOrderClick={() => scrollToOrderForm(selectedQuantity)}
+      />
+
+      {/* SELLER CONFIGURATION MODAL */}
+      <SellerConfigModal
+        config={config}
+        isOpen={isConfigModalOpen}
+        onClose={() => setIsConfigModalOpen(false)}
+        onSave={handleSaveConfig}
+      />
+
+    </div>
+  );
+}
