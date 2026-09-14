@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
-import { Settings, ShieldCheck, Flame, Phone, MessageCircle } from 'lucide-react';
-import { INITIAL_CONFIG, generateWhatsAppLink } from './config';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Settings, ShieldCheck, Flame, Phone, MessageCircle, Truck } from 'lucide-react';
+import { INITIAL_CONFIG, generateWhatsAppLink, formatNaira, formatWhatsAppNumber } from './config';
 import { LandingPageConfig } from './types';
 
 import { TopUrgencyBar } from './components/TopUrgencyBar';
@@ -78,6 +78,62 @@ export default function App() {
   const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
   const [isConfigModalOpen, setIsConfigModalOpen] = useState<boolean>(false);
 
+  // Tracks if the customer has placed an order and finished filling the form
+  const [hasPlacedOrder, setHasPlacedOrder] = useState<boolean>(() => {
+    try {
+      return sessionStorage.getItem('burner_has_ordered') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const [lastOrderDetails, setLastOrderDetails] = useState<{
+    fullName: string;
+    phoneNumber: string;
+    state: string;
+    city: string;
+    quantity: number;
+    total: number;
+    orderId: string;
+  } | null>(() => {
+    try {
+      const saved = sessionStorage.getItem('burner_last_order');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  const handleOrderSuccess = (details: {
+    fullName: string;
+    phoneNumber: string;
+    state: string;
+    city: string;
+    quantity: number;
+    total: number;
+    orderId: string;
+  }) => {
+    setHasPlacedOrder(true);
+    setLastOrderDetails(details);
+    try {
+      sessionStorage.setItem('burner_has_ordered', 'true');
+      sessionStorage.setItem('burner_last_order', JSON.stringify(details));
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleResetOrder = () => {
+    setHasPlacedOrder(false);
+    setLastOrderDetails(null);
+    try {
+      sessionStorage.removeItem('burner_has_ordered');
+      sessionStorage.removeItem('burner_last_order');
+    } catch {
+      // ignore
+    }
+  };
+
   const handleSaveConfig = (newConfig: LandingPageConfig) => {
     setConfig(newConfig);
     try {
@@ -97,11 +153,19 @@ export default function App() {
     }
   };
 
-  const whatsappGeneralUrl = generateWhatsAppLink(
-    config.WHATSAPP_NUMBER,
-    config.PRODUCT_NAME,
-    selectedQuantity
-  );
+  // WhatsApp confirmation URL with customer's order specifics (active only after order)
+  const whatsappConfirmUrl = useMemo(() => {
+    const cleanNumber = formatWhatsAppNumber(config.WHATSAPP_NUMBER);
+    if (lastOrderDetails) {
+      const msg = `Hello! I just completed the order form for ${lastOrderDetails.quantity} unit(s) of 2-Flip-Up Double Gas Burner on your website.\n\nOrder ID: #${lastOrderDetails.orderId}\nName: ${lastOrderDetails.fullName}\nPhone: ${lastOrderDetails.phoneNumber}\nAddress: ${lastOrderDetails.city}, ${lastOrderDetails.state}\nTotal: ${formatNaira(lastOrderDetails.total)}\n\nPlease confirm my order dispatch.`;
+      return `https://wa.me/${cleanNumber}?text=${encodeURIComponent(msg)}`;
+    }
+    return generateWhatsAppLink(
+      config.WHATSAPP_NUMBER,
+      config.PRODUCT_NAME,
+      selectedQuantity
+    );
+  }, [config.WHATSAPP_NUMBER, config.PRODUCT_NAME, selectedQuantity, lastOrderDetails]);
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans antialiased selection:bg-blue-600 selection:text-white pb-16 sm:pb-0">
@@ -138,22 +202,30 @@ export default function App() {
               <span>{config.PHONE_NUMBER}</span>
             </a>
 
-            <a
-              href={whatsappGeneralUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors shadow-sm"
-            >
-              <MessageCircle className="w-3.5 h-3.5 fill-current" />
-              <span>WhatsApp</span>
-            </a>
+            {/* WhatsApp is displayed in the header ONLY after the customer has placed an order */}
+            {hasPlacedOrder && (
+              <a
+                href={whatsappConfirmUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-glow-emerald hidden sm:inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-all shadow-sm"
+              >
+                <MessageCircle className="w-3.5 h-3.5 fill-current" />
+                <span>Confirm on WhatsApp</span>
+              </a>
+            )}
 
-            <button
-              onClick={() => scrollToOrderForm(1)}
-              className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-black px-4 py-2 rounded-lg cursor-pointer transition-colors shadow-sm"
-            >
-              ORDER NOW
-            </button>
+            <div className="flex flex-col items-end">
+              <button
+                onClick={() => scrollToOrderForm(1)}
+                className="btn-glow bg-blue-600 hover:bg-blue-700 text-white text-xs font-black px-4 py-2 rounded-lg cursor-pointer transition-all shadow-md flex items-center gap-1.5"
+              >
+                <span>{hasPlacedOrder ? "ORDER MORE" : "ORDER NOW"}</span>
+              </button>
+              <span className="text-[9px] font-bold text-emerald-700 hidden sm:flex items-center gap-0.5 mt-0.5 tracking-tight">
+                <Truck className="w-2.5 h-2.5" /> FREE DELIVERY
+              </span>
+            </div>
           </div>
         </div>
       </header>
@@ -161,7 +233,11 @@ export default function App() {
       {/* MAIN SALES CONTENT FLOW */}
       <main>
         {/* SECTION 2 — HERO SECTION */}
-        <HeroSection config={config} onOrderClick={scrollToOrderForm} />
+        <HeroSection
+          config={config}
+          onOrderClick={scrollToOrderForm}
+          hasPlacedOrder={hasPlacedOrder}
+        />
 
         {/* SECTION 3 — PRICE OFFER CARDS */}
         <PriceOfferCards config={config} onSelectTier={scrollToOrderForm} />
@@ -197,10 +273,19 @@ export default function App() {
         <FAQSection faqs={config.FAQS} />
 
         {/* SECTION 14 — FINAL SALES CTA */}
-        <FinalSalesCTASection config={config} onOrderClick={() => scrollToOrderForm(1)} />
+        <FinalSalesCTASection
+          config={config}
+          onOrderClick={() => scrollToOrderForm(1)}
+          hasPlacedOrder={hasPlacedOrder}
+        />
 
         {/* SECTION 15 — ORDER FORM */}
-        <OrderFormSection config={config} initialQuantity={selectedQuantity} />
+        <OrderFormSection
+          config={config}
+          initialQuantity={selectedQuantity}
+          onOrderSuccess={handleOrderSuccess}
+          onResetOrder={handleResetOrder}
+        />
       </main>
 
       {/* FOOTER */}
@@ -234,7 +319,33 @@ export default function App() {
       <StickyMobileCTA
         priceFor3Plus={config.PRICE_FOR_3_PLUS}
         onOrderClick={() => scrollToOrderForm(selectedQuantity)}
+        hasPlacedOrder={hasPlacedOrder}
+        whatsappUrl={whatsappConfirmUrl}
       />
+
+      {/* FLOATING WHATSAPP BUTTON — SHOWN ONLY AFTER THE PERSON HAS PLACED AN ORDER */}
+      {hasPlacedOrder && (
+        <aside
+          aria-label="WhatsApp Order Confirmation"
+          className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-50 animate-in fade-in slide-in-from-bottom-5 duration-300 flex flex-col items-end gap-2"
+        >
+          <div className="bg-white text-slate-800 text-xs font-bold py-1.5 px-3 rounded-full shadow-lg border border-emerald-200 flex items-center gap-1.5 shadow-slate-900/10">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+            <span>Order Placed! Click to confirm on WhatsApp</span>
+          </div>
+          <a
+            href={whatsappConfirmUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-glow-emerald bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white p-3.5 sm:p-4 rounded-full shadow-2xl flex items-center justify-center gap-2 cursor-pointer transition-transform hover:scale-105"
+            aria-label="Confirm Order on WhatsApp"
+            title="Confirm Order on WhatsApp"
+          >
+            <MessageCircle className="w-6 h-6 sm:w-7 sm:h-7 fill-current" />
+            <span className="hidden sm:inline font-black text-sm pr-1">Confirm on WhatsApp</span>
+          </a>
+        </aside>
+      )}
 
       {/* SELLER CONFIGURATION MODAL */}
       <SellerConfigModal

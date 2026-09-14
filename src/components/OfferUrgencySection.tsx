@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, ArrowRight, Clock } from 'lucide-react';
+import { Sparkles, ArrowRight, Clock, Truck } from 'lucide-react';
 import { LandingPageConfig } from '../types';
 import { formatNaira } from '../config';
 import { useCountdown } from '../hooks/useCountdown';
@@ -106,10 +106,15 @@ export const OfferUrgencySection: React.FC<OfferUrgencySectionProps> = ({ config
         {/* CTA */}
         <button
           onClick={onClaimOffer}
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-black text-base py-4 px-10 rounded-xl shadow-xl hover:shadow-blue-500/25 transition-all cursor-pointer"
+          className="btn-glow w-full sm:w-auto inline-flex flex-col items-center justify-center bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-black text-base py-3.5 px-10 rounded-xl shadow-xl transition-all cursor-pointer"
         >
-          <span>CLAIM MY OFFER</span>
-          <ArrowRight className="w-5 h-5" />
+          <div className="flex items-center gap-2">
+            <span>ORDER NOW — CLAIM MY OFFER</span>
+            <ArrowRight className="w-5 h-5 stroke-[2.5]" />
+          </div>
+          <div className="text-[11px] font-bold text-blue-100 uppercase tracking-wider flex items-center gap-1.5 mt-0.5">
+            <Truck className="w-3.5 h-3.5" /> FREE DELIVERY NATIONWIDE
+          </div>
         </button>
 
       </div>

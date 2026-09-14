@@ -1,19 +1,74 @@
-import React from 'react';
-import { Check, MessageCircle, ArrowRight, Truck, PackageCheck, PhoneCall, ShieldCheck, Flame } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Check, MessageCircle, ArrowRight, Truck, PackageCheck, PhoneCall, ShieldCheck, Flame, ChevronLeft, ChevronRight } from 'lucide-react';
 import { LandingPageConfig } from '../types';
 import { formatNaira, generateWhatsAppLink } from '../config';
 
 interface HeroSectionProps {
   config: LandingPageConfig;
   onOrderClick: (quantity?: number) => void;
+  hasPlacedOrder?: boolean;
 }
 
-export const HeroSection: React.FC<HeroSectionProps> = ({ config, onOrderClick }) => {
-  const mainImage = config.PRODUCT_IMAGES[0]?.url || "/images/cooker_active_blue_flames.jpg";
+export const HeroSection: React.FC<HeroSectionProps> = ({ config, onOrderClick, hasPlacedOrder = false }) => {
   const whatsappUrl = generateWhatsAppLink(config.WHATSAPP_NUMBER, config.PRODUCT_NAME, 1);
+  const heroImages = config.PRODUCT_IMAGES.filter((img) => !img.isPlaceholder && Boolean(img.url));
+  const effectiveImages = heroImages.length > 0 ? heroImages : [
+    { id: 'default', title: config.PRODUCT_NAME, url: '/images/cooker_active_blue_flames.jpg', caption: '', isPlaceholder: false }
+  ];
+
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isInView, setIsInView] = useState(true);
+  const [isHovered, setIsHovered] = useState(false);
+  const heroRef = useRef<HTMLElement | null>(null);
+
+  // IntersectionObserver for Hero Section
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInView(entry.isIntersecting);
+      },
+      { threshold: 0.2 }
+    );
+
+    const currentElem = heroRef.current;
+    if (currentElem) {
+      observer.observe(currentElem);
+    }
+
+    return () => {
+      if (currentElem) {
+        observer.unobserve(currentElem);
+      }
+    };
+  }, []);
+
+  // Auto-play slideshow when Hero is in view
+  useEffect(() => {
+    if (!isInView || isHovered || effectiveImages.length <= 1) {
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % effectiveImages.length);
+    }, 4000);
+
+    return () => clearInterval(timer);
+  }, [isInView, isHovered, effectiveImages.length]);
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev > 0 ? prev - 1 : effectiveImages.length - 1));
+  };
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev < effectiveImages.length - 1 ? prev + 1 : 0));
+  };
 
   return (
-    <section id="hero-section" className="bg-gradient-to-b from-blue-900 via-blue-800 to-blue-950 text-white pt-6 pb-12 sm:py-16 px-4 border-b border-blue-800/80 relative overflow-hidden">
+    <section
+      ref={heroRef}
+      id="hero-section"
+      className="bg-gradient-to-b from-blue-900 via-blue-800 to-blue-950 text-white pt-6 pb-12 sm:py-16 px-4 border-b border-blue-800/80 relative overflow-hidden"
+    >
       {/* Subtle background ambient glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-sky-400/15 blur-3xl pointer-events-none rounded-full" />
 
@@ -21,31 +76,87 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ config, onOrderClick }
         {/* Desktop: 2-column grid; Mobile: Product Image First, then Sales Copy */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           
-          {/* PRODUCT IMAGE (First on Mobile via order-1, Desktop Right via lg:order-2) */}
+          {/* PRODUCT IMAGE SLIDESHOW (First on Mobile via order-1, Desktop Right via lg:order-2) */}
           <div className="order-1 lg:order-2 lg:col-span-6 flex flex-col items-center">
-            <div className="relative w-full max-w-lg group">
+            <div
+              className="relative w-full max-w-lg group select-none"
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+            >
               {/* Product Badge */}
-              <div className="absolute top-3 left-3 z-10 bg-blue-600 text-white text-xs font-black uppercase px-3 py-1.5 rounded shadow-lg flex items-center gap-1.5 tracking-wider border border-blue-400/40">
+              <div className="absolute top-3 left-3 z-20 bg-blue-600 text-white text-xs font-black uppercase px-3 py-1.5 rounded shadow-lg flex items-center gap-1.5 tracking-wider border border-blue-400/40">
                 <Flame className="w-3.5 h-3.5 fill-current" />
                 Dual Burner + Built-in Timer
               </div>
 
-              {/* Glass Frame */}
-              <div className="overflow-hidden rounded-2xl border border-blue-400/30 bg-white shadow-2xl p-2 sm:p-3 transition-transform duration-300 group-hover:border-sky-300">
-                <img
-                  src={mainImage}
-                  alt="2-Flip-Up Double Gas Burner Cooker with Built-in Timer"
-                  className="w-full h-auto object-cover rounded-xl shadow-inner max-h-[420px] mx-auto transition-transform duration-500 group-hover:scale-[1.02]"
-                  referrerPolicy="no-referrer"
-                  id="hero-product-image"
-                />
+              {/* Auto Slideshow Indicator Badge */}
+              <div className="absolute top-3 right-3 z-20 bg-slate-900/80 backdrop-blur-md text-sky-200 text-[10px] font-bold uppercase px-2.5 py-1 rounded shadow-md border border-white/20 flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                <span>Slideshow {currentSlide + 1}/{effectiveImages.length}</span>
+              </div>
+
+              {/* Glass Frame with Slideshow */}
+              <div className="relative overflow-hidden rounded-2xl border border-blue-400/30 bg-white shadow-2xl p-2 sm:p-3 transition-transform duration-300 group-hover:border-sky-300 aspect-[4/3] sm:aspect-[16/11]">
+                {effectiveImages.map((img, idx) => (
+                  <div
+                    key={img.id || idx}
+                    className={`absolute inset-2 sm:inset-3 rounded-xl overflow-hidden transition-opacity duration-700 ease-in-out flex items-center justify-center bg-slate-900 ${
+                      idx === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+                    }`}
+                  >
+                    <img
+                      src={img.url}
+                      alt={img.title || config.PRODUCT_NAME}
+                      className="w-full h-full object-cover rounded-xl shadow-inner transition-transform duration-500 group-hover:scale-[1.02]"
+                      referrerPolicy="no-referrer"
+                    />
+                  </div>
+                ))}
+
+                {/* Slideshow Arrows (Show on hover or mobile) */}
+                {effectiveImages.length > 1 && (
+                  <>
+                    <button
+                      onClick={prevSlide}
+                      aria-label="Previous hero image"
+                      className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-slate-900/70 hover:bg-slate-900 text-white p-2 rounded-full shadow-lg backdrop-blur-sm transition-all cursor-pointer opacity-80 hover:opacity-100"
+                    >
+                      <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
+                    </button>
+                    <button
+                      onClick={nextSlide}
+                      aria-label="Next hero image"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-slate-900/70 hover:bg-slate-900 text-white p-2 rounded-full shadow-lg backdrop-blur-sm transition-all cursor-pointer opacity-80 hover:opacity-100"
+                    >
+                      <ChevronRight className="w-4 h-4 stroke-[2.5]" />
+                    </button>
+                  </>
+                )}
+
+                {/* Bottom Dots */}
+                {effectiveImages.length > 1 && (
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 bg-slate-950/60 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/20">
+                    {effectiveImages.map((_, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setCurrentSlide(idx)}
+                        aria-label={`Go to hero slide ${idx + 1}`}
+                        className={`transition-all rounded-full cursor-pointer ${
+                          idx === currentSlide
+                            ? 'w-5 h-1.5 bg-sky-400 shadow-sm'
+                            : 'w-1.5 h-1.5 bg-white/50 hover:bg-white/80'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Verified Product Spec Tag */}
               <div className="mt-3 flex items-center justify-between text-xs text-blue-200 px-1">
                 <span className="flex items-center gap-1">
                   <ShieldCheck className="w-3.5 h-3.5 text-sky-300" />
-                  Actual Product Photo
+                  Actual Product Photos (Auto Slideshow)
                 </span>
                 <span className="text-blue-300">Dual Burner • Glass-Top</span>
               </div>
@@ -126,22 +237,29 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ config, onOrderClick }
               <button
                 id="hero-order-btn"
                 onClick={() => onOrderClick(1)}
-                className="w-full sm:w-auto flex-1 bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 font-black text-base py-4 px-6 rounded-xl shadow-lg hover:shadow-amber-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="btn-glow-amber w-full flex-1 bg-amber-400 hover:bg-amber-300 active:bg-amber-500 text-slate-950 font-black py-4 px-6 rounded-xl shadow-xl transition-all flex flex-col items-center justify-center cursor-pointer"
               >
-                <span>ORDER NOW</span>
-                <ArrowRight className="w-5 h-5" />
+                <div className="flex items-center gap-2 text-base sm:text-lg">
+                  <span>{hasPlacedOrder ? "ORDER ANOTHER UNIT" : "ORDER NOW"}</span>
+                  <ArrowRight className="w-5 h-5 stroke-[2.5]" />
+                </div>
+                <div className="text-[11px] font-black text-slate-950/90 uppercase tracking-wider flex items-center gap-1 mt-0.5">
+                  <Truck className="w-3.5 h-3.5" /> FREE DELIVERY NATIONWIDE
+                </div>
               </button>
 
-              <a
-                id="hero-whatsapp-btn"
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto flex-1 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-bold text-base py-4 px-6 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2"
-              >
-                <MessageCircle className="w-5 h-5 fill-current" />
-                <span>CHAT ON WHATSAPP</span>
-              </a>
+              {hasPlacedOrder && (
+                <a
+                  id="hero-whatsapp-btn"
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-glow-emerald w-full sm:w-auto flex-1 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-bold text-base py-3.5 px-6 rounded-xl shadow-xl transition-all flex items-center justify-center gap-2"
+                >
+                  <MessageCircle className="w-5 h-5 fill-current" />
+                  <span>CHAT ON WHATSAPP</span>
+                </a>
+              )}
             </div>
 
             {/* Editable Trust Statements */}

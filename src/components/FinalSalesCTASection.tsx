@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, MessageCircle, Clock, Sparkles } from 'lucide-react';
+import { ArrowRight, MessageCircle, Clock, Sparkles, Truck } from 'lucide-react';
 import { LandingPageConfig } from '../types';
 import { formatNaira, generateWhatsAppLink } from '../config';
 import { useCountdown } from '../hooks/useCountdown';
@@ -7,11 +7,13 @@ import { useCountdown } from '../hooks/useCountdown';
 interface FinalSalesCTASectionProps {
   config: LandingPageConfig;
   onOrderClick: () => void;
+  hasPlacedOrder?: boolean;
 }
 
 export const FinalSalesCTASection: React.FC<FinalSalesCTASectionProps> = ({
   config,
-  onOrderClick
+  onOrderClick,
+  hasPlacedOrder = false
 }) => {
   const { days, hours, minutes, seconds, isEnded } = useCountdown(
     config.COUNTDOWN_END_DATE,
@@ -74,21 +76,28 @@ export const FinalSalesCTASection: React.FC<FinalSalesCTASectionProps> = ({
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <button
             onClick={onOrderClick}
-            className="w-full sm:w-auto min-w-[240px] bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-black text-base py-4 px-8 rounded-xl shadow-xl hover:shadow-blue-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            className="btn-glow w-full sm:w-auto min-w-[280px] bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-black text-base py-3.5 px-8 rounded-xl shadow-xl transition-all flex flex-col items-center justify-center cursor-pointer"
           >
-            <span>ORDER NOW</span>
-            <ArrowRight className="w-5 h-5" />
+            <div className="flex items-center gap-2">
+              <span>{hasPlacedOrder ? "ORDER ANOTHER UNIT" : "ORDER NOW"}</span>
+              <ArrowRight className="w-5 h-5 stroke-[2.5]" />
+            </div>
+            <div className="text-[11px] font-bold text-blue-100 uppercase tracking-wider flex items-center gap-1.5 mt-0.5">
+              <Truck className="w-3.5 h-3.5" /> FREE DELIVERY NATIONWIDE
+            </div>
           </button>
 
-          <a
-            href={whatsappUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full sm:w-auto min-w-[240px] bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-base py-4 px-8 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2"
-          >
-            <MessageCircle className="w-5 h-5 fill-current" />
-            <span>CHAT ON WHATSAPP</span>
-          </a>
+          {hasPlacedOrder && (
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-glow-emerald w-full sm:w-auto min-w-[240px] bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-base py-3.5 px-8 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2"
+            >
+              <MessageCircle className="w-5 h-5 fill-current" />
+              <span>CHAT ON WHATSAPP</span>
+            </a>
+          )}
         </div>
 
       </div>

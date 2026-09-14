@@ -1,16 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingBag, CheckCircle2, MessageCircle, ArrowRight, ShieldCheck, AlertCircle, Plus, Minus } from 'lucide-react';
+import { ShoppingBag, CheckCircle2, MessageCircle, ArrowRight, ShieldCheck, AlertCircle, Plus, Minus, Truck } from 'lucide-react';
 import { LandingPageConfig, OrderFormData } from '../types';
 import { formatNaira, calculatePricing, generateWhatsAppLink, formatWhatsAppNumber, NIGERIAN_STATES } from '../config';
 
 interface OrderFormSectionProps {
   config: LandingPageConfig;
   initialQuantity?: number;
+  onOrderSuccess?: (details: {
+    fullName: string;
+    phoneNumber: string;
+    state: string;
+    city: string;
+    quantity: number;
+    total: number;
+    orderId: string;
+  }) => void;
+  onResetOrder?: () => void;
 }
 
 export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
   config,
-  initialQuantity = 1
+  initialQuantity = 1,
+  onOrderSuccess,
+  onResetOrder
 }) => {
   const [quantity, setQuantity] = useState<number>(initialQuantity);
   const [formData, setFormData] = useState<Omit<OrderFormData, 'quantity'>>({
@@ -144,6 +156,24 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
 
       setIsSubmitting(false);
       setIsSubmitted(true);
+
+      onOrderSuccess?.({
+        fullName: formData.fullName.trim(),
+        phoneNumber: formData.phoneNumber.trim(),
+        state: formData.state,
+        city: formData.city.trim(),
+        quantity,
+        total: pricing.total,
+        orderId
+      });
+
+      // Smooth scroll to success message
+      setTimeout(() => {
+        const orderSection = document.getElementById('order-form-section');
+        if (orderSection) {
+          orderSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
     }
   };
 
@@ -151,6 +181,11 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
     const cleanNumber = formatWhatsAppNumber(config.WHATSAPP_NUMBER);
     const msg = `Hello! I just placed an order for ${quantity} unit(s) of 2-Flip-Up Double Gas Burner on your website.\n\nName: ${formData.fullName}\nPhone: ${formData.phoneNumber}\nCity/State: ${formData.city}, ${formData.state}\nTotal: ${formatNaira(pricing.total)}\n\nPlease confirm my order dispatch.`;
     return `https://wa.me/${cleanNumber}?text=${encodeURIComponent(msg)}`;
+  };
+
+  const handlePlaceAnotherOrder = () => {
+    setIsSubmitted(false);
+    onResetOrder?.();
   };
 
   return (
@@ -213,22 +248,28 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 max-w-md mx-auto mb-6 text-center">
+              <p className="text-emerald-900 text-xs sm:text-sm font-semibold mb-3">
+                ⚡ <strong className="text-emerald-800">Fast-Track Your Dispatch:</strong> Click below to confirm your delivery address directly with our warehouse team on WhatsApp.
+              </p>
               <a
                 href={orderWhatsAppUrl()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-8 rounded-xl shadow-lg transition-all"
+                className="btn-glow-emerald w-full inline-flex items-center justify-center gap-2.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-black text-sm sm:text-base py-4 px-6 rounded-xl shadow-xl transition-all"
               >
                 <MessageCircle className="w-5 h-5 fill-current" />
-                <span>CHAT WITH US ON WHATSAPP</span>
+                <span>CONFIRM ORDER ON WHATSAPP</span>
               </a>
+            </div>
 
+            <div className="text-center">
               <button
-                onClick={() => setIsSubmitted(false)}
-                className="w-full sm:w-auto text-slate-500 hover:text-slate-800 text-xs py-3 px-4 underline cursor-pointer"
+                type="button"
+                onClick={handlePlaceAnotherOrder}
+                className="text-slate-500 hover:text-slate-800 text-xs py-2 px-4 underline cursor-pointer transition-colors"
               >
-                Place Another Order
+                Need another order? Click here to fill a new form
               </button>
             </div>
           </div>
@@ -478,7 +519,7 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
                   type="submit"
                   disabled={isSubmitting}
                   id="submit-order-btn"
-                  className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:bg-slate-400 text-white font-black text-base sm:text-lg py-4 px-6 rounded-xl shadow-xl hover:shadow-blue-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className="btn-glow w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:bg-slate-400 text-white font-black text-base sm:text-lg py-3.5 px-6 rounded-xl shadow-xl transition-all flex flex-col items-center justify-center cursor-pointer"
                 >
                   {isSubmitting ? (
                     <span className="flex items-center gap-2 text-white">
@@ -486,8 +527,13 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
                     </span>
                   ) : (
                     <>
-                      <span>COMPLETE MY ORDER</span>
-                      <ArrowRight className="w-5 h-5 stroke-[2.5]" />
+                      <div className="flex items-center gap-2">
+                        <span>ORDER NOW — COMPLETE ORDER</span>
+                        <ArrowRight className="w-5 h-5 stroke-[2.5]" />
+                      </div>
+                      <div className="text-xs font-bold text-blue-100 uppercase tracking-wider flex items-center gap-1.5 mt-0.5">
+                        <Truck className="w-3.5 h-3.5" /> FREE DELIVERY NATIONWIDE + PAY ON DELIVERY
+                      </div>
                     </>
                   )}
                 </button>

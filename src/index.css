@@ -29,3 +29,151 @@
   background: #3b82f6;
 }
 
+/* High-Energy Blinking Action Button Keyframes */
+@keyframes blinkBlueAction {
+  0%, 100% {
+    transform: scale(1);
+    filter: brightness(1);
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7), 0 4px 14px rgba(37, 99, 235, 0.35);
+  }
+  15% {
+    transform: scale(1.035);
+    filter: brightness(1.35) contrast(1.1);
+    box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.35), 0 0 26px rgba(59, 130, 246, 0.85), 0 6px 18px rgba(37, 99, 235, 0.5);
+  }
+  28% {
+    transform: scale(0.99);
+    filter: brightness(0.96);
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.1), 0 2px 8px rgba(37, 99, 235, 0.3);
+  }
+  42% {
+    transform: scale(1.05);
+    filter: brightness(1.4) contrast(1.15);
+    box-shadow: 0 0 0 9px rgba(96, 165, 250, 0.4), 0 0 34px rgba(96, 165, 250, 0.95), 0 8px 22px rgba(37, 99, 235, 0.6);
+  }
+  65% {
+    transform: scale(1.01);
+    filter: brightness(1.05);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15), 0 4px 12px rgba(37, 99, 235, 0.4);
+  }
+}
+
+@keyframes blinkAmberAction {
+  0%, 100% {
+    transform: scale(1);
+    filter: brightness(1);
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.75), 0 4px 14px rgba(245, 158, 11, 0.4);
+  }
+  15% {
+    transform: scale(1.035);
+    filter: brightness(1.28) contrast(1.1);
+    box-shadow: 0 0 0 6px rgba(251, 191, 36, 0.4), 0 0 28px rgba(251, 191, 36, 0.9), 0 6px 18px rgba(245, 158, 11, 0.5);
+  }
+  28% {
+    transform: scale(0.99);
+    filter: brightness(0.96);
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.1), 0 2px 8px rgba(245, 158, 11, 0.3);
+  }
+  42% {
+    transform: scale(1.05);
+    filter: brightness(1.35) contrast(1.15);
+    box-shadow: 0 0 0 9px rgba(251, 191, 36, 0.45), 0 0 36px rgba(251, 191, 36, 1), 0 8px 24px rgba(245, 158, 11, 0.6);
+  }
+  65% {
+    transform: scale(1.01);
+    filter: brightness(1.05);
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2), 0 4px 12px rgba(245, 158, 11, 0.4);
+  }
+}
+
+@keyframes blinkEmeraldAction {
+  0%, 100% {
+    transform: scale(1);
+    filter: brightness(1);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7), 0 4px 14px rgba(16, 185, 129, 0.35);
+  }
+  15% {
+    transform: scale(1.035);
+    filter: brightness(1.3) contrast(1.1);
+    box-shadow: 0 0 0 6px rgba(52, 211, 153, 0.35), 0 0 26px rgba(52, 211, 153, 0.85), 0 6px 18px rgba(16, 185, 129, 0.5);
+  }
+  28% {
+    transform: scale(0.99);
+    filter: brightness(0.96);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.1), 0 2px 8px rgba(16, 185, 129, 0.3);
+  }
+  42% {
+    transform: scale(1.05);
+    filter: brightness(1.38) contrast(1.15);
+    box-shadow: 0 0 0 9px rgba(110, 231, 183, 0.4), 0 0 34px rgba(110, 231, 183, 0.95), 0 8px 22px rgba(16, 185, 129, 0.6);
+  }
+  65% {
+    transform: scale(1.01);
+    filter: brightness(1.05);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15), 0 4px 12px rgba(16, 185, 129, 0.4);
+  }
+}
+
+.btn-glow,
+.btn-blink {
+  animation: blinkBlueAction 1.4s infinite ease-in-out;
+  transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+  will-change: transform, filter, box-shadow;
+}
+.btn-glow:hover,
+.btn-blink:hover {
+  transform: translateY(-2px) scale(1.02);
+  filter: brightness(1.15);
+  box-shadow: 0 0 30px rgba(37, 99, 235, 0.9), 0 0 55px rgba(96, 165, 250, 0.7);
+}
+
+.btn-glow-amber,
+.btn-blink-amber {
+  animation: blinkAmberAction 1.4s infinite ease-in-out;
+  transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+  will-change: transform, filter, box-shadow;
+}
+.btn-glow-amber:hover,
+.btn-blink-amber:hover {
+  transform: translateY(-2px) scale(1.02);
+  filter: brightness(1.15);
+  box-shadow: 0 0 30px rgba(245, 158, 11, 0.95), 0 0 55px rgba(251, 191, 36, 0.7);
+}
+
+.btn-glow-emerald,
+.btn-blink-emerald {
+  animation: blinkEmeraldAction 1.4s infinite ease-in-out;
+  transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+  will-change: transform, filter, box-shadow;
+}
+.btn-glow-emerald:hover,
+.btn-blink-emerald:hover {
+  transform: translateY(-2px) scale(1.02);
+  filter: brightness(1.15);
+  box-shadow: 0 0 28px rgba(16, 185, 129, 0.9), 0 0 50px rgba(52, 211, 153, 0.65);
+}
+
+/* Slideshow Progress Bar Animation */
+@keyframes slideProgressAnim {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.slideshow-progress-bar {
+  animation: slideProgressAnim 3.5s linear infinite;
+}
+
+.slideshow-progress-bar-running {
+  animation: slideProgressAnim 3.5s linear infinite;
+}
+
+.slideshow-progress-bar-paused {
+  animation-play-state: paused;
+}
+
+
+

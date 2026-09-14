@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tag, Sparkles, CheckCircle, ArrowRight } from 'lucide-react';
+import { Tag, Sparkles, CheckCircle, ArrowRight, Truck } from 'lucide-react';
 import { LandingPageConfig } from '../types';
 import { formatNaira } from '../config';
 
@@ -75,10 +75,15 @@ export const PriceOfferCards: React.FC<PriceOfferCardsProps> = ({ config, onSele
 
             <button
               onClick={() => onSelectTier(1)}
-              className="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3.5 px-4 rounded-xl transition-colors flex items-center justify-center gap-2 text-sm cursor-pointer shadow-sm"
+              className="btn-glow w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-3 px-4 rounded-xl transition-all flex flex-col items-center justify-center cursor-pointer shadow-md"
             >
-              <span>GET MINE NOW (1 UNIT)</span>
-              <ArrowRight className="w-4 h-4" />
+              <div className="flex items-center gap-2 text-sm font-black">
+                <span>ORDER NOW (1 UNIT)</span>
+                <ArrowRight className="w-4 h-4" />
+              </div>
+              <div className="text-[10px] text-blue-100 font-bold uppercase tracking-wider flex items-center gap-1 mt-0.5">
+                <Truck className="w-3 h-3" /> FREE DELIVERY NATIONWIDE
+              </div>
             </button>
           </div>
 
@@ -127,10 +132,15 @@ export const PriceOfferCards: React.FC<PriceOfferCardsProps> = ({ config, onSele
 
             <button
               onClick={() => onSelectTier(2)}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-3.5 px-4 rounded-xl transition-all shadow-md flex items-center justify-center gap-2 text-sm cursor-pointer"
+              className="btn-glow w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-black py-3 px-4 rounded-xl transition-all shadow-md flex flex-col items-center justify-center cursor-pointer"
             >
-              <span>GET MINE NOW (2 UNITS)</span>
-              <ArrowRight className="w-4 h-4" />
+              <div className="flex items-center gap-2 text-sm font-black">
+                <span>ORDER NOW (2 UNITS)</span>
+                <ArrowRight className="w-4 h-4" />
+              </div>
+              <div className="text-[10px] text-blue-100 font-bold uppercase tracking-wider flex items-center gap-1 mt-0.5">
+                <Truck className="w-3 h-3" /> FREE DELIVERY NATIONWIDE
+              </div>
             </button>
           </div>
 
@@ -181,10 +191,15 @@ export const PriceOfferCards: React.FC<PriceOfferCardsProps> = ({ config, onSele
 
             <button
               onClick={() => onSelectTier(3)}
-              className="w-full bg-amber-400 hover:bg-amber-300 text-slate-950 font-black py-4 px-4 rounded-xl transition-all shadow-xl hover:shadow-amber-400/30 flex items-center justify-center gap-2 text-sm cursor-pointer"
+              className="btn-glow-amber w-full bg-amber-400 hover:bg-amber-300 active:bg-amber-500 text-slate-950 font-black py-3 px-4 rounded-xl transition-all shadow-xl flex flex-col items-center justify-center cursor-pointer"
             >
-              <span>GET MINE NOW (3+ UNITS)</span>
-              <ArrowRight className="w-4 h-4" />
+              <div className="flex items-center gap-2 text-sm sm:text-base font-black">
+                <span>ORDER NOW (3+ UNITS)</span>
+                <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+              </div>
+              <div className="text-[10px] font-black text-slate-950 uppercase tracking-wider flex items-center gap-1 mt-0.5">
+                <Truck className="w-3 h-3" /> FREE DELIVERY NATIONWIDE
+              </div>
             </button>
           </div>
 
