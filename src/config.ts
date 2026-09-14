@@ -108,8 +108,8 @@ export const INITIAL_CONFIG: LandingPageConfig = {
     },
     {
       id: "faq-5",
-      question: "5. Is it suitable for small kitchens?",
-      answer: "Yes, its space-saving and compact countertop design makes it a practical choice for kitchens and apartments where counter space is at a premium."
+      question: "5. What is the panel size and dimensions of the 2-Burner Cooker?",
+      answer: "The 2-Burner Cooker top panel measures 75 by 45 cm (75 × 45 cm / 750 × 450 mm). It is compact yet spacious enough to accommodate two large family pots or pans simultaneously. It can be used directly on any countertop with its non-slip rubber feet or installed into a 680 × 380 mm cutout."
     },
     {
       id: "faq-6",
@@ -134,7 +134,7 @@ export const INITIAL_CONFIG: LandingPageConfig = {
     {
       id: "faq-10",
       question: "10. How do I place an order?",
-      answer: "Simply scroll down to our Order Form, choose your desired quantity, fill in your delivery contact details, and click 'COMPLETE MY ORDER'. You can also order directly via WhatsApp."
+      answer: "Simply scroll down to our Order Form, choose your desired product (2-Burner, 5-Burner, or Both together), enter your delivery contact details, and submit. You can also order directly via WhatsApp."
     },
     {
       id: "faq-11",
@@ -145,8 +145,46 @@ export const INITIAL_CONFIG: LandingPageConfig = {
       id: "faq-12",
       question: "12. What is your return or warranty policy?",
       answer: "Every order is thoroughly inspected before dispatch. In the rare event of transit issues, our customer care line is available to assist you with quick resolution according to our store terms."
+    },
+    {
+      id: "faq-13",
+      question: "13. What are the specifications of the 5-Burner Gas + Electric Hybrid Cooktop?",
+      answer: "The 5-Burner Hybrid Cooktop is an executive 900mm wide built-in cooktop featuring 4 high-heat gas burners + 1 central 2000W instant radiant ceramic electric zone, digital countdown timer, 1-touch emergency power cutoff key, and 90° flip-up hinged burners for 10-second cleanups."
+    },
+    {
+      id: "faq-14",
+      question: "14. What are the dimensions and countertop cutout size for the 5-Burner cooktop?",
+      answer: "Top Panel Dimensions: 900 × 510 mm (90 × 51 cm). Countertop Cutout Requirement: 870 × 480 mm. Package Dimensions: 970 × 570 × 250 mm. It drops cleanly into standard kitchen cabinet openings."
+    },
+    {
+      id: "faq-15",
+      question: "15. How does the hybrid feature help if gas finishes or there is no light?",
+      answer: "With dual-fuel engineering, you never get stranded. If NEPA takes light, use the 4 gas burners. If your gas cylinder finishes unexpectedly while cooking, simply power the 2000W central electric ceramic zone with electricity or generator to complete your meal smoothly."
+    },
+    {
+      id: "faq-16",
+      question: "16. Can I order both the 2-Burner and the 5-Burner cooktops at the same time?",
+      answer: "Yes! In Step 1 of the Order Form, select 'ORDER BOTH (2-Burner + 5-Burner Combo)'. You can adjust the quantity for each model and enjoy an automatic extra combo bundle discount of ₦20,000 off your combined order, delivered together anywhere in Nigeria."
     }
   ]
+};
+
+export const TWO_BURNER_CONFIG = {
+  id: "cooktop-2burner-flipup",
+  name: "2-Flip-Up Double Gas Burner with Timer",
+  shortName: "2-Flip-Up Double Burner",
+  panelDimensions: "75 × 45 cm (750 × 450 mm)",
+  panelSizeText: "75 by 45 cm",
+  cutoutDimensions: "680 × 380 mm (or Desktop / Tabletop with Non-Slip Feet)",
+  specs: {
+    panelDimensions: "75 by 45 cm (750 × 450 mm)",
+    cutoutDimensions: "680 × 380 mm (Tabletop or Recessed)",
+    surfaceMaterial: "Executive Bevelled Black Tempered Glass",
+    burnerMechanism: "90° Flip-Up Articulated Hinged Burner Heads",
+    timer: "Integrated Digital Countdown LED Timer",
+    ignitionType: "Instant Ceramic Pulse Electronic Ignition",
+    zones: "2 Dedicated Gas Cooking Zones"
+  }
 };
 
 export function formatNaira(amount: number): string {
@@ -179,6 +217,242 @@ export function calculatePricing(
     regularTotal,
     savings
   };
+}
+
+export const ALTERNATIVE_PRODUCT_CONFIG = {
+  id: "cooktop-5burner-hybrid",
+  name: "5-Burner Built-In Gas + Electric Cooktop",
+  shortName: "5-Burner Hybrid Cooktop",
+  fullName: "5-Burner Built-In Gas + Electric Cooktop (with Digital Timer & Auto-Off)",
+  tagline: "4 High-Power Gas Burners + 1 Central 2000W Radiant Electric Zone",
+  description:
+    "Executive 5-zone hybrid cooktop combining 4 gas burners with a heavy-duty 2000W central electric ceramic plate, integrated digital timer with automatic shutoff, and 90° flip-up hinged burners for 1-wipe cleanups.",
+  NORMAL_PRICE: 280000,
+  PRICE_FOR_2: 275000,
+  PRICE_FOR_3: 270000,
+  PRICE_FOR_4_PLUS: 265000,
+  REGULAR_PRICE: 350000,
+  specs: {
+    panelDimensions: "900 × 510 mm",
+    cutoutDimensions: "870 × 480 mm",
+    packageDimensions: "970 × 570 × 250 mm",
+    zones: "5 Zones (4 Gas Burners + 1 Central 2000W Radiant Ceramic Electric Plate)",
+    electricZonePower: "2000W Instant Radiant Ceramic with Digital LED Display & Touch (+/-)",
+    surfaceMaterial: "Executive Heavy-Duty Black Tempered Glass with Polished Bevelled Edges",
+    burnerMechanism: "90° Flip-Up Articulated Hinged Burners (Lift Up to Clean Spills in 10s)",
+    ignitionType: "Automatic Electronic Pulse Ignition + Micro-Touch Sensor",
+    safetyFeatures: [
+      "1-Touch Automatic Off Key for Emergency Power Cutoff",
+      "Digital Countdown Timer with Auto-Shutoff to Prevent Burnt Food",
+      "Thermocouple Flame Failure Protection on Gas Burners",
+      "High-Temp Residual Heat Indicator on Electric Ceramic Plate"
+    ]
+  },
+  images: [
+    {
+      id: "img-5b-diagram",
+      title: "5-Zone Hybrid Cooktop (Layout Blueprint)",
+      caption: "4 Gas Burners + 1 Central Radiant Ceramic Electric Burner with Digital Timer & Touch Controls on Deep Black Glass.",
+      url: "/images/alternative_5burner/cooktop_main_diagram.png",
+      isPlaceholder: false
+    },
+    {
+      id: "img-5b-showroom",
+      title: "Physical Showroom Unit (2000W Active Ceramic Zone)",
+      caption: "Authentic physical unit featuring central glowing radiant zone, 2000W digital display, and robust rotary control knobs.",
+      url: "/images/alternative_5burner/cooktop_showroom_active.jpg",
+      isPlaceholder: false
+    },
+    {
+      id: "img-5b-hinge",
+      title: "Innovative 90° Flip-Up Hinged Burners",
+      caption: "Heavy-duty dual-hinge design allows burners to tilt upward for effortless 1-wipe cleaning of soup/oil spills underneath without dismantling parts.",
+      url: "/images/alternative_5burner/cooktop_hinged_burners.png",
+      isPlaceholder: false
+    },
+    {
+      id: "img-5b-dimensions",
+      title: "Official Dimension Blueprint & Countertop Cutout Specs",
+      caption: "Panel: 900 × 510mm • Cutout: 870 × 480mm • Package: 970 × 570 × 250mm. Fits standard modern kitchen cabinetry seamlessly.",
+      url: "/images/alternative_5burner/cooktop_dimensions_spec.jpg",
+      isPlaceholder: false
+    },
+    {
+      id: "img-5b-installed",
+      title: "Real Kitchen Countertop Installation",
+      caption: "Flush built-in recessed installation on white quartz countertop matching contemporary luxury kitchen cabinetry.",
+      url: "/images/alternative_5burner/cooktop_kitchen_installed.jpeg",
+      isPlaceholder: false
+    }
+  ],
+  keyBenefits: [
+    {
+      title: "Never Get Stranded: Dual-Fuel Cooking",
+      desc: "Cook with gas when there's no electricity; cook with the 2000W electric ceramic zone when your gas cylinder finishes unexpectedly.",
+      badge: "Dual Fuel"
+    },
+    {
+      title: "90° Flip-Up Burners (1-Wipe Clean)",
+      desc: "No more baked-on grease or rust. Simply lift the hinged burner heads and wipe the flat tempered glass in seconds.",
+      badge: "Easy Clean"
+    },
+    {
+      title: "Smart Digital Timer & Automatic Off Key",
+      desc: "Set exact cooking countdowns. Walk away with peace of mind—the cooker automatically cuts off so food never burns.",
+      badge: "Safety Auto-Off"
+    },
+    {
+      title: "Executive 90cm 5-Pan Capacity",
+      desc: "Cook multiple family dishes at once without pots bumping into each other. Features cast iron trivets for maximum stability.",
+      badge: "Spacious 900mm"
+    }
+  ]
+};
+
+export interface CombinedPricingResult {
+  mode: '2-burner' | '5-burner' | 'combo';
+  isCombo: boolean;
+  qty2Burner: number;
+  qty5Burner: number;
+  totalQuantity: number;
+  unitPrice2Burner: number;
+  unitPrice5Burner: number;
+  subtotal2Burner: number;
+  subtotal5Burner: number;
+  comboDiscount: number;
+  total: number;
+  regularTotal: number;
+  savings: number;
+  productName: string;
+  shortName: string;
+  itemsSummary: string;
+}
+
+export function calculateCombinedPricing(
+  mode: '2-burner' | '5-burner' | 'combo',
+  qty2Burner: number,
+  qty5Burner: number,
+  config: LandingPageConfig
+): CombinedPricingResult {
+  let q2 = Math.max(0, qty2Burner);
+  let q5 = Math.max(0, qty5Burner);
+
+  // Normalize quantities based on explicit mode if passed
+  if (mode === '2-burner') {
+    q2 = Math.max(1, q2);
+    q5 = 0;
+  } else if (mode === '5-burner') {
+    q2 = 0;
+    q5 = Math.max(1, q5);
+  } else if (mode === 'combo') {
+    q2 = Math.max(1, q2);
+    q5 = Math.max(1, q5);
+  }
+
+  // 2-Burner unit tiered pricing
+  let unitPrice2 = config.NORMAL_PRICE;
+  if (q2 === 1) unitPrice2 = config.NORMAL_PRICE;
+  else if (q2 === 2) unitPrice2 = config.PRICE_FOR_2;
+  else if (q2 >= 3) unitPrice2 = config.PRICE_FOR_3_PLUS;
+
+  // 5-Burner unit tiered pricing
+  let unitPrice5 = ALTERNATIVE_PRODUCT_CONFIG.NORMAL_PRICE;
+  if (q5 === 1) unitPrice5 = ALTERNATIVE_PRODUCT_CONFIG.NORMAL_PRICE;
+  else if (q5 === 2) unitPrice5 = ALTERNATIVE_PRODUCT_CONFIG.PRICE_FOR_2;
+  else if (q5 === 3) unitPrice5 = ALTERNATIVE_PRODUCT_CONFIG.PRICE_FOR_3;
+  else if (q5 >= 4) unitPrice5 = ALTERNATIVE_PRODUCT_CONFIG.PRICE_FOR_4_PLUS;
+
+  const subtotal2 = q2 * unitPrice2;
+  const subtotal5 = q5 * unitPrice5;
+
+  const isCombo = q2 > 0 && q5 > 0;
+  // Special bonus incentive when ordering both simultaneously: ₦20,000 combo discount!
+  const comboDiscount = isCombo ? 20000 : 0;
+
+  const total = Math.max(0, subtotal2 + subtotal5 - comboDiscount);
+  const regularTotal = (q2 * (config.NORMAL_PRICE + 30000)) + (q5 * ALTERNATIVE_PRODUCT_CONFIG.REGULAR_PRICE);
+  const savings = Math.max(0, regularTotal - total);
+
+  let productName = config.PRODUCT_NAME;
+  let shortName = "2-Flip-Up Double Burner";
+  let itemsSummary = "";
+
+  if (isCombo) {
+    shortName = "Combo (2-Burner + 5-Burner)";
+    productName = `COMBO: ${q2}x 2-Flip-Up (75×45cm) + ${q5}x 5-Burner Hybrid (90×51cm)`;
+    itemsSummary = `${q2}x 2-Flip-Up Double Burner (75 × 45cm) + ${q5}x 5-Burner Hybrid Cooktop (90 × 51cm)`;
+  } else if (q5 > 0) {
+    shortName = "5-Burner Hybrid Cooktop";
+    productName = `${ALTERNATIVE_PRODUCT_CONFIG.name} (90 × 51 cm)`;
+    itemsSummary = `${q5}x 5-Burner Hybrid Cooktop (90 × 51cm)`;
+  } else {
+    shortName = "2-Flip-Up Double Burner";
+    productName = `${config.PRODUCT_NAME} (75 × 45 cm)`;
+    itemsSummary = `${q2}x 2-Flip-Up Double Burner (75 × 45cm)`;
+  }
+
+  const effectiveMode: '2-burner' | '5-burner' | 'combo' = isCombo ? 'combo' : (q5 > 0 ? '5-burner' : '2-burner');
+
+  return {
+    mode: effectiveMode,
+    isCombo,
+    qty2Burner: q2,
+    qty5Burner: q5,
+    totalQuantity: q2 + q5,
+    unitPrice2Burner: unitPrice2,
+    unitPrice5Burner: unitPrice5,
+    subtotal2Burner: subtotal2,
+    subtotal5Burner: subtotal5,
+    comboDiscount,
+    total,
+    regularTotal,
+    savings,
+    productName,
+    shortName,
+    itemsSummary
+  };
+}
+
+export function calculateProductPricing(
+  model: '2-burner' | '5-burner' | 'combo',
+  quantity: number,
+  config: LandingPageConfig
+) {
+  const qty = Math.max(1, quantity);
+  if (model === '5-burner') {
+    const res = calculateCombinedPricing('5-burner', 0, qty, config);
+    return {
+      productName: res.productName,
+      shortName: res.shortName,
+      quantity: res.qty5Burner,
+      pricePerUnit: res.unitPrice5Burner,
+      total: res.total,
+      regularTotal: res.regularTotal,
+      savings: res.savings
+    };
+  } else if (model === 'combo') {
+    const res = calculateCombinedPricing('combo', 1, 1, config);
+    return {
+      productName: res.productName,
+      shortName: res.shortName,
+      quantity: res.totalQuantity,
+      pricePerUnit: res.total,
+      total: res.total,
+      regularTotal: res.regularTotal,
+      savings: res.savings
+    };
+  } else {
+    const res = calculateCombinedPricing('2-burner', qty, 0, config);
+    return {
+      productName: res.productName,
+      shortName: res.shortName,
+      quantity: res.qty2Burner,
+      pricePerUnit: res.unitPrice2Burner,
+      total: res.total,
+      regularTotal: res.regularTotal,
+      savings: res.savings
+    };
+  }
 }
 
 export function formatWhatsAppNumber(phoneNumber: string): string {

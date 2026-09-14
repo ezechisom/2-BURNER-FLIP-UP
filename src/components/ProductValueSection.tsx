@@ -32,8 +32,8 @@ export const ProductValueSection: React.FC<ProductValueSectionProps> = ({ config
       icon: Sparkles
     },
     {
-      title: "Space-Conscious Design",
-      desc: "Efficient footprint maximizes usable food preparation room on any counter.",
+      title: "Space-Conscious 75 × 45 cm Panel",
+      desc: "Optimal 750 × 450 mm panel footprint maximizes usable food preparation room on any counter while fitting standard kitchen cutouts.",
       icon: Minimize2
     }
   ];

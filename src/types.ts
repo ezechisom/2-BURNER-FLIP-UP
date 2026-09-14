@@ -1,3 +1,5 @@
+export type CookerModel = '2-burner' | '5-burner' | 'combo';
+
 export interface ProductImageItem {
   id: string;
   title: string;
@@ -49,4 +51,8 @@ export interface OrderFormData {
   state: string;
   email?: string;
   quantity: number;
+  productModel?: CookerModel;
+  qty2Burner?: number;
+  qty5Burner?: number;
 }
+

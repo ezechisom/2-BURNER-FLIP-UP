@@ -184,10 +184,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ config, onOrderClick, 
             {/* Core Benefits Bullets */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
               {[
-                "2 Powerful Cooking Zones",
-                "Flip-Up Space-Saving Design",
-                "Built-In Timer",
-                "Modern Glass-Top Finish"
+                "75 × 45 cm Panel Size (750 × 450 mm)",
+                "2 Powerful Gas Cooking Zones",
+                "90° Flip-Up Space-Saving Design",
+                "Built-In Mechanical Timer"
               ].map((benefit, idx) => (
                 <div key={idx} className="flex items-center gap-2 text-xs sm:text-sm font-medium text-white">
                   <span className="w-5 h-5 rounded-full bg-sky-400/20 border border-sky-400/50 text-sky-200 flex items-center justify-center shrink-0">

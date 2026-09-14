@@ -4,9 +4,9 @@
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { Settings, ShieldCheck, Flame, Phone, MessageCircle, Truck } from 'lucide-react';
+import { Settings, ShieldCheck, Flame, Phone, MessageCircle, Truck, Zap } from 'lucide-react';
 import { INITIAL_CONFIG, generateWhatsAppLink, formatNaira, formatWhatsAppNumber } from './config';
-import { LandingPageConfig } from './types';
+import { LandingPageConfig, CookerModel } from './types';
 
 import { TopUrgencyBar } from './components/TopUrgencyBar';
 import { HeroSection } from './components/HeroSection';
@@ -14,6 +14,7 @@ import { PriceOfferCards } from './components/PriceOfferCards';
 import { ProblemHookSection } from './components/ProblemHookSection';
 import { ProductBenefitsSection } from './components/ProductBenefitsSection';
 import { ProductShowcaseSection } from './components/ProductShowcaseSection';
+import { AlternativeProductSection } from './components/AlternativeProductSection';
 import { HowItWorksSection } from './components/HowItWorksSection';
 import { PerfectForSection } from './components/PerfectForSection';
 import { ProductValueSection } from './components/ProductValueSection';
@@ -25,6 +26,7 @@ import { FinalSalesCTASection } from './components/FinalSalesCTASection';
 import { OrderFormSection } from './components/OrderFormSection';
 import { StickyMobileCTA } from './components/StickyMobileCTA';
 import { SellerConfigModal } from './components/SellerConfigModal';
+import { HeaderOptionsMenu } from './components/HeaderOptionsMenu';
 
 export default function App() {
   const [config, setConfig] = useState<LandingPageConfig>(() => {
@@ -76,6 +78,7 @@ export default function App() {
   });
 
   const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
+  const [selectedModel, setSelectedModel] = useState<CookerModel>('2-burner');
   const [isConfigModalOpen, setIsConfigModalOpen] = useState<boolean>(false);
 
   // Tracks if the customer has placed an order and finished filling the form
@@ -95,6 +98,8 @@ export default function App() {
     quantity: number;
     total: number;
     orderId: string;
+    productModel?: CookerModel;
+    productName?: string;
   } | null>(() => {
     try {
       const saved = sessionStorage.getItem('burner_last_order');
@@ -112,6 +117,8 @@ export default function App() {
     quantity: number;
     total: number;
     orderId: string;
+    productModel?: CookerModel;
+    productName?: string;
   }) => {
     setHasPlacedOrder(true);
     setLastOrderDetails(details);
@@ -143,11 +150,28 @@ export default function App() {
     }
   };
 
-  const scrollToOrderForm = (qty?: number) => {
+  const scrollToOrderForm = (qty?: number, model?: CookerModel) => {
     if (qty) {
       setSelectedQuantity(qty);
     }
+    if (model) {
+      setSelectedModel(model);
+    }
     const target = document.getElementById('order-form-section');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const scrollToAlternativeSection = () => {
+    const target = document.getElementById('alternative-product-section');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const scrollToSection = (sectionId: string) => {
+    const target = document.getElementById(sectionId);
     if (target) {
       target.scrollIntoView({ behavior: 'smooth' });
     }
@@ -157,15 +181,16 @@ export default function App() {
   const whatsappConfirmUrl = useMemo(() => {
     const cleanNumber = formatWhatsAppNumber(config.WHATSAPP_NUMBER);
     if (lastOrderDetails) {
-      const msg = `Hello! I just completed the order form for ${lastOrderDetails.quantity} unit(s) of 2-Flip-Up Double Gas Burner on your website.\n\nOrder ID: #${lastOrderDetails.orderId}\nName: ${lastOrderDetails.fullName}\nPhone: ${lastOrderDetails.phoneNumber}\nAddress: ${lastOrderDetails.city}, ${lastOrderDetails.state}\nTotal: ${formatNaira(lastOrderDetails.total)}\n\nPlease confirm my order dispatch.`;
+      const prodName = lastOrderDetails.productName || (lastOrderDetails.productModel === '5-burner' ? '5-Burner Built-In Gas + Electric Cooktop' : '2-Flip-Up Double Gas Burner');
+      const msg = `Hello! I just completed the order form for ${lastOrderDetails.quantity} unit(s) of ${prodName} on your website.\n\nOrder ID: #${lastOrderDetails.orderId}\nName: ${lastOrderDetails.fullName}\nPhone: ${lastOrderDetails.phoneNumber}\nAddress: ${lastOrderDetails.city}, ${lastOrderDetails.state}\nTotal: ${formatNaira(lastOrderDetails.total)}\n\nPlease confirm my order dispatch.`;
       return `https://wa.me/${cleanNumber}?text=${encodeURIComponent(msg)}`;
     }
     return generateWhatsAppLink(
       config.WHATSAPP_NUMBER,
-      config.PRODUCT_NAME,
+      selectedModel === '5-burner' ? '5-Burner Built-In Gas + Electric Cooktop' : config.PRODUCT_NAME,
       selectedQuantity
     );
-  }, [config.WHATSAPP_NUMBER, config.PRODUCT_NAME, selectedQuantity, lastOrderDetails]);
+  }, [config.WHATSAPP_NUMBER, config.PRODUCT_NAME, selectedQuantity, lastOrderDetails, selectedModel]);
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans antialiased selection:bg-blue-600 selection:text-white pb-16 sm:pb-0">
@@ -185,15 +210,24 @@ export default function App() {
             </span>
             <div>
               <span className="font-extrabold tracking-tight text-slate-900 text-sm sm:text-base uppercase block leading-tight">
-                2-FLIP-UP COOKER
+                2-FLIP-UP COOKER STORE
               </span>
               <span className="text-[10px] text-blue-600 font-mono tracking-widest hidden sm:block font-bold">
-                OFFICIAL PROMOTIONAL STORE
+                PREMIUM GAS & HYBRID COOKING APPLIANCES
               </span>
             </div>
           </div>
 
           <div className="flex items-center gap-2 sm:gap-4">
+            {/* Quick jump to 5-burner upgrade */}
+            <button
+              onClick={scrollToAlternativeSection}
+              className="hidden lg:flex items-center gap-1.5 text-xs font-bold text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-300/80 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer"
+            >
+              <Zap className="w-3.5 h-3.5 fill-amber-500 text-amber-600" />
+              <span>See 5-Burner Hybrid (₦280k)</span>
+            </button>
+
             <a
               href={`tel:${config.PHONE_NUMBER}`}
               className="hidden md:flex items-center gap-1.5 text-xs text-slate-600 hover:text-blue-700 transition-colors font-medium"
@@ -226,21 +260,59 @@ export default function App() {
                 <Truck className="w-2.5 h-2.5" /> FREE DELIVERY
               </span>
             </div>
+
+            {/* TOP-RIGHT OPTION ICON MENU */}
+            <HeaderOptionsMenu
+              config={config}
+              onSelectModel={(model, qty) => scrollToOrderForm(qty, model)}
+              onScrollToSection={scrollToSection}
+              onOpenSellerConfig={() => setIsConfigModalOpen(true)}
+              whatsappUrl={whatsappConfirmUrl}
+            />
           </div>
         </div>
       </header>
+
+      {/* QUICK PRODUCT SWITCHER BANNER */}
+      <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white py-2.5 px-4 text-xs border-b border-blue-900/60">
+        <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span className="bg-amber-500/20 border border-amber-400/40 text-amber-300 text-[10px] font-mono font-black uppercase px-2 py-0.5 rounded">
+              NEW ALTERNATIVE
+            </span>
+            <span className="text-slate-200 text-xs font-medium">
+              Looking for a bigger kitchen centerpiece? Discover our <strong className="text-amber-300">5-Burner Gas + Electric Hybrid Cooktop</strong>.
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={scrollToAlternativeSection}
+              className="text-amber-400 hover:text-amber-300 font-bold underline cursor-pointer text-xs transition-colors"
+            >
+              View 5-Burner Specs & Photos →
+            </button>
+            <span className="text-slate-600">|</span>
+            <button
+              onClick={() => scrollToOrderForm(1, '5-burner')}
+              className="bg-amber-500 hover:bg-amber-400 text-slate-950 text-[11px] font-black px-2.5 py-1 rounded cursor-pointer transition-colors"
+            >
+              Order 5-Burner (₦280k)
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* MAIN SALES CONTENT FLOW */}
       <main>
         {/* SECTION 2 — HERO SECTION */}
         <HeroSection
           config={config}
-          onOrderClick={scrollToOrderForm}
+          onOrderClick={(qty) => scrollToOrderForm(qty, '2-burner')}
           hasPlacedOrder={hasPlacedOrder}
         />
 
         {/* SECTION 3 — PRICE OFFER CARDS */}
-        <PriceOfferCards config={config} onSelectTier={scrollToOrderForm} />
+        <PriceOfferCards config={config} onSelectTier={(qty) => scrollToOrderForm(qty, '2-burner')} />
 
         {/* SECTION 4 — PROBLEM / EMOTIONAL HOOK */}
         <ProblemHookSection />
@@ -251,38 +323,44 @@ export default function App() {
         {/* SECTION 6 — PRODUCT IMAGE SHOWCASE */}
         <ProductShowcaseSection images={config.PRODUCT_IMAGES} />
 
-        {/* SECTION 7 — HOW THE PRODUCT WORKS */}
+        {/* SECTION 7 — ALTERNATIVE PRODUCT SHOWCASE (5-Burner Gas + Electric Hybrid) */}
+        <AlternativeProductSection
+          onSelectModel={(model, qty) => scrollToOrderForm(qty, model)}
+        />
+
+        {/* SECTION 8 — HOW THE PRODUCT WORKS */}
         <HowItWorksSection />
 
-        {/* SECTION 8 — PERFECT FOR */}
+        {/* SECTION 9 — PERFECT FOR */}
         <PerfectForSection />
 
-        {/* SECTION 9 — PRODUCT VALUE */}
-        <ProductValueSection config={config} onOrderClick={scrollToOrderForm} />
+        {/* SECTION 10 — PRODUCT VALUE */}
+        <ProductValueSection config={config} onOrderClick={(qty) => scrollToOrderForm(qty, '2-burner')} />
 
-        {/* SECTION 10 — CUSTOMER REVIEWS */}
+        {/* SECTION 11 — CUSTOMER REVIEWS */}
         <CustomerReviewsSection reviews={config.REVIEWS} />
 
-        {/* SECTION 11 — OFFER URGENCY */}
+        {/* SECTION 12 — OFFER URGENCY */}
         <OfferUrgencySection config={config} onClaimOffer={() => scrollToOrderForm(1)} />
 
-        {/* SECTION 12 — TRUST & DELIVERY */}
+        {/* SECTION 13 — TRUST & DELIVERY */}
         <TrustDeliverySection config={config} />
 
-        {/* SECTION 13 — FAQ */}
+        {/* SECTION 14 — FAQ */}
         <FAQSection faqs={config.FAQS} />
 
-        {/* SECTION 14 — FINAL SALES CTA */}
+        {/* SECTION 15 — FINAL SALES CTA */}
         <FinalSalesCTASection
           config={config}
           onOrderClick={() => scrollToOrderForm(1)}
           hasPlacedOrder={hasPlacedOrder}
         />
 
-        {/* SECTION 15 — ORDER FORM */}
+        {/* SECTION 16 — ORDER FORM */}
         <OrderFormSection
           config={config}
           initialQuantity={selectedQuantity}
+          initialModel={selectedModel}
           onOrderSuccess={handleOrderSuccess}
           onResetOrder={handleResetOrder}
         />
@@ -293,11 +371,11 @@ export default function App() {
         <div className="max-w-4xl mx-auto space-y-4">
           <div className="flex items-center justify-center gap-2 text-slate-900 font-bold">
             <Flame className="w-4 h-4 text-blue-600 fill-current" />
-            <span>2-FLIP-UP DOUBLE GAS BURNER WITH TIMER</span>
+            <span>2-FLIP-UP & 5-BURNER HYBRID COOKTOPS</span>
           </div>
 
           <p className="text-slate-500 max-w-md mx-auto leading-relaxed">
-            Direct-response promotional landing page. Nationwide delivery across Nigeria.
+            Direct-response promotional landing page. Free nationwide delivery across Nigeria with Pay on Delivery.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-4 text-slate-500 pt-2">
