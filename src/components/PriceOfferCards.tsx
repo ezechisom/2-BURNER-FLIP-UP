@@ -9,7 +9,7 @@ interface PriceOfferCardsProps {
 }
 
 export const PriceOfferCards: React.FC<PriceOfferCardsProps> = ({ config, onSelectTier }) => {
-  const regular1 = config.NORMAL_PRICE;
+  const regular1 = 350000;
   const regular2 = regular1 * 2;
   const offer2 = config.PRICE_FOR_2 * 2;
   const save2 = regular2 - offer2;
@@ -30,7 +30,7 @@ export const PriceOfferCards: React.FC<PriceOfferCardsProps> = ({ config, onSele
             GET MORE VALUE WHEN YOU BUY MORE
           </h2>
           <p className="text-slate-600 text-sm sm:text-base">
-            Choose your package below. The more units you order, the lower the price per cooker. Perfect for multi-home setups or sharing with family.
+            Choose your package below. The more units you order, the lower the price per cooker. Perfect for multi-home setups, family gifts, or contractors.
           </p>
         </div>
 
@@ -44,31 +44,35 @@ export const PriceOfferCards: React.FC<PriceOfferCardsProps> = ({ config, onSele
                 <span className="text-xs font-bold uppercase tracking-wider text-slate-600 bg-slate-100 px-2.5 py-1 rounded">
                   Starter Pack
                 </span>
-                <span className="text-xs text-slate-400 font-medium">Standard Rate</span>
+                <span className="text-xs text-slate-400 font-medium line-through">Reg. {formatNaira(regular1)}</span>
               </div>
 
               <h3 className="text-xl font-bold text-slate-900 mb-1">1 UNIT</h3>
-              <p className="text-xs text-slate-500 mb-6">Complete 2-Flip-Up Double Burner</p>
+              <p className="text-xs text-slate-500 mb-6">Complete 5-Burner Hybrid Cooktop (90 × 51 cm)</p>
 
               <div className="mb-6 pb-6 border-b border-slate-100">
                 <div className="text-3xl font-extrabold text-slate-900">
                   {formatNaira(config.NORMAL_PRICE)}
                 </div>
-                <span className="text-xs text-slate-500">Single unit price</span>
+                <span className="text-xs text-slate-500">Single unit promotional price</span>
               </div>
 
               <ul className="space-y-3 text-xs sm:text-sm text-slate-600 mb-6">
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-blue-600 shrink-0" />
-                  <span>1x Double flip-up burner cooker</span>
+                  <span>4 Gas + 1 Central 2000W Electric</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-blue-600 shrink-0" />
-                  <span>Integrated mechanical timer</span>
+                  <span>Digital LED timer with auto-off</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-blue-600 shrink-0" />
-                  <span>Full secure transit packing</span>
+                  <span>90° Flip-up burners (1-wipe clean)</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-blue-600 shrink-0" />
+                  <span>Heavy-duty tempered glass & cast trivets</span>
                 </li>
               </ul>
             </div>
@@ -102,7 +106,7 @@ export const PriceOfferCards: React.FC<PriceOfferCardsProps> = ({ config, onSele
               </div>
 
               <h3 className="text-xl font-bold text-slate-900 mb-1">2 UNITS</h3>
-              <p className="text-xs text-slate-500 mb-6">2 Complete Double Cookers</p>
+              <p className="text-xs text-slate-500 mb-6">2 Complete 5-Burner Hybrid Cooktops</p>
 
               <div className="mb-6 pb-6 border-b border-slate-100">
                 <div className="text-3xl font-extrabold text-blue-700">
@@ -117,15 +121,19 @@ export const PriceOfferCards: React.FC<PriceOfferCardsProps> = ({ config, onSele
               <ul className="space-y-3 text-xs sm:text-sm text-slate-600 mb-6">
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-blue-600 shrink-0" />
-                  <span>2x Double flip-up burner cookers</span>
+                  <span>2x Complete 5-burner hybrid cooktops</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-blue-600 shrink-0" />
-                  <span>Built-in timer on both units</span>
+                  <span>Digital timer & auto-off on both units</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-blue-600 shrink-0" />
+                  <span>90° Flip-up burners on both units</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-emerald-600 font-semibold shrink-0" />
-                  <span>Instant {formatNaira(save2)} bundle savings</span>
+                  <span>Instant {formatNaira(save2)} package savings</span>
                 </li>
               </ul>
             </div>
@@ -160,7 +168,7 @@ export const PriceOfferCards: React.FC<PriceOfferCardsProps> = ({ config, onSele
               </div>
 
               <h3 className="text-xl font-bold text-white mb-1">3+ UNITS</h3>
-              <p className="text-xs text-blue-200 mb-6">3 or more Complete Cookers</p>
+              <p className="text-xs text-blue-200 mb-6">3 or more Complete 5-Burner Cooktops</p>
 
               <div className="mb-6 pb-6 border-b border-blue-800/70">
                 <div className="text-3xl font-extrabold text-amber-300">
@@ -176,15 +184,19 @@ export const PriceOfferCards: React.FC<PriceOfferCardsProps> = ({ config, onSele
               <ul className="space-y-3 text-xs sm:text-sm text-blue-100 mb-6">
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-sky-300 shrink-0" />
-                  <span>3+ Double flip-up burner units</span>
+                  <span>3+ Executive 5-burner hybrid units</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-sky-300 shrink-0" />
-                  <span>Lowest guaranteed unit price</span>
+                  <span>Dual-fuel (4 gas + 1 electric) per unit</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-emerald-300 font-semibold shrink-0" />
-                  <span>Save ₦10,000 per unit off regular</span>
+                  <CheckCircle className="w-4 h-4 text-sky-300 shrink-0" />
+                  <span>Priority nationwide dispatch & handling</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-amber-300 font-semibold shrink-0" />
+                  <span>Maximum bulk savings applied</span>
                 </li>
               </ul>
             </div>

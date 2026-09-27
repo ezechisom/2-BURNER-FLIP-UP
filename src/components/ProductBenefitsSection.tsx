@@ -1,42 +1,42 @@
 import React from 'react';
-import { Flame, Clock, RefreshCw, Minimize2, Sparkles, ChefHat } from 'lucide-react';
+import { Flame, Clock, RefreshCw, Maximize2, Sparkles, Zap, ShieldCheck } from 'lucide-react';
 
 export const ProductBenefitsSection: React.FC = () => {
   const benefits = [
     {
-      title: "2-BURNER DESIGN",
-      copy: "Cook with two burners at the same time, making it easier to prepare multiple dishes simultaneously.",
-      icon: Flame,
+      title: "DUAL-FUEL PEACE OF MIND",
+      copy: "Never get stranded mid-cooking. Use 4 gas burners during outages, or switch instantly to the 2000W electric zone when gas runs out.",
+      icon: Zap,
       number: "01"
     },
     {
-      title: "BUILT-IN TIMER",
-      copy: "Keep track of cooking time conveniently with the integrated timer without needing external gadgets.",
-      icon: Clock,
+      title: "FLAME FAILURE DEVICE (FFD)",
+      copy: "Automatic thermocouple safety protection on every gas burner. If wind or boiling soup blows out the flame, gas is cut off in seconds to eliminate gas leak explosion risks.",
+      icon: ShieldCheck,
       number: "02"
     },
     {
-      title: "FLIP-UP DESIGN",
-      copy: "The flip-up burner design helps create a more flexible and space-conscious cooking setup with effortless under-surface wipe down.",
-      icon: RefreshCw,
+      title: "DIGITAL TIMER & AUTO-CUTOFF",
+      copy: "Program cooking duration from 1 to 99 minutes. Power cuts off automatically the second time elapses, so stews and rice never overboil or burn.",
+      icon: Clock,
       number: "03"
     },
     {
-      title: "SPACE-SAVING",
-      copy: "A practical choice for kitchens where countertop space matters, delivering high functionality in a compact footprint.",
-      icon: Minimize2,
+      title: "EXECUTIVE 5-ZONE CAPACITY",
+      copy: "Spacious 90cm surface comfortably fits 5 large pots simultaneously so whole family banquets are prepared in half the time.",
+      icon: Maximize2,
       number: "04"
     },
     {
-      title: "MODERN GLASS-TOP LOOK",
-      copy: "A sleek black appearance designed to complement modern kitchen spaces with clean, reflective elegance.",
-      icon: Sparkles,
+      title: "90° FLIP-UP HINGED BURNERS",
+      copy: "Articulated hinges tilt burners upright effortlessly. Wipe away soup and oil spills in 10 seconds without removing burner parts.",
+      icon: RefreshCw,
       number: "05"
     },
     {
-      title: "EVERYDAY CONVENIENCE",
-      copy: "Suitable for everyday home cooking and customers looking for a convenient double-burner setup for daily family meals.",
-      icon: ChefHat,
+      title: "2000W RADIANT CERAMIC ZONE",
+      copy: "Instant high-temperature ceramic burner that works with any flat-bottom pot—stainless steel, enamel, cast iron, or ceramic.",
+      icon: Flame,
       number: "06"
     }
   ];
@@ -48,13 +48,13 @@ export const ProductBenefitsSection: React.FC = () => {
         {/* Title */}
         <div className="text-center max-w-2xl mx-auto mb-12">
           <span className="text-blue-600 font-mono text-xs uppercase tracking-widest font-bold block mb-2">
-            Engineered For Simplicity
+            Engineered For Excellence
           </span>
           <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-3">
-            WHY YOU'LL LOVE THIS 2-FLIP-UP BURNER
+            WHY YOU'LL LOVE THIS 5-BURNER HYBRID COOKTOP
           </h2>
           <p className="text-slate-600 text-sm sm:text-base">
-            Every feature is designed to make your daily cooking smoother, cleaner, and more manageable.
+            Every feature is designed to give you uninterrupted cooking power, spacious freedom, and effortless 1-wipe cleanups.
           </p>
         </div>
 

@@ -9,15 +9,15 @@ interface CountdownResult {
   formattedText: string;
 }
 
-export function useCountdown(endDateString?: string, defaultHours: number = 24): CountdownResult {
+export function useCountdown(endDateString?: string, defaultHours: number = 168): CountdownResult {
   const [targetTime, setTargetTime] = useState<number>(() => {
     // If a fixed end date string is provided, use it
     if (endDateString && !isNaN(new Date(endDateString).getTime())) {
       return new Date(endDateString).getTime();
     }
 
-    // Otherwise use persistent countdown in localStorage
-    const storageKey = 'promo_countdown_target_timestamp';
+    // Otherwise use persistent 7-day countdown in localStorage
+    const storageKey = `promo_countdown_target_7days_${defaultHours}h`;
     const stored = localStorage.getItem(storageKey);
     if (stored) {
       const parsed = parseInt(stored, 10);
@@ -26,7 +26,7 @@ export function useCountdown(endDateString?: string, defaultHours: number = 24):
       }
     }
 
-    // Initialize new duration
+    // Initialize new 7-day (168 hours) duration
     const newTarget = Date.now() + defaultHours * 60 * 60 * 1000;
     try {
       localStorage.setItem(storageKey, newTarget.toString());

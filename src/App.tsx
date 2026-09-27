@@ -9,12 +9,14 @@ import { INITIAL_CONFIG, generateWhatsAppLink, formatNaira, formatWhatsAppNumber
 import { LandingPageConfig, CookerModel } from './types';
 
 import { TopUrgencyBar } from './components/TopUrgencyBar';
+import { TopAlternativeProductScroll } from './components/TopAlternativeProductScroll';
 import { HeroSection } from './components/HeroSection';
 import { PriceOfferCards } from './components/PriceOfferCards';
 import { ProblemHookSection } from './components/ProblemHookSection';
 import { ProductBenefitsSection } from './components/ProductBenefitsSection';
 import { ProductShowcaseSection } from './components/ProductShowcaseSection';
-import { AlternativeProductSection } from './components/AlternativeProductSection';
+import { SafetyProtectionSection } from './components/SafetyProtectionSection';
+import { DigitalTimerSimulator } from './components/DigitalTimerSimulator';
 import { HowItWorksSection } from './components/HowItWorksSection';
 import { PerfectForSection } from './components/PerfectForSection';
 import { ProductValueSection } from './components/ProductValueSection';
@@ -26,7 +28,11 @@ import { FinalSalesCTASection } from './components/FinalSalesCTASection';
 import { OrderFormSection } from './components/OrderFormSection';
 import { StickyMobileCTA } from './components/StickyMobileCTA';
 import { SellerConfigModal } from './components/SellerConfigModal';
-import { HeaderOptionsMenu } from './components/HeaderOptionsMenu';
+import { HeaderSupportFaq } from './components/HeaderSupportFaq';
+import { LiveSalesNotifications } from './components/LiveSalesNotifications';
+import { AlternativeProductModal } from './components/AlternativeProductModal';
+import { CriticalOrderWarningModal } from './components/CriticalOrderWarningModal';
+import { QuickOrderPopupModal } from './components/QuickOrderPopupModal';
 
 export default function App() {
   const [config, setConfig] = useState<LandingPageConfig>(() => {
@@ -34,6 +40,17 @@ export default function App() {
       const saved = localStorage.getItem('burner_store_config');
       if (saved) {
         const parsed = JSON.parse(saved);
+        // Force refresh to new 5-burner main product if old 2-burner was saved as main
+        if (
+          !parsed.PRODUCT_NAME ||
+          parsed.PRODUCT_NAME.includes('2-FLIP-UP') ||
+          parsed.NORMAL_PRICE === 170000 ||
+          !parsed.PRODUCT_IMAGES ||
+          parsed.PRODUCT_IMAGES[0]?.url !== INITIAL_CONFIG.PRODUCT_IMAGES[0]?.url
+        ) {
+          localStorage.setItem('burner_store_config', JSON.stringify(INITIAL_CONFIG));
+          return INITIAL_CONFIG;
+        }
         if (parsed.PHONE_NUMBER === '+2348123456789' || !parsed.PHONE_NUMBER) {
           parsed.PHONE_NUMBER = INITIAL_CONFIG.PHONE_NUMBER;
         }
@@ -46,29 +63,6 @@ export default function App() {
         if (!parsed.META_PIXEL_ID) {
           parsed.META_PIXEL_ID = INITIAL_CONFIG.META_PIXEL_ID;
         }
-        if (
-          !parsed.PRODUCT_IMAGES ||
-          parsed.PRODUCT_IMAGES[0]?.url !== INITIAL_CONFIG.PRODUCT_IMAGES[0]?.url ||
-          parsed.PRODUCT_IMAGES[0]?.title !== INITIAL_CONFIG.PRODUCT_IMAGES[0]?.title ||
-          parsed.PRODUCT_IMAGES[1]?.title !== INITIAL_CONFIG.PRODUCT_IMAGES[1]?.title ||
-          parsed.PRODUCT_IMAGES[2]?.title !== INITIAL_CONFIG.PRODUCT_IMAGES[2]?.title ||
-          parsed.PRODUCT_IMAGES[3]?.title !== INITIAL_CONFIG.PRODUCT_IMAGES[3]?.title ||
-          parsed.PRODUCT_IMAGES[5]?.title !== INITIAL_CONFIG.PRODUCT_IMAGES[5]?.title ||
-          parsed.PRODUCT_IMAGES.some((img: { url?: string }) => img.url?.includes('flip_burner_unit') || img.url?.includes('flip_burner_detail'))
-        ) {
-          parsed.PRODUCT_IMAGES = INITIAL_CONFIG.PRODUCT_IMAGES;
-        }
-        if (
-          !parsed.REVIEWS ||
-          parsed.REVIEWS.length < 3 ||
-          parsed.REVIEWS.some(
-            (rev: { content?: string; author?: string }) =>
-              rev.content?.includes('INSERT REAL CUSTOMER') ||
-              rev.author?.includes('CUSTOMER NAME')
-          )
-        ) {
-          parsed.REVIEWS = INITIAL_CONFIG.REVIEWS;
-        }
         return { ...INITIAL_CONFIG, ...parsed };
       }
     } catch {
@@ -78,8 +72,15 @@ export default function App() {
   });
 
   const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
-  const [selectedModel, setSelectedModel] = useState<CookerModel>('2-burner');
+  const [selectedModel, setSelectedModel] = useState<CookerModel>('5-burner');
   const [isConfigModalOpen, setIsConfigModalOpen] = useState<boolean>(false);
+  const [is2BurnerModalOpen, setIs2BurnerModalOpen] = useState<boolean>(false);
+  const [isWarningModalOpen, setIsWarningModalOpen] = useState<boolean>(false);
+  const [isQuickOrderOpen, setIsQuickOrderOpen] = useState<boolean>(false);
+  const [pendingOrder, setPendingOrder] = useState<{ qty: number; model: CookerModel }>({
+    qty: 1,
+    model: '5-burner'
+  });
 
   // Tracks if the customer has placed an order and finished filling the form
   const [hasPlacedOrder, setHasPlacedOrder] = useState<boolean>(() => {
@@ -108,6 +109,26 @@ export default function App() {
       return null;
     }
   });
+
+  // Ensure the page always starts at the top when opened so the visitor scrolls down by themselves
+  useEffect(() => {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+  }, []);
+
+  // Quick Order Form pops up every 30 seconds after opening website
+  useEffect(() => {
+    if (hasPlacedOrder) return;
+
+    // Recurring 30s interval
+    const intervalId = setInterval(() => {
+      setIsQuickOrderOpen(true);
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(intervalId);
+  }, [hasPlacedOrder]);
 
   const handleOrderSuccess = (details: {
     fullName: string;
@@ -150,17 +171,30 @@ export default function App() {
     }
   };
 
+  // Shows the Critical Warning Message first whenever someone clicks an Order button
   const scrollToOrderForm = (qty?: number, model?: CookerModel) => {
-    if (qty) {
-      setSelectedQuantity(qty);
+    setPendingOrder({
+      qty: qty || selectedQuantity || 1,
+      model: model || selectedModel || '5-burner'
+    });
+    setIsWarningModalOpen(true);
+  };
+
+  // Called when customer confirms they are ready in the Critical Warning Modal
+  const handleProceedAfterWarning = () => {
+    setIsWarningModalOpen(false);
+    if (pendingOrder.qty) {
+      setSelectedQuantity(pendingOrder.qty);
     }
-    if (model) {
-      setSelectedModel(model);
+    if (pendingOrder.model) {
+      setSelectedModel(pendingOrder.model);
     }
-    const target = document.getElementById('order-form-section');
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth' });
-    }
+    setTimeout(() => {
+      const target = document.getElementById('critical-warning-banner') || document.getElementById('order-form-section');
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 60);
   };
 
   const scrollToAlternativeSection = () => {
@@ -210,32 +244,15 @@ export default function App() {
             </span>
             <div>
               <span className="font-extrabold tracking-tight text-slate-900 text-sm sm:text-base uppercase block leading-tight">
-                2-FLIP-UP COOKER STORE
+                5-BURNER HYBRID COOKER STORE
               </span>
               <span className="text-[10px] text-blue-600 font-mono tracking-widest hidden sm:block font-bold">
-                PREMIUM GAS & HYBRID COOKING APPLIANCES
+                EXECUTIVE DUAL-FUEL GAS & ELECTRIC COOKTOPS
               </span>
             </div>
           </div>
 
           <div className="flex items-center gap-2 sm:gap-4">
-            {/* Quick jump to 5-burner upgrade */}
-            <button
-              onClick={scrollToAlternativeSection}
-              className="hidden lg:flex items-center gap-1.5 text-xs font-bold text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-300/80 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer"
-            >
-              <Zap className="w-3.5 h-3.5 fill-amber-500 text-amber-600" />
-              <span>See 5-Burner Hybrid (₦280k)</span>
-            </button>
-
-            <a
-              href={`tel:${config.PHONE_NUMBER}`}
-              className="hidden md:flex items-center gap-1.5 text-xs text-slate-600 hover:text-blue-700 transition-colors font-medium"
-            >
-              <Phone className="w-3.5 h-3.5 text-blue-600" />
-              <span>{config.PHONE_NUMBER}</span>
-            </a>
-
             {/* WhatsApp is displayed in the header ONLY after the customer has placed an order */}
             {hasPlacedOrder && (
               <a
@@ -251,7 +268,7 @@ export default function App() {
 
             <div className="flex flex-col items-end">
               <button
-                onClick={() => scrollToOrderForm(1)}
+                onClick={() => scrollToOrderForm(1, '5-burner')}
                 className="btn-glow bg-blue-600 hover:bg-blue-700 text-white text-xs font-black px-4 py-2 rounded-lg cursor-pointer transition-all shadow-md flex items-center gap-1.5"
               >
                 <span>{hasPlacedOrder ? "ORDER MORE" : "ORDER NOW"}</span>
@@ -261,58 +278,33 @@ export default function App() {
               </span>
             </div>
 
-            {/* TOP-RIGHT OPTION ICON MENU */}
-            <HeaderOptionsMenu
+            {/* TOP-RIGHT SUPPORT & FAQ BUTTONS */}
+            <HeaderSupportFaq
               config={config}
-              onSelectModel={(model, qty) => scrollToOrderForm(qty, model)}
               onScrollToSection={scrollToSection}
               onOpenSellerConfig={() => setIsConfigModalOpen(true)}
-              whatsappUrl={whatsappConfirmUrl}
             />
           </div>
         </div>
       </header>
 
-      {/* QUICK PRODUCT SWITCHER BANNER */}
-      <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white py-2.5 px-4 text-xs border-b border-blue-900/60">
-        <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <span className="bg-amber-500/20 border border-amber-400/40 text-amber-300 text-[10px] font-mono font-black uppercase px-2 py-0.5 rounded">
-              NEW ALTERNATIVE
-            </span>
-            <span className="text-slate-200 text-xs font-medium">
-              Looking for a bigger kitchen centerpiece? Discover our <strong className="text-amber-300">5-Burner Gas + Electric Hybrid Cooktop</strong>.
-            </span>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={scrollToAlternativeSection}
-              className="text-amber-400 hover:text-amber-300 font-bold underline cursor-pointer text-xs transition-colors"
-            >
-              View 5-Burner Specs & Photos →
-            </button>
-            <span className="text-slate-600">|</span>
-            <button
-              onClick={() => scrollToOrderForm(1, '5-burner')}
-              className="bg-amber-500 hover:bg-amber-400 text-slate-950 text-[11px] font-black px-2.5 py-1 rounded cursor-pointer transition-colors"
-            >
-              Order 5-Burner (₦280k)
-            </button>
-          </div>
-        </div>
-      </div>
+      {/* CONTINUOUS SCROLLING BANNER ACROSS TOP OF PAGE FOR ALTERNATIVE PRODUCT */}
+      <TopAlternativeProductScroll
+        onOpenDetails={() => setIs2BurnerModalOpen(true)}
+        onSelectAlternative={(model, qty) => scrollToOrderForm(qty, model)}
+      />
 
       {/* MAIN SALES CONTENT FLOW */}
       <main>
         {/* SECTION 2 — HERO SECTION */}
         <HeroSection
           config={config}
-          onOrderClick={(qty) => scrollToOrderForm(qty, '2-burner')}
+          onOrderClick={(qty) => scrollToOrderForm(qty, '5-burner')}
           hasPlacedOrder={hasPlacedOrder}
         />
 
         {/* SECTION 3 — PRICE OFFER CARDS */}
-        <PriceOfferCards config={config} onSelectTier={(qty) => scrollToOrderForm(qty, '2-burner')} />
+        <PriceOfferCards config={config} onSelectTier={(qty) => scrollToOrderForm(qty, '5-burner')} />
 
         {/* SECTION 4 — PROBLEM / EMOTIONAL HOOK */}
         <ProblemHookSection />
@@ -323,10 +315,11 @@ export default function App() {
         {/* SECTION 6 — PRODUCT IMAGE SHOWCASE */}
         <ProductShowcaseSection images={config.PRODUCT_IMAGES} />
 
-        {/* SECTION 7 — ALTERNATIVE PRODUCT SHOWCASE (5-Burner Gas + Electric Hybrid) */}
-        <AlternativeProductSection
-          onSelectModel={(model, qty) => scrollToOrderForm(qty, model)}
-        />
+        {/* SECTION 7 — DUAL KITCHEN SAFETY: FLAME FAILURE DEVICE (FFD) & DIGITAL TIMER AUTO-CUTOFF */}
+        <SafetyProtectionSection onOrderClick={() => scrollToOrderForm(1, '5-burner')} />
+
+        {/* SECTION 8 — INTERACTIVE DIGITAL TIMER & AUTO SAFETY OFF SIMULATOR (From maxluxurybathrooms.online) */}
+        <DigitalTimerSimulator onOrderClick={() => scrollToOrderForm(1, '5-burner')} />
 
         {/* SECTION 8 — HOW THE PRODUCT WORKS */}
         <HowItWorksSection />
@@ -335,13 +328,13 @@ export default function App() {
         <PerfectForSection />
 
         {/* SECTION 10 — PRODUCT VALUE */}
-        <ProductValueSection config={config} onOrderClick={(qty) => scrollToOrderForm(qty, '2-burner')} />
+        <ProductValueSection config={config} onOrderClick={(qty) => scrollToOrderForm(qty, '5-burner')} />
 
         {/* SECTION 11 — CUSTOMER REVIEWS */}
         <CustomerReviewsSection reviews={config.REVIEWS} />
 
         {/* SECTION 12 — OFFER URGENCY */}
-        <OfferUrgencySection config={config} onClaimOffer={() => scrollToOrderForm(1)} />
+        <OfferUrgencySection config={config} onClaimOffer={() => scrollToOrderForm(1, '5-burner')} />
 
         {/* SECTION 13 — TRUST & DELIVERY */}
         <TrustDeliverySection config={config} />
@@ -352,7 +345,7 @@ export default function App() {
         {/* SECTION 15 — FINAL SALES CTA */}
         <FinalSalesCTASection
           config={config}
-          onOrderClick={() => scrollToOrderForm(1)}
+          onOrderClick={() => scrollToOrderForm(1, '5-burner')}
           hasPlacedOrder={hasPlacedOrder}
         />
 
@@ -363,6 +356,7 @@ export default function App() {
           initialModel={selectedModel}
           onOrderSuccess={handleOrderSuccess}
           onResetOrder={handleResetOrder}
+          onView2BurnerDetails={() => setIs2BurnerModalOpen(true)}
         />
       </main>
 
@@ -401,6 +395,9 @@ export default function App() {
         whatsappUrl={whatsappConfirmUrl}
       />
 
+      {/* LIVE SALES SOCIAL PROOF TOASTS (From maxluxurybathrooms.online) */}
+      <LiveSalesNotifications onNotificationClick={(model) => scrollToOrderForm(1, model)} />
+
       {/* FLOATING WHATSAPP BUTTON — SHOWN ONLY AFTER THE PERSON HAS PLACED AN ORDER */}
       {hasPlacedOrder && (
         <aside
@@ -431,6 +428,32 @@ export default function App() {
         isOpen={isConfigModalOpen}
         onClose={() => setIsConfigModalOpen(false)}
         onSave={handleSaveConfig}
+      />
+
+      {/* 2-BURNER FLIP-UP DETAILS MODAL (Opens from suggested product sliding banner on top) */}
+      <AlternativeProductModal
+        isOpen={is2BurnerModalOpen}
+        onClose={() => setIs2BurnerModalOpen(false)}
+        onSelectModel={(model, qty) => scrollToOrderForm(qty, model)}
+        whatsappNumber={config.WHATSAPP_NUMBER}
+      />
+
+      {/* CRITICAL ORDER WARNING MODAL (Shows when any Order button is clicked before scrolling to form) */}
+      <CriticalOrderWarningModal
+        isOpen={isWarningModalOpen}
+        onClose={() => setIsWarningModalOpen(false)}
+        onProceedToForm={handleProceedAfterWarning}
+        whatsappNumber={config.WHATSAPP_NUMBER}
+      />
+
+      {/* QUICK ORDER POPUP MODAL (Pops up every 30 seconds) */}
+      <QuickOrderPopupModal
+        isOpen={isQuickOrderOpen}
+        onClose={() => setIsQuickOrderOpen(false)}
+        config={config}
+        onOrderSuccess={(details) => {
+          handleOrderSuccess(details);
+        }}
       />
 
     </div>

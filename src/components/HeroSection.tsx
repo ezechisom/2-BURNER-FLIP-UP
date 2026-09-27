@@ -9,7 +9,11 @@ interface HeroSectionProps {
   hasPlacedOrder?: boolean;
 }
 
-export const HeroSection: React.FC<HeroSectionProps> = ({ config, onOrderClick, hasPlacedOrder = false }) => {
+export const HeroSection: React.FC<HeroSectionProps> = ({
+  config,
+  onOrderClick,
+  hasPlacedOrder = false
+}) => {
   const whatsappUrl = generateWhatsAppLink(config.WHATSAPP_NUMBER, config.PRODUCT_NAME, 1);
   const heroImages = config.PRODUCT_IMAGES.filter((img) => !img.isPlaceholder && Boolean(img.url));
   const effectiveImages = heroImages.length > 0 ? heroImages : [
@@ -86,7 +90,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ config, onOrderClick, 
               {/* Product Badge */}
               <div className="absolute top-3 left-3 z-20 bg-blue-600 text-white text-xs font-black uppercase px-3 py-1.5 rounded shadow-lg flex items-center gap-1.5 tracking-wider border border-blue-400/40">
                 <Flame className="w-3.5 h-3.5 fill-current" />
-                Dual Burner + Built-in Timer
+                4 Gas + 1 Central 2000W Electric Zone
               </div>
 
               {/* Auto Slideshow Indicator Badge */}
@@ -158,7 +162,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ config, onOrderClick, 
                   <ShieldCheck className="w-3.5 h-3.5 text-sky-300" />
                   Actual Product Photos (Auto Slideshow)
                 </span>
-                <span className="text-blue-300">Dual Burner • Glass-Top</span>
+                <span className="text-blue-300">5-Zone Hybrid • 90 × 51 cm</span>
               </div>
             </div>
           </div>
@@ -168,26 +172,26 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ config, onOrderClick, 
             
             {/* Supporting Headline pill */}
             <div className="inline-flex items-center gap-2 self-start bg-blue-950/80 border border-blue-400/40 text-sky-200 text-xs sm:text-sm font-semibold px-3.5 py-1.5 rounded-full shadow-sm">
-              <span>Cook More Conveniently. Save Space. Enjoy More Control.</span>
+              <span>Dual-Fuel Security • Executive 90cm Space • 1-Wipe Clean</span>
             </div>
 
             {/* Main Headline */}
             <h1 className="text-2xl sm:text-4xl lg:text-4xl font-extrabold tracking-tight text-white leading-tight">
-              UPGRADE YOUR KITCHEN WITH THE 2-FLIP-UP DOUBLE BURNER
+              UPGRADE YOUR KITCHEN WITH THE 5-BURNER GAS + ELECTRIC HYBRID COOKTOP
             </h1>
 
             {/* Subheadline */}
             <p className="text-blue-100 text-sm sm:text-base leading-relaxed">
-              Designed for modern kitchens, this 2-burner flip-up gas cooker combines convenience, a space-saving design and a built-in timer to make everyday cooking easier.
+              Designed for executive kitchens, this 90cm built-in hybrid cooktop combines 4 high-heat gas burners with built-in Flame Failure Device (FFD) gas leak protection, central 2000W instant radiant electric plate, 1–99 min digital timer with automatic power cutoff, and 90° flip-up burners to make cooking effortless.
             </p>
 
             {/* Core Benefits Bullets */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
               {[
-                "75 × 45 cm Panel Size (750 × 450 mm)",
-                "2 Powerful Gas Cooking Zones",
-                "90° Flip-Up Space-Saving Design",
-                "Built-In Mechanical Timer"
+                "Flame Failure Device (FFD) Gas Protection",
+                "1–99 Min Digital Timer & Auto-Power Cutoff",
+                "4 Gas Burners + 1 Central 2000W Electric Zone",
+                "90° Flip-Up Burners for 10-Second Cleanups"
               ].map((benefit, idx) => (
                 <div key={idx} className="flex items-center gap-2 text-xs sm:text-sm font-medium text-white">
                   <span className="w-5 h-5 rounded-full bg-sky-400/20 border border-sky-400/50 text-sky-200 flex items-center justify-center shrink-0">
@@ -208,7 +212,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ config, onOrderClick, 
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className="text-xs text-slate-400 block line-through">Reg. {formatNaira(config.NORMAL_PRICE + 30000)}</span>
+                  <span className="text-xs text-slate-400 block line-through">Reg. ₦350,000</span>
                   <span className="text-xs text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
                     Bulk Discounts Active
                   </span>
@@ -240,11 +244,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ config, onOrderClick, 
                 className="btn-glow-amber w-full flex-1 bg-amber-400 hover:bg-amber-300 active:bg-amber-500 text-slate-950 font-black py-4 px-6 rounded-xl shadow-xl transition-all flex flex-col items-center justify-center cursor-pointer"
               >
                 <div className="flex items-center gap-2 text-base sm:text-lg">
-                  <span>{hasPlacedOrder ? "ORDER ANOTHER UNIT" : "ORDER NOW"}</span>
+                  <span>{hasPlacedOrder ? "ORDER ANOTHER UNIT" : "ORDER NOW (PAY ON ARRIVAL)"}</span>
                   <ArrowRight className="w-5 h-5 stroke-[2.5]" />
                 </div>
                 <div className="text-[11px] font-black text-slate-950/90 uppercase tracking-wider flex items-center gap-1 mt-0.5">
-                  <Truck className="w-3.5 h-3.5" /> FREE DELIVERY NATIONWIDE
+                  <Truck className="w-3.5 h-3.5" /> FREE DELIVERY NATIONWIDE • NO ADVANCE DEPOSIT
                 </div>
               </button>
 

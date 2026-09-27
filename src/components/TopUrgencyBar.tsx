@@ -8,7 +8,7 @@ interface TopUrgencyBarProps {
 
 export const TopUrgencyBar: React.FC<TopUrgencyBarProps> = ({
   countdownEndDate,
-  countdownHours = 24
+  countdownHours = 168
 }) => {
   const { days, hours, minutes, seconds, isEnded } = useCountdown(countdownEndDate, countdownHours);
 
@@ -18,7 +18,7 @@ export const TopUrgencyBar: React.FC<TopUrgencyBarProps> = ({
         {/* Promotional announcement text */}
         <div className="flex items-center gap-1.5 text-xs sm:text-sm font-bold tracking-wide text-blue-100">
           <span className="text-base animate-pulse">🔥</span>
-          <span className="text-white font-extrabold">LIMITED-TIME OFFER — SAVE MORE WHEN YOU BUY MORE</span>
+          <span className="text-white font-extrabold">7-DAY PROMOTIONAL OFFER — FREE DELIVERY & 12 MONTHS WARRANTY</span>
         </div>
 
         {/* Countdown display */}

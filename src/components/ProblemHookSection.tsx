@@ -4,28 +4,34 @@ import { Maximize2, Layers, Clock, Sparkles, ArrowDown } from 'lucide-react';
 export const ProblemHookSection: React.FC = () => {
   const painPoints = [
     {
-      title: "LIMITED KITCHEN SPACE?",
-      description: "Countertop clutter slows down meal prep. A compact flip-up design is practical where countertop real estate is precious, keeping your surfaces flexible and tidy.",
-      icon: Maximize2,
-      badge: "Space Friction"
-    },
-    {
-      title: "NEED TO COOK MORE THAN ONE THING?",
-      description: "Cooking dishes one by one wastes valuable hours. The dedicated two-burner setup gives you two active cooking zones so you can boil and fry simultaneously.",
+      title: "EVER RUN OUT OF GAS MID-MEAL?",
+      description: "Getting stranded with raw food halfway through cooking is frustrating. The dual-fuel system gives you 4 gas burners plus an instant 2000W central electric radiant plate so you can finish cooking smoothly.",
       icon: Layers,
-      badge: "Cooking Capacity"
+      badge: "Dual-Fuel Security"
     },
     {
-      title: "TIRED OF WATCHING THE CLOCK?",
-      description: "Constantly checking timers on phones while running around the kitchen is distracting. The built-in mechanical timer provides convenient, on-device time tracking.",
+      title: "COOKING BOTTLENECK FOR FAMILY MEALS?",
+      description: "Waiting for one pot to finish before starting another wastes hours. With 5 dedicated cooking zones on a spacious 90cm surface, you can boil soup, fry, make sauce, and steam all at once.",
+      icon: Maximize2,
+      badge: "5-Pan Capacity"
+    },
+    {
+      title: "BURNT FOOD FROM MISSED TIMING?",
+      description: "Multitasking while boiling meat, rice, or yam leads to burnt pots and wasted groceries. The built-in 1–99 min digital timer with auto-off monitors your cooking and cuts off power automatically so meals never burn.",
       icon: Clock,
-      badge: "Time Tracking"
+      badge: "Digital Timer & Auto-Off"
     },
     {
-      title: "WANT A CLEAN, MODERN KITCHEN LOOK?",
-      description: "Bulky, stained conventional stoves detract from your kitchen's aesthetic. The sleek black glass-top finish delivers a sharp, sophisticated visual style that wipes down cleanly.",
+      title: "SCARED OF SILENT GAS LEAKS & EXPLOSIONS?",
+      description: "If wind blows from a window or boiling soup extinguishes the flame, ordinary stoves pump flammable gas into the room unnoticed. The Flame Failure Device (FFD) detects flameout and cuts off gas within seconds.",
+      icon: Layers,
+      badge: "FFD Gas Leak Shield"
+    },
+    {
+      title: "TIRED OF HARD-TO-CLEAN GREASE?",
+      description: "Traditional stoves trap burnt oil and soup underneath bulky burner bases. The 90° flip-up articulated hinges let you tilt the burners upright to wipe the sleek glass top in 10 seconds.",
       icon: Sparkles,
-      badge: "Kitchen Style"
+      badge: "10-Sec Cleanup"
     }
   ];
 
@@ -39,10 +45,10 @@ export const ProblemHookSection: React.FC = () => {
             The Daily Kitchen Reality
           </span>
           <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 leading-tight">
-            YOUR COOKING SPACE SHOULD WORK FOR YOU — NOT AGAINST YOU.
+            YOUR COOKING SETUP SHOULD EMPOWER YOU — NEVER SLOW YOU DOWN.
           </h2>
           <p className="text-slate-600 text-sm sm:text-base mt-3">
-            Preparing good meals shouldn't mean fighting with cramped counters, single-burner bottlenecks, or burnt food from missed timing.
+            Cooking for your home shouldn't mean getting stranded when gas finishes, waiting on cramped burners, or scrubbing stubborn baked-on grease.
           </p>
         </div>
 

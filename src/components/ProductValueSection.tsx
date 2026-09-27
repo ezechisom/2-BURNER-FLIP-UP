@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layers, Timer, RefreshCw, Sparkles, Minimize2, ArrowRight, Truck } from 'lucide-react';
+import { Layers, Timer, RefreshCw, Sparkles, Maximize2, Zap, ArrowRight, Truck, ShieldCheck } from 'lucide-react';
 import { LandingPageConfig } from '../types';
 
 interface ProductValueSectionProps {
@@ -8,33 +8,33 @@ interface ProductValueSectionProps {
 }
 
 export const ProductValueSection: React.FC<ProductValueSectionProps> = ({ config, onOrderClick }) => {
-  const detailImage = config.PRODUCT_IMAGES[1]?.url || "/images/burner_flip_hinge.jpg";
+  const detailImage = config.PRODUCT_IMAGES[1]?.url || "/images/alternative_5burner/cooktop_showroom_active.jpg";
 
   const valuePoints = [
     {
-      title: "Two Cooking Zones",
-      desc: "Simultaneous dual cooking eliminates bottlenecks so meals are served hot together.",
-      icon: Layers
+      title: "Dual-Fuel Hybrid Versatility",
+      desc: "4 high-heat gas burners plus an instant 2000W radiant electric plate ensure you never get stranded when gas finishes or electricity goes off.",
+      icon: Zap
     },
     {
-      title: "Built-In Timer",
-      desc: "Hands-on timing control helps prevent burnt sauces and overboiled pots.",
+      title: "Flame Failure Device (FFD) Protection",
+      desc: "Sensitive thermocouple on every gas burner shuts off the gas supply within seconds if the flame is blown out by wind or overflowing soup.",
+      icon: ShieldCheck
+    },
+    {
+      title: "Digital Timer with Automatic Cutoff",
+      desc: "Set exact 1–99 min cooking countdowns. System disconnects power automatically at zero to prevent burnt food, boiling dry, and fire hazards.",
       icon: Timer
     },
     {
-      title: "Flip-Up Design",
-      desc: "Innovative hinge allows lifting the burner to wipe spills in seconds without greasy buildup.",
+      title: "Executive 90 × 51 cm Footprint",
+      desc: "Spacious built-in layout comfortably fits 5 large pots and pans at once without bumping or crowding.",
+      icon: Maximize2
+    },
+    {
+      title: "90° Flip-Up Burners for 10-Second Clean",
+      desc: "Articulated hinges let you lift burners upright to wipe spills in 10 seconds without greasy buildup or dismantling.",
       icon: RefreshCw
-    },
-    {
-      title: "Modern Appearance",
-      desc: "Glossy black tempered surface elevates your countertop visual aesthetic instantly.",
-      icon: Sparkles
-    },
-    {
-      title: "Space-Conscious 75 × 45 cm Panel",
-      desc: "Optimal 750 × 450 mm panel footprint maximizes usable food preparation room on any counter while fitting standard kitchen cutouts.",
-      icon: Minimize2
     }
   ];
 
@@ -50,14 +50,14 @@ export const ProductValueSection: React.FC<ProductValueSectionProps> = ({ config
               <div className="rounded-2xl overflow-hidden border border-blue-200 bg-white p-2 shadow-xl">
                 <img
                   src={detailImage}
-                  alt="Flip-Up Burner Head and Timer Detail"
+                  alt="5-Burner Hybrid Cooktop Detail"
                   className="w-full h-auto object-cover rounded-xl"
                   referrerPolicy="no-referrer"
                 />
               </div>
 
               <div className="mt-3 text-center text-xs text-slate-500 font-medium">
-                {config.PRODUCT_IMAGES[1]?.title || "Double-Burner Cooker with Timer"}
+                {config.PRODUCT_IMAGES[1]?.title || "5-Burner Built-In Gas + Electric Cooktop"}
               </div>
             </div>
           </div>
@@ -66,13 +66,13 @@ export const ProductValueSection: React.FC<ProductValueSectionProps> = ({ config
           <div className="lg:col-span-6 space-y-6 text-left">
             <div>
               <span className="text-blue-600 font-mono text-xs uppercase tracking-widest font-bold block mb-2">
-                All-In-One Cooktop
+                All-In-One Flagship Cooktop
               </span>
               <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-3">
-                ONE SMARTER COOKING SETUP
+                ONE COMPLETE EXECUTIVE COOKING SETUP
               </h2>
               <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-                Rather than settling for standard bulky single-function stoves, bring intelligent dual-zone cooking and easy-clean ergonomics into your home.
+                Rather than settling for standard gas-only stoves or cramped counters, bring intelligent dual-fuel capability, 5-zone capacity, and easy-clean ergonomics into your home.
               </p>
             </div>
 

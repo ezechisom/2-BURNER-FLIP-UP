@@ -56,15 +56,16 @@ export const ProductShowcaseSection: React.FC<ProductShowcaseSectionProps> = ({ 
     return () => clearInterval(timer);
   }, [isInView, isAutoPlaying, isHovered, lightboxOpen, images.length, selectedIndex]);
 
-  // Keep active thumbnail scrolled into view as slideshow plays
+  // Keep active thumbnail scrolled into view inside its container as slideshow plays
   useEffect(() => {
     if (thumbnailTrackRef.current) {
-      const activeElement = thumbnailTrackRef.current.children[selectedIndex] as HTMLElement;
+      const container = thumbnailTrackRef.current;
+      const activeElement = container.children[selectedIndex] as HTMLElement;
       if (activeElement) {
-        activeElement.scrollIntoView({
-          behavior: 'smooth',
-          block: 'nearest',
-          inline: 'center'
+        const leftPos = activeElement.offsetLeft - (container.clientWidth / 2) + (activeElement.clientWidth / 2);
+        container.scrollTo({
+          left: Math.max(0, leftPos),
+          behavior: 'smooth'
         });
       }
     }
@@ -119,10 +120,10 @@ export const ProductShowcaseSection: React.FC<ProductShowcaseSectionProps> = ({ 
             )}
           </div>
           <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-3">
-            PRODUCT IMAGE SHOWCASE
+            5-BURNER HYBRID PRODUCT SHOWCASE
           </h2>
           <p className="text-slate-600 text-sm sm:text-base">
-            Detailed views of the 2-flip-up double burner cooker, burner mechanics, and timer control. Slideshow plays automatically.
+            Detailed views of the 5-burner built-in hybrid cooktop, 2000W radiant ceramic zone, 90° flip-up burner hinges, and physical showroom unit.
           </p>
         </div>
 
@@ -319,7 +320,7 @@ export const ProductShowcaseSection: React.FC<ProductShowcaseSectionProps> = ({ 
         {/* Reassurance disclaimer */}
         <div className="mt-4 text-center text-xs text-slate-600 flex items-center justify-center gap-1.5">
           <ShieldCheck className="w-4 h-4 text-blue-600" />
-          <span>The photographs above depict the exact 2-flip-up double burner product design you will receive.</span>
+          <span>The photographs above depict the exact 5-burner gas + electric hybrid product you will receive.</span>
         </div>
 
       </div>

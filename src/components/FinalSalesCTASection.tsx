@@ -34,12 +34,12 @@ export const FinalSalesCTASection: React.FC<FinalSalesCTASectionProps> = ({
 
         {/* Headline */}
         <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 mb-4 leading-tight">
-          READY TO COOK SMARTER?
+          READY TO UPGRADE YOUR KITCHEN?
         </h2>
 
         {/* Subheadline */}
         <p className="text-slate-600 text-sm sm:text-lg mb-8 max-w-xl mx-auto leading-relaxed">
-          Get your 2-Flip-Up Double Burner today and enjoy a more convenient, space-conscious cooking experience.
+          Get your 5-Burner Built-In Gas + Electric Hybrid Cooktop today and enjoy uninterrupted dual-fuel power, executive 5-zone capacity, and 1-wipe cleanups.
         </p>
 
         {/* Pricing Tiers Summary Banner */}

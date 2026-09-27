@@ -1,25 +1,25 @@
 import React from 'react';
-import { ArrowUpFromLine, Timer, UtensilsCrossed } from 'lucide-react';
+import { Zap, Timer, RefreshCw } from 'lucide-react';
 
 export const HowItWorksSection: React.FC = () => {
   const steps = [
     {
       step: "01",
-      title: "FLIP UP",
-      desc: "Open the burner into cooking position or flip up when needed for quick, unobstructed surface cleaning.",
-      icon: ArrowUpFromLine
+      title: "CHOOSE YOUR FUEL ZONE",
+      desc: "Turn on the 4 high-flame gas burners for traditional wok and pot cooking, or touch to activate the central 2000W instant radiant electric plate.",
+      icon: Zap
     },
     {
       step: "02",
-      title: "SET YOUR TIMER",
-      desc: "Set your desired cooking time using the built-in timer to keep tabs on your dishes effortlessly.",
+      title: "SET DIGITAL TIMER & AUTO-OFF",
+      desc: "Set your desired cooking duration on the illuminated digital LED display. Walk away with peace of mind—the cooker automatically powers down when time elapses.",
       icon: Timer
     },
     {
       step: "03",
-      title: "START COOKING",
-      desc: "Ignite your gas flame and enjoy a more convenient, controlled, and flexible cooking experience.",
-      icon: UtensilsCrossed
+      title: "10-SECOND FLIP-UP CLEANUP",
+      desc: "Simply lift the articulated 90° hinged burners upright to wipe down the flat tempered glass in seconds without taking any pieces apart.",
+      icon: RefreshCw
     }
   ];
 
@@ -33,10 +33,10 @@ export const HowItWorksSection: React.FC = () => {
             Effortless Operation
           </span>
           <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-3">
-            HOW THE PRODUCT WORKS
+            HOW THE 5-BURNER HYBRID COOKTOP WORKS
           </h2>
           <p className="text-slate-600 text-sm sm:text-base">
-            Simple 3-step process to transform the way you prepare everyday meals.
+            Simple 3-step operation engineered for seamless cooking flexibility and zero cleanup stress.
           </p>
         </div>
 

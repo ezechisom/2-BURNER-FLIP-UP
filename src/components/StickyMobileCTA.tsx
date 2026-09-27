@@ -67,13 +67,13 @@ export const StickyMobileCTA: React.FC<StickyMobileCTAProps> = ({
 
             <button
               onClick={onOrderClick}
-              className="btn-glow bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-black py-2 px-3.5 rounded-xl shadow-lg flex flex-col items-center justify-center cursor-pointer shrink-0 leading-tight"
+              className="btn-glow-amber bg-amber-400 hover:bg-amber-300 active:bg-amber-500 text-slate-950 font-black py-2 px-3.5 rounded-xl shadow-lg flex flex-col items-center justify-center cursor-pointer shrink-0 leading-tight"
             >
               <div className="flex items-center gap-1 text-xs">
                 <span>ORDER NOW</span>
                 <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
               </div>
-              <span className="text-[9px] font-bold text-amber-200 uppercase tracking-tight flex items-center gap-0.5 mt-0.5">
+              <span className="text-[9px] font-black text-slate-950 uppercase tracking-tight flex items-center gap-0.5 mt-0.5">
                 <Truck className="w-2.5 h-2.5" /> Free Delivery
               </span>
             </button>

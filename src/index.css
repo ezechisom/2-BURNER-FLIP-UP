@@ -175,5 +175,37 @@
   animation-play-state: paused;
 }
 
+/* Continuous Marquee Scrolling for Top Alternative Product Banner */
+@keyframes marqueeScroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marqueeScroll 32s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+.animate-marquee-track-fast {
+  display: flex;
+  width: max-content;
+  animation: marqueeScroll 22s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee-track-fast:hover {
+  animation-play-state: paused;
+}
+
 
 

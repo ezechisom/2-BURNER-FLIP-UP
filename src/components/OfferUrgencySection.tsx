@@ -49,7 +49,7 @@ export const OfferUrgencySection: React.FC<OfferUrgencySectionProps> = ({ config
             <div className="text-2xl font-black text-blue-700 mt-1">
               {formatNaira(config.PRICE_FOR_2)} <span className="text-xs font-medium text-slate-500">EACH</span>
             </div>
-            <span className="text-xs text-slate-600 block mt-1">₦330,000 Total for 2</span>
+            <span className="text-xs text-slate-600 block mt-1">{formatNaira(config.PRICE_FOR_2 * 2)} Total for 2</span>
           </div>
 
           <div className="bg-blue-50 border-2 border-blue-600 rounded-xl p-5 relative shadow-md">
@@ -113,7 +113,7 @@ export const OfferUrgencySection: React.FC<OfferUrgencySectionProps> = ({ config
             <ArrowRight className="w-5 h-5 stroke-[2.5]" />
           </div>
           <div className="text-[11px] font-bold text-blue-100 uppercase tracking-wider flex items-center gap-1.5 mt-0.5">
-            <Truck className="w-3.5 h-3.5" /> FREE DELIVERY NATIONWIDE
+            <Truck className="w-3.5 h-3.5" /> FREE DELIVERY • PAYMENT ON DELIVERY • 12 MONTHS WARRANTY
           </div>
         </button>
 
