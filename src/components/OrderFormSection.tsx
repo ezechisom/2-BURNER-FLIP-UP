@@ -204,6 +204,29 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
         }
       }
 
+      // Trigger TikTok Pixel PlaceAnOrder & CompletePayment events
+      if (typeof window !== 'undefined' && (window as any).ttq) {
+        try {
+          (window as any).ttq.track('PlaceAnOrder', {
+            content_id: orderId,
+            content_type: 'product',
+            content_name: pricing.productName,
+            quantity: pricing.totalQuantity,
+            price: pricing.total,
+            value: pricing.total,
+            currency: 'NGN'
+          });
+          (window as any).ttq.track('CompletePayment', {
+            content_id: orderId,
+            content_name: pricing.productName,
+            value: pricing.total,
+            currency: 'NGN'
+          });
+        } catch (tiktokErr) {
+          console.error('TikTok Pixel event dispatch error:', tiktokErr);
+        }
+      }
+
       setIsSubmitting(false);
       setIsSubmitted(true);
 

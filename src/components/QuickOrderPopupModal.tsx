@@ -139,6 +139,29 @@ export const QuickOrderPopupModal: React.FC<QuickOrderPopupModalProps> = ({
         }
       }
 
+      // Fire TikTok Pixel PlaceAnOrder & CompletePayment events
+      if (typeof window !== 'undefined' && (window as any).ttq) {
+        try {
+          (window as any).ttq.track('PlaceAnOrder', {
+            content_id: orderId,
+            content_type: 'product',
+            content_name: '5-Burner Built-In Cooktop (Quick Order)',
+            quantity: quantity,
+            price: totalPrice,
+            value: totalPrice,
+            currency: 'NGN'
+          });
+          (window as any).ttq.track('CompletePayment', {
+            content_id: orderId,
+            content_name: '5-Burner Built-In Cooktop (Quick Order)',
+            value: totalPrice,
+            currency: 'NGN'
+          });
+        } catch {
+          // ignore tracking error
+        }
+      }
+
       setIsSubmitted(true);
       onOrderSuccess?.({
         fullName: formData.fullName,
