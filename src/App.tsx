@@ -33,6 +33,7 @@ import { LiveSalesNotifications } from './components/LiveSalesNotifications';
 import { AlternativeProductModal } from './components/AlternativeProductModal';
 import { CriticalOrderWarningModal } from './components/CriticalOrderWarningModal';
 import { QuickOrderPopupModal } from './components/QuickOrderPopupModal';
+import { SuggestedProductPopupModal } from './components/SuggestedProductPopupModal';
 
 export default function App() {
   const [config, setConfig] = useState<LandingPageConfig>(() => {
@@ -77,6 +78,7 @@ export default function App() {
   const [is2BurnerModalOpen, setIs2BurnerModalOpen] = useState<boolean>(false);
   const [isWarningModalOpen, setIsWarningModalOpen] = useState<boolean>(false);
   const [isQuickOrderOpen, setIsQuickOrderOpen] = useState<boolean>(false);
+  const [isSuggestedProductPopupOpen, setIsSuggestedProductPopupOpen] = useState<boolean>(false);
   const [pendingOrder, setPendingOrder] = useState<{ qty: number; model: CookerModel }>({
     qty: 1,
     model: '5-burner'
@@ -118,17 +120,50 @@ export default function App() {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
   }, []);
 
-  // Quick Order Form pops up every 30 seconds after opening website
+  // SEQUENCE FOR POPUPS:
+  // 1. Suggested Product (from moonlightcrecent.shop) pops up after 35 seconds.
+  // 2. The suggested product popup stays for 15 seconds (or until user clicks see details / closes).
+  // 3. 10 seconds after the suggested product popup closes, the Quick Order Form pops up!
   useEffect(() => {
     if (hasPlacedOrder) return;
 
-    // Recurring 30s interval
-    const intervalId = setInterval(() => {
-      setIsQuickOrderOpen(true);
-    }, 30000); // 30 seconds
+    // Trigger suggested companion product popup after 35 seconds
+    const suggestedProductTimer = setTimeout(() => {
+      if (!hasPlacedOrder) {
+        setIsSuggestedProductPopupOpen(true);
+      }
+    }, 35000); // 35 seconds
 
-    return () => clearInterval(intervalId);
+    return () => clearTimeout(suggestedProductTimer);
   }, [hasPlacedOrder]);
+
+  const handleCloseSuggestedProductPopup = () => {
+    setIsSuggestedProductPopupOpen(false);
+
+    // After 10 seconds of the suggested product closing, the Quick Order Form pops up
+    setTimeout(() => {
+      if (!hasPlacedOrder) {
+        setIsQuickOrderOpen(true);
+      }
+    }, 10000); // 10 seconds
+  };
+
+  const handleSeeDetailsFromSuggestedPopup = () => {
+    setIsSuggestedProductPopupOpen(false);
+    setIs2BurnerModalOpen(true);
+
+    // After 10 seconds of closing the suggested popup, queue the Quick Order Form
+    setTimeout(() => {
+      if (!hasPlacedOrder) {
+        setIsQuickOrderOpen(true);
+      }
+    }, 10000); // 10 seconds
+  };
+
+  const handleOrderFromSuggestedPopup = (model: CookerModel, qty: number = 1) => {
+    setIsSuggestedProductPopupOpen(false);
+    scrollToOrderForm(qty, model);
+  };
 
   const handleOrderSuccess = (details: {
     fullName: string;
@@ -229,70 +264,73 @@ export default function App() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans antialiased selection:bg-blue-600 selection:text-white pb-16 sm:pb-0">
       
-      {/* SECTION 1 — TOP URGENCY BAR */}
-      <TopUrgencyBar
-        countdownEndDate={config.COUNTDOWN_END_DATE}
-        countdownHours={config.COUNTDOWN_HOURS}
-      />
+      {/* STICKY TOP CONTAINER — ALWAYS VISIBLE ON THE TOP EVEN WHEN A CLIENT IS SCROLLING DOWN */}
+      <div className="sticky top-0 z-40 shadow-md bg-white">
+        {/* SECTION 1 — TOP URGENCY BAR */}
+        <TopUrgencyBar
+          countdownEndDate={config.COUNTDOWN_END_DATE}
+          countdownHours={config.COUNTDOWN_HOURS}
+        />
 
-      {/* BRAND / NAVIGATION HEADER */}
-      <header className="bg-white border-b border-blue-100 px-4 py-3 sticky top-9 z-40 backdrop-blur-md bg-opacity-95 shadow-xs">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-black shadow-sm">
-              <Flame className="w-5 h-5 fill-current" />
-            </span>
-            <div>
-              <span className="font-extrabold tracking-tight text-slate-900 text-sm sm:text-base uppercase block leading-tight">
-                5-BURNER HYBRID COOKER STORE
+        {/* BRAND / NAVIGATION HEADER */}
+        <header className="bg-white border-b border-blue-100 px-4 py-2.5 backdrop-blur-md bg-opacity-95 shadow-xs">
+          <div className="max-w-6xl mx-auto flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-black shadow-sm">
+                <Flame className="w-5 h-5 fill-current" />
               </span>
-              <span className="text-[10px] text-blue-600 font-mono tracking-widest hidden sm:block font-bold">
-                EXECUTIVE DUAL-FUEL GAS & ELECTRIC COOKTOPS
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 sm:gap-4">
-            {/* WhatsApp is displayed in the header ONLY after the customer has placed an order */}
-            {hasPlacedOrder && (
-              <a
-                href={whatsappConfirmUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-glow-emerald hidden sm:inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-all shadow-sm"
-              >
-                <MessageCircle className="w-3.5 h-3.5 fill-current" />
-                <span>Confirm on WhatsApp</span>
-              </a>
-            )}
-
-            <div className="flex flex-col items-end">
-              <button
-                onClick={() => scrollToOrderForm(1, '5-burner')}
-                className="btn-glow bg-blue-600 hover:bg-blue-700 text-white text-xs font-black px-4 py-2 rounded-lg cursor-pointer transition-all shadow-md flex items-center gap-1.5"
-              >
-                <span>{hasPlacedOrder ? "ORDER MORE" : "ORDER NOW"}</span>
-              </button>
-              <span className="text-[9px] font-bold text-emerald-700 hidden sm:flex items-center gap-0.5 mt-0.5 tracking-tight">
-                <Truck className="w-2.5 h-2.5" /> FREE DELIVERY
-              </span>
+              <div>
+                <span className="font-extrabold tracking-tight text-slate-900 text-sm sm:text-base uppercase block leading-tight">
+                  5-BURNER HYBRID COOKER STORE
+                </span>
+                <span className="text-[10px] text-blue-600 font-mono tracking-widest hidden sm:block font-bold">
+                  EXECUTIVE DUAL-FUEL GAS & ELECTRIC COOKTOPS
+                </span>
+              </div>
             </div>
 
-            {/* TOP-RIGHT SUPPORT & FAQ BUTTONS */}
-            <HeaderSupportFaq
-              config={config}
-              onScrollToSection={scrollToSection}
-              onOpenSellerConfig={() => setIsConfigModalOpen(true)}
-            />
-          </div>
-        </div>
-      </header>
+            <div className="flex items-center gap-2 sm:gap-4">
+              {/* WhatsApp is displayed in the header ONLY after the customer has placed an order */}
+              {hasPlacedOrder && (
+                <a
+                  href={whatsappConfirmUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-glow-emerald hidden sm:inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-all shadow-sm"
+                >
+                  <MessageCircle className="w-3.5 h-3.5 fill-current" />
+                  <span>Confirm on WhatsApp</span>
+                </a>
+              )}
 
-      {/* CONTINUOUS SCROLLING BANNER ACROSS TOP OF PAGE FOR ALTERNATIVE PRODUCT */}
-      <TopAlternativeProductScroll
-        onOpenDetails={() => setIs2BurnerModalOpen(true)}
-        onSelectAlternative={(model, qty) => scrollToOrderForm(qty, model)}
-      />
+              <div className="flex flex-col items-end">
+                <button
+                  onClick={() => scrollToOrderForm(1, '5-burner')}
+                  className="btn-glow bg-blue-600 hover:bg-blue-700 text-white text-xs font-black px-4 py-2 rounded-lg cursor-pointer transition-all shadow-md flex items-center gap-1.5"
+                >
+                  <span>{hasPlacedOrder ? "ORDER MORE" : "ORDER NOW"}</span>
+                </button>
+                <span className="text-[9px] font-bold text-emerald-700 hidden sm:flex items-center gap-0.5 mt-0.5 tracking-tight">
+                  <Truck className="w-2.5 h-2.5" /> FREE DELIVERY
+                </span>
+              </div>
+
+              {/* TOP-RIGHT SUPPORT & FAQ BUTTONS */}
+              <HeaderSupportFaq
+                config={config}
+                onScrollToSection={scrollToSection}
+                onOpenSellerConfig={() => setIsConfigModalOpen(true)}
+              />
+            </div>
+          </div>
+        </header>
+
+        {/* CONTINUOUS SCROLLING BANNER ACROSS TOP OF PAGE FOR ALTERNATIVE PRODUCT — ALWAYS VISIBLE ON TOP */}
+        <TopAlternativeProductScroll
+          onOpenDetails={() => setIs2BurnerModalOpen(true)}
+          onSelectAlternative={(model, qty) => scrollToOrderForm(qty, model)}
+        />
+      </div>
 
       {/* MAIN SALES CONTENT FLOW */}
       <main>
@@ -446,13 +484,26 @@ export default function App() {
         whatsappNumber={config.WHATSAPP_NUMBER}
       />
 
-      {/* QUICK ORDER POPUP MODAL (Pops up every 30 seconds) */}
+      {/* SUGGESTED PRODUCT POPUP MODAL (Pops up after 35s, stays 15s, then Quick Order follows after 10s) */}
+      <SuggestedProductPopupModal
+        isOpen={isSuggestedProductPopupOpen}
+        onClose={handleCloseSuggestedProductPopup}
+        onSeeDetails={handleSeeDetailsFromSuggestedPopup}
+        onOrderNow={handleOrderFromSuggestedPopup}
+      />
+
+      {/* QUICK ORDER POPUP MODAL */}
       <QuickOrderPopupModal
         isOpen={isQuickOrderOpen}
         onClose={() => setIsQuickOrderOpen(false)}
         config={config}
+        initialModel={selectedModel}
         onOrderSuccess={(details) => {
           handleOrderSuccess(details);
+        }}
+        onView2BurnerDetails={() => {
+          setIsQuickOrderOpen(false);
+          setIs2BurnerModalOpen(true);
         }}
       />
 

@@ -15,7 +15,7 @@ export const TopAlternativeProductScroll: React.FC<TopAlternativeProductScrollPr
   const [isPaused, setIsPaused] = useState(false);
 
   const tickerContent = (
-    <div className="flex items-center gap-6 sm:gap-10 shrink-0 pr-6 sm:pr-10">
+    <div className="flex items-center gap-4 sm:gap-8 shrink-0 pr-6 sm:pr-10">
       {/* Product Highlight Item 1 */}
       <div
         className="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity"
@@ -24,16 +24,16 @@ export const TopAlternativeProductScroll: React.FC<TopAlternativeProductScrollPr
       >
         <span className="bg-amber-400 text-slate-950 text-[10px] font-black uppercase px-2 py-0.5 rounded shadow-xs flex items-center gap-1 shrink-0">
           <Sparkles className="w-3 h-3 fill-current" />
-          COMPACT ALTERNATIVE AVAILABLE
+          ALTERNATIVE PRODUCT
         </span>
         <div className="flex items-center gap-2">
           <img
-            src="/images/cooker_double_unit.jpg"
-            alt="2-Burner Flip-Up Gas Stove"
+            src="/images/cooker_active_blue_flames.jpg"
+            alt="2-Flip-Up Double Gas Burner With Timer"
             className="w-7 h-7 sm:w-8 sm:h-8 rounded object-cover border border-amber-300/40 shrink-0"
           />
           <span className="text-white font-extrabold text-xs sm:text-sm tracking-tight whitespace-nowrap">
-            2-Flip-Up Double Gas Burner (75 × 45 cm)
+            2-Flip-Up Double Gas Burner With Timer (75 × 45 cm)
           </span>
         </div>
       </div>
@@ -45,24 +45,24 @@ export const TopAlternativeProductScroll: React.FC<TopAlternativeProductScrollPr
       >
         <span className="flex items-center gap-1 font-medium">
           <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-          90° Hinged Flip-Up for 10-Second Clean
+          90° Hinged Flip-Up for 5-Second Clean
         </span>
         <span>•</span>
         <span className="flex items-center gap-1 font-medium">
           <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-          Heavy Duty Cast-Iron Trivets
+          0–180m Auto-Off Safety Timer
         </span>
         <span>•</span>
         <span className="flex items-center gap-1 font-medium">
           <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-          Instant Auto-Ignition
+          Pure Blue Flame & Zero Pot Soot
         </span>
       </div>
 
       {/* Price & Action */}
-      <div className="flex items-center gap-2.5 shrink-0">
+      <div className="flex items-center gap-2 shrink-0">
         <div className="text-right">
-          <span className="text-[10px] text-amber-200 uppercase font-mono block leading-none">Only</span>
+          <span className="text-[10px] text-amber-200 uppercase font-mono block leading-none">Promo</span>
           <span className="text-amber-300 font-black text-xs sm:text-sm tracking-tight">
             {formatNaira(ALTERNATIVE_PRODUCT_CONFIG.NORMAL_PRICE)}
           </span>
@@ -71,15 +71,24 @@ export const TopAlternativeProductScroll: React.FC<TopAlternativeProductScrollPr
         <button
           type="button"
           onClick={onOpenDetails}
-          className="btn-glow-amber bg-amber-400 hover:bg-amber-300 active:bg-amber-500 text-slate-950 font-black text-[11px] sm:text-xs px-3 py-1.5 rounded-md cursor-pointer transition-all shadow-sm flex items-center gap-1.5 shrink-0"
+          className="btn-glow-amber bg-amber-400 hover:bg-amber-300 active:bg-amber-500 text-slate-950 font-black text-[11px] sm:text-xs px-2.5 py-1.5 rounded-md cursor-pointer transition-all shadow-sm flex items-center gap-1 shrink-0"
         >
-          <Sparkles className="w-3.5 h-3.5 fill-current text-slate-950" />
-          <span>View 2-Burner Details (₦170k)</span>
+          <Sparkles className="w-3 h-3 fill-current text-slate-950" />
+          <span>See Details</span>
           <ArrowRight className="w-3 h-3 stroke-[2.5]" />
         </button>
 
-        <span className="text-emerald-400 text-[10px] font-bold hidden sm:inline-flex items-center gap-1 shrink-0">
-          <Truck className="w-3 h-3" /> Free Delivery Nationwide
+        <button
+          type="button"
+          onClick={() => onSelectAlternative('2-burner', 1)}
+          className="bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-slate-950 font-black text-[11px] sm:text-xs px-2.5 py-1.5 rounded-md cursor-pointer transition-all shadow-sm flex items-center gap-1 shrink-0"
+        >
+          <Flame className="w-3 h-3 fill-current text-slate-950" />
+          <span>+ Add to Form (₦170,000)</span>
+        </button>
+
+        <span className="text-emerald-400 text-[10px] font-bold hidden xl:inline-flex items-center gap-1 shrink-0">
+          <Truck className="w-3 h-3" /> Free Delivery
         </span>
       </div>
 
@@ -89,14 +98,14 @@ export const TopAlternativeProductScroll: React.FC<TopAlternativeProductScrollPr
       <div className="flex items-center gap-2 whitespace-nowrap text-xs text-sky-100">
         <Flame className="w-3.5 h-3.5 text-amber-400 fill-amber-400 shrink-0" />
         <span className="font-semibold">
-          Don't need a 5-burner? The 2-burner flip-up fits any standard kitchen countertop!
+          Alternative Product from moonlightcrecent.shop • Tabletop or Flush Built-in dual-purpose cooker!
         </span>
         <button
           type="button"
           onClick={onOpenDetails}
           className="text-amber-300 hover:text-white underline font-bold text-xs ml-1 cursor-pointer"
         >
-          Click to view photos & specs
+          Click to see details & photos
         </button>
       </div>
 

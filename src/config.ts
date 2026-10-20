@@ -338,16 +338,19 @@ export function calculateCombinedPricing(
   let q2 = Math.max(0, qty2Burner);
   let q5 = Math.max(0, qty5Burner);
 
-  // Normalize quantities based on explicit mode if passed
-  if (mode === '5-burner') {
+  // Normalize quantities based on explicit mode or combined quantities
+  if (q5 > 0 && q2 > 0) {
     q5 = Math.max(1, q5);
-    q2 = 0;
+    q2 = Math.max(1, q2);
   } else if (mode === '2-burner') {
     q2 = Math.max(1, q2);
     q5 = 0;
   } else if (mode === 'combo') {
     q5 = Math.max(1, q5);
     q2 = Math.max(1, q2);
+  } else {
+    q5 = Math.max(1, q5);
+    q2 = 0;
   }
 
   // 5-Burner (Main Flagship Product) tiered pricing

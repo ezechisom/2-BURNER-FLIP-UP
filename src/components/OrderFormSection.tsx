@@ -544,216 +544,391 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
                   </div>
                 )}
 
-              {/* STEP 1: QUANTITY SELECTION FOR THE 5-BURNER HYBRID COOKTOP */}
-              {selectedModel === '2-burner' ? (
-                /* 2-BURNER COOKTOP ORDER VIEW (ONLY SHOWN IF CUSTOMER CLICKED TO SEE 2-BURNER DETAILS) */
-                <div className="space-y-3">
-                  <div className="p-4 rounded-2xl bg-amber-50/90 border-2 border-amber-400 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-amber-400 text-slate-950 flex items-center justify-center shrink-0 font-black shadow-xs">
-                        <Flame className="w-5 h-5 fill-current" />
-                      </div>
-                      <div>
-                        <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-900 bg-amber-200/80 px-2 py-0.5 rounded">
-                          Selected from Details
-                        </span>
-                        <h4 className="text-sm font-extrabold text-slate-900">
-                          2-Burner Flip-Up Double Gas Cooktop (75 × 45 cm)
-                        </h4>
-                        <p className="text-[11px] text-amber-900 mt-0.5">
-                          {formatNaira(pricing.unitPrice2Burner)} each • Tabletop & Flush Built-in Dual-Purpose
-                        </p>
-                      </div>
-                    </div>
+                {/* STEP 1: MODEL SELECTION & QUANTITY CONFIGURATION */}
+                <div className="space-y-4">
+                  {/* MODEL SELECTION TABS */}
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2.5 flex items-center justify-between">
+                      <span>Step 1: Select What You Want to Order:</span>
+                      <span className="text-[11px] text-blue-700 font-bold bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                        Pay on Delivery Available
+                      </span>
+                    </label>
 
-                    <button
-                      type="button"
-                      onClick={() => handleSelectModelType('5-burner')}
-                      className="text-xs font-bold text-blue-700 hover:text-blue-900 underline cursor-pointer shrink-0"
-                    >
-                      ← Switch back to 5-Burner Flagship
-                    </button>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                      <button
+                        type="button"
+                        onClick={() => handleSelectModelType('5-burner')}
+                        className={`p-3 rounded-2xl border-2 text-left transition-all cursor-pointer flex items-center gap-3 ${
+                          selectedModel === '5-burner' && qty2Burner === 0
+                            ? 'bg-blue-50/95 border-blue-600 shadow-md ring-2 ring-blue-500/20'
+                            : 'bg-white border-slate-200 hover:border-slate-300'
+                        }`}
+                      >
+                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                          selectedModel === '5-burner' && qty2Burner === 0 ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-700'
+                        }`}>
+                          <Flame className="w-5 h-5 fill-current" />
+                        </div>
+                        <div className="min-w-0">
+                          <span className="text-xs font-extrabold block text-slate-900 truncate">
+                            5-Burner Hybrid
+                          </span>
+                          <span className="text-[11px] text-slate-500 block">
+                            90 × 51 cm • From {formatNaira(config.NORMAL_PRICE)}
+                          </span>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleSelectModelType('2-burner')}
+                        className={`p-3 rounded-2xl border-2 text-left transition-all cursor-pointer flex items-center gap-3 ${
+                          selectedModel === '2-burner' && qty5Burner === 0
+                            ? 'bg-amber-50/95 border-amber-500 shadow-md ring-2 ring-amber-400/40'
+                            : 'bg-white border-slate-200 hover:border-amber-300'
+                        }`}
+                      >
+                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                          selectedModel === '2-burner' && qty5Burner === 0 ? 'bg-amber-400 text-slate-950 font-bold' : 'bg-amber-100 text-amber-800'
+                        }`}>
+                          <Sparkles className="w-5 h-5 fill-current" />
+                        </div>
+                        <div className="min-w-0">
+                          <span className="text-xs font-extrabold block text-slate-900 truncate">
+                            Alternative: 2-Burner
+                          </span>
+                          <span className="text-[11px] text-amber-800 font-bold block">
+                            75 × 45 cm • From {formatNaira(ALTERNATIVE_PRODUCT_CONFIG.NORMAL_PRICE)}
+                          </span>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleSelectModelType('combo')}
+                        className={`p-3 rounded-2xl border-2 text-left transition-all cursor-pointer flex items-center gap-3 ${
+                          pricing.isCombo || (qty2Burner > 0 && qty5Burner > 0)
+                            ? 'bg-emerald-50/95 border-emerald-600 shadow-md ring-2 ring-emerald-500/20'
+                            : 'bg-white border-slate-200 hover:border-emerald-300'
+                        }`}
+                      >
+                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                          pricing.isCombo || (qty2Burner > 0 && qty5Burner > 0) ? 'bg-emerald-600 text-white font-bold' : 'bg-emerald-100 text-emerald-800'
+                        }`}>
+                          <Layers className="w-5 h-5" />
+                        </div>
+                        <div className="min-w-0">
+                          <span className="text-xs font-extrabold block text-emerald-950 truncate">
+                            Order Both (Combo)
+                          </span>
+                          <span className="text-[11px] text-emerald-700 font-bold block">
+                            Save ₦20,000 Bonus!
+                          </span>
+                        </div>
+                      </button>
+                    </div>
                   </div>
 
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 flex items-center justify-between">
-                    <span>Set Quantity for 2-Burner Cooktop:</span>
-                    <span className="text-slate-500 font-normal">Choose 1 to 5 units</span>
-                  </label>
+                  {/* 2-BURNER ONLY VIEW */}
+                  {selectedModel === '2-burner' && qty5Burner === 0 ? (
+                    <div className="space-y-3">
+                      <div className="p-4 rounded-2xl bg-amber-50/90 border-2 border-amber-400 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-amber-400 text-slate-950 flex items-center justify-center shrink-0 font-black shadow-xs">
+                            <Flame className="w-5 h-5 fill-current" />
+                          </div>
+                          <div>
+                            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-900 bg-amber-200/80 px-2 py-0.5 rounded">
+                              Alternative Product Selected
+                            </span>
+                            <h4 className="text-sm font-extrabold text-slate-900">
+                              2-Burner Flip-Up Double Gas Cooktop (75 × 45 cm)
+                            </h4>
+                            <p className="text-[11px] text-amber-900 mt-0.5">
+                              {formatNaira(pricing.unitPrice2Burner)} each • Tabletop & Flush Built-in Dual-Purpose
+                            </p>
+                          </div>
+                        </div>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 mb-3">
-                    {[1, 2, 3, 4, 5].map((qtyVal) => {
-                      const isSelected = qty2Burner === qtyVal || (qtyVal === 5 && qty2Burner >= 5);
-                      let unitRate = ALTERNATIVE_PRODUCT_CONFIG.NORMAL_PRICE;
-                      if (qtyVal === 2) unitRate = ALTERNATIVE_PRODUCT_CONFIG.PRICE_FOR_2;
-                      else if (qtyVal >= 3) unitRate = ALTERNATIVE_PRODUCT_CONFIG.PRICE_FOR_3_PLUS;
+                        {onView2BurnerDetails && (
+                          <button
+                            type="button"
+                            onClick={onView2BurnerDetails}
+                            className="text-xs font-bold text-blue-700 hover:text-blue-900 underline cursor-pointer shrink-0"
+                          >
+                            View Full Details & Photos
+                          </button>
+                        )}
+                      </div>
 
-                      return (
+                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 flex items-center justify-between">
+                        <span>Set Quantity for 2-Burner Cooktop:</span>
+                        <span className="text-slate-500 font-normal">Choose 1 to 5 units</span>
+                      </label>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 mb-3">
+                        {[1, 2, 3, 4, 5].map((qtyVal) => {
+                          const isSelected = qty2Burner === qtyVal || (qtyVal === 5 && qty2Burner >= 5);
+                          let unitRate = ALTERNATIVE_PRODUCT_CONFIG.NORMAL_PRICE;
+                          if (qtyVal === 2) unitRate = ALTERNATIVE_PRODUCT_CONFIG.PRICE_FOR_2;
+                          else if (qtyVal >= 3) unitRate = ALTERNATIVE_PRODUCT_CONFIG.PRICE_FOR_3_PLUS;
+
+                          return (
+                            <button
+                              type="button"
+                              key={qtyVal}
+                              onClick={() => setQty2Burner(qtyVal)}
+                              className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center justify-center ${
+                                isSelected
+                                  ? 'bg-amber-500 text-slate-950 border-amber-500 font-black shadow-md scale-102 ring-2 ring-amber-400/40'
+                                  : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-amber-300'
+                              }`}
+                            >
+                              <span className="text-base sm:text-lg font-bold">
+                                {qtyVal === 5 ? '5+ PCS' : `${qtyVal} PC`}
+                              </span>
+                              <span className={`text-[10px] mt-0.5 ${isSelected ? 'text-slate-950 font-bold' : 'text-amber-800 font-medium'}`}>
+                                {formatNaira(unitRate)} ea
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      <div className="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl p-3">
+                        <div className="text-xs text-slate-600">
+                          Units of 2-Burner (75×45cm): <strong className="text-slate-900 text-sm ml-1">{qty2Burner}</strong>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setQty2Burner((q) => Math.max(1, q - 1))}
+                            className="w-8 h-8 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 flex items-center justify-center cursor-pointer transition-colors"
+                            aria-label="Decrease 2-burner quantity"
+                          >
+                            <Minus className="w-4 h-4" />
+                          </button>
+                          <span className="w-8 text-center font-bold text-slate-900 font-mono">
+                            {qty2Burner}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setQty2Burner((q) => q + 1)}
+                            className="w-8 h-8 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 flex items-center justify-center cursor-pointer transition-colors"
+                            aria-label="Increase 2-burner quantity"
+                          >
+                            <Plus className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* OPTIONAL ADD 5-BURNER TO ORDER */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setQty5Burner(1);
+                          setSelectedModel('combo');
+                        }}
+                        className="w-full p-3 rounded-xl border border-dashed border-blue-300 bg-blue-50/60 hover:bg-blue-50 text-blue-800 text-xs font-bold flex items-center justify-between cursor-pointer transition-colors"
+                      >
+                        <span className="flex items-center gap-2">
+                          <Plus className="w-4 h-4 text-blue-600" />
+                          <span>Also Add 5-Burner Hybrid Flagship Cooktop to this Order (+{formatNaira(config.NORMAL_PRICE)})</span>
+                        </span>
+                        <span className="text-[10px] bg-emerald-600 text-white font-bold px-2 py-0.5 rounded">
+                          Save ₦20,000 Combo Discount
+                        </span>
+                      </button>
+                    </div>
+                  ) : (
+                    /* 5-BURNER VIEW (OR COMBO) */
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2.5 flex items-center justify-between">
+                        <span>Select Quantity for 5-Burner Hybrid Cooktop (90 × 51 cm):</span>
+                        <span className="text-[11px] font-mono text-blue-700 font-bold bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                          Wholesale Tier Rates
+                        </span>
+                      </label>
+
+                      {/* 3 Tier Choices */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
                         <button
                           type="button"
-                          key={qtyVal}
-                          onClick={() => setQty2Burner(qtyVal)}
-                          className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center justify-center ${
-                            isSelected
-                              ? 'bg-amber-500 text-slate-950 border-amber-500 font-black shadow-md scale-102 ring-2 ring-amber-400/40'
-                              : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-amber-300'
+                          onClick={() => setQty5Burner(1)}
+                          className={`p-3.5 rounded-2xl border-2 text-left transition-all cursor-pointer ${
+                            qty5Burner === 1
+                              ? 'border-blue-600 bg-blue-50/90 shadow-md ring-2 ring-blue-500/20'
+                              : 'border-slate-200 bg-white hover:border-slate-300'
                           }`}
                         >
-                          <span className="text-base sm:text-lg font-bold">
-                            {qtyVal === 5 ? '5+ PCS' : `${qtyVal} PC`}
-                          </span>
-                          <span className={`text-[10px] mt-0.5 ${isSelected ? 'text-slate-950 font-bold' : 'text-amber-800 font-medium'}`}>
-                            {formatNaira(unitRate)} ea
-                          </span>
+                          <span className="text-xs font-bold text-slate-500 block uppercase">1 Unit</span>
+                          <div className="text-xl font-black text-slate-900 mt-1">
+                            {formatNaira(config.NORMAL_PRICE)}
+                          </div>
+                          <span className="text-[11px] text-slate-500 block mt-0.5">Regular single rate</span>
                         </button>
-                      );
-                    })}
-                  </div>
 
-                  <div className="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl p-3">
-                    <div className="text-xs text-slate-600">
-                      Units of 2-Burner (75×45cm): <strong className="text-slate-900 text-sm ml-1">{qty2Burner}</strong>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setQty2Burner((q) => Math.max(1, q - 1))}
-                        className="w-8 h-8 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 flex items-center justify-center cursor-pointer transition-colors"
-                        aria-label="Decrease 2-burner quantity"
-                      >
-                        <Minus className="w-4 h-4" />
-                      </button>
-                      <span className="w-8 text-center font-bold text-slate-900 font-mono">
-                        {qty2Burner}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => setQty2Burner((q) => q + 1)}
-                        className="w-8 h-8 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 flex items-center justify-center cursor-pointer transition-colors"
-                        aria-label="Increase 2-burner quantity"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                /* DEFAULT 5-BURNER ORDER VIEW (NO 2-BURNER CLUTTER) */
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2.5 flex items-center justify-between">
-                    <span>Select Quantity for 5-Burner Hybrid Cooktop (90 × 51 cm):</span>
-                    <span className="text-[11px] font-mono text-blue-700 font-bold bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
-                      Wholesale Tier Rates
-                    </span>
-                  </label>
-
-                  {/* 3 Tier Choices */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
-                    <button
-                      type="button"
-                      onClick={() => setQty5Burner(1)}
-                      className={`p-3.5 rounded-2xl border-2 text-left transition-all cursor-pointer ${
-                        qty5Burner === 1
-                          ? 'border-blue-600 bg-blue-50/90 shadow-md ring-2 ring-blue-500/20'
-                          : 'border-slate-200 bg-white hover:border-slate-300'
-                      }`}
-                    >
-                      <span className="text-xs font-bold text-slate-500 block uppercase">1 Unit</span>
-                      <div className="text-xl font-black text-slate-900 mt-1">
-                        {formatNaira(config.NORMAL_PRICE)}
-                      </div>
-                      <span className="text-[11px] text-slate-500 block mt-0.5">Regular single rate</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setQty5Burner(2)}
-                      className={`p-3.5 rounded-2xl border-2 text-left transition-all cursor-pointer relative ${
-                        qty5Burner === 2
-                          ? 'border-blue-600 bg-blue-50/90 shadow-md ring-2 ring-blue-500/20'
-                          : 'border-slate-200 bg-white hover:border-blue-300'
-                      }`}
-                    >
-                      <span className="absolute -top-2.5 right-3 bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-xs">
-                        Save ₦10,000
-                      </span>
-                      <span className="text-xs font-bold text-blue-700 block uppercase">2 Units</span>
-                      <div className="text-xl font-black text-blue-700 mt-1">
-                        {formatNaira(config.PRICE_FOR_2)}{' '}
-                        <span className="text-[10px] font-medium text-slate-500">EACH</span>
-                      </div>
-                      <span className="text-[11px] text-slate-600 block mt-0.5">
-                        {formatNaira(config.PRICE_FOR_2 * 2)} Total for 2
-                      </span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setQty5Burner((q) => (q >= 3 ? q : 3))}
-                      className={`p-3.5 rounded-2xl border-2 text-left transition-all cursor-pointer relative ${
-                        qty5Burner >= 3
-                          ? 'border-blue-600 bg-blue-50/90 shadow-md ring-2 ring-blue-500/20'
-                          : 'border-slate-200 bg-white hover:border-blue-300'
-                      }`}
-                    >
-                      <span className="absolute -top-2.5 right-3 bg-blue-600 text-white text-[10px] font-black px-2 py-0.5 rounded shadow-xs">
-                        Best Value
-                      </span>
-                      <span className="text-xs font-bold text-blue-800 block uppercase">3+ Units</span>
-                      <div className="text-xl font-black text-blue-800 mt-1">
-                        {formatNaira(config.PRICE_FOR_3_PLUS)}{' '}
-                        <span className="text-[10px] font-medium text-slate-500">EACH</span>
-                      </div>
-                      <span className="text-[11px] text-slate-600 block mt-0.5">
-                        Wholesale savings
-                      </span>
-                    </button>
-                  </div>
-
-                  {/* Quantity Stepper */}
-                  <div className="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl p-3">
-                    <div className="text-xs text-slate-600">
-                      Selected 5-Burner Quantity: <strong className="text-slate-900 text-sm ml-1">{qty5Burner} Unit(s)</strong>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setQty5Burner((q) => Math.max(1, q - 1))}
-                        className="w-8 h-8 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 flex items-center justify-center cursor-pointer transition-colors"
-                        aria-label="Decrease 5-burner quantity"
-                      >
-                        <Minus className="w-4 h-4" />
-                      </button>
-                      <span className="w-8 text-center font-bold text-slate-900 font-mono">
-                        {qty5Burner}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => setQty5Burner((q) => q + 1)}
-                        className="w-8 h-8 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 flex items-center justify-center cursor-pointer transition-colors"
-                        aria-label="Increase 5-burner quantity"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Subtle link to 2-burner details if requested */}
-                  {onView2BurnerDetails && (
-                    <div className="mt-2.5 text-center">
-                      <p className="text-[11px] text-slate-500">
-                        Looking for the compact 2-Burner Cooker (75 × 45 cm) instead?{' '}
                         <button
                           type="button"
-                          onClick={onView2BurnerDetails}
-                          className="text-blue-700 hover:text-blue-900 underline font-bold cursor-pointer"
+                          onClick={() => setQty5Burner(2)}
+                          className={`p-3.5 rounded-2xl border-2 text-left transition-all cursor-pointer relative ${
+                            qty5Burner === 2
+                              ? 'border-blue-600 bg-blue-50/90 shadow-md ring-2 ring-blue-500/20'
+                              : 'border-slate-200 bg-white hover:border-blue-300'
+                          }`}
                         >
-                          Click here to view 2-Burner details & photos
+                          <span className="absolute -top-2.5 right-3 bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-xs">
+                            Save ₦10,000
+                          </span>
+                          <span className="text-xs font-bold text-blue-700 block uppercase">2 Units</span>
+                          <div className="text-xl font-black text-blue-700 mt-1">
+                            {formatNaira(config.PRICE_FOR_2)}{' '}
+                            <span className="text-[10px] font-medium text-slate-500">EACH</span>
+                          </div>
+                          <span className="text-[11px] text-slate-600 block mt-0.5">
+                            {formatNaira(config.PRICE_FOR_2 * 2)} Total for 2
+                          </span>
                         </button>
-                      </p>
+
+                        <button
+                          type="button"
+                          onClick={() => setQty5Burner((q) => (q >= 3 ? q : 3))}
+                          className={`p-3.5 rounded-2xl border-2 text-left transition-all cursor-pointer relative ${
+                            qty5Burner >= 3
+                              ? 'border-blue-600 bg-blue-50/90 shadow-md ring-2 ring-blue-500/20'
+                              : 'border-slate-200 bg-white hover:border-blue-300'
+                          }`}
+                        >
+                          <span className="absolute -top-2.5 right-3 bg-blue-600 text-white text-[10px] font-black px-2 py-0.5 rounded shadow-xs">
+                            Best Value
+                          </span>
+                          <span className="text-xs font-bold text-blue-800 block uppercase">3+ Units</span>
+                          <div className="text-xl font-black text-blue-800 mt-1">
+                            {formatNaira(config.PRICE_FOR_3_PLUS)}{' '}
+                            <span className="text-[10px] font-medium text-slate-500">EACH</span>
+                          </div>
+                          <span className="text-[11px] text-slate-600 block mt-0.5">
+                            Wholesale savings
+                          </span>
+                        </button>
+                      </div>
+
+                      {/* Quantity Stepper */}
+                      <div className="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl p-3">
+                        <div className="text-xs text-slate-600">
+                          Selected 5-Burner Quantity: <strong className="text-slate-900 text-sm ml-1">{qty5Burner} Unit(s)</strong>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setQty5Burner((q) => Math.max(qty2Burner > 0 ? 0 : 1, q - 1))}
+                            className="w-8 h-8 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 flex items-center justify-center cursor-pointer transition-colors"
+                            aria-label="Decrease 5-burner quantity"
+                          >
+                            <Minus className="w-4 h-4" />
+                          </button>
+                          <span className="w-8 text-center font-bold text-slate-900 font-mono">
+                            {qty5Burner}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setQty5Burner((q) => q + 1)}
+                            className="w-8 h-8 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 flex items-center justify-center cursor-pointer transition-colors"
+                            aria-label="Increase 5-burner quantity"
+                          >
+                            <Plus className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* ADD ALTERNATIVE PRODUCT TO THIS FORM TOGGLE CARD */}
+                      <div className={`mt-3.5 p-4 rounded-2xl border-2 transition-all ${
+                        qty2Burner > 0
+                          ? 'bg-amber-50/95 border-amber-400 shadow-sm ring-2 ring-amber-400/30'
+                          : 'bg-slate-50/80 border-dashed border-slate-300 hover:border-amber-400'
+                      }`}>
+                        <div className="flex items-start justify-between gap-3">
+                          <label className="flex items-start gap-3 cursor-pointer flex-1">
+                            <input
+                              type="checkbox"
+                              checked={qty2Burner > 0}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setQty2Burner(1);
+                                  setSelectedModel('combo');
+                                } else {
+                                  setQty2Burner(0);
+                                  setSelectedModel('5-burner');
+                                }
+                              }}
+                              className="w-5 h-5 text-amber-500 rounded border-slate-300 focus:ring-amber-400 mt-0.5 cursor-pointer shrink-0"
+                            />
+                            <div>
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="text-xs sm:text-sm font-black text-slate-900 uppercase">
+                                  Add Alternative Product (2-Burner Flip-Up Gas Cooktop) to this Order
+                                </span>
+                                <span className="text-[10px] font-black bg-amber-400 text-slate-950 px-2 py-0.5 rounded shadow-2xs">
+                                  +{formatNaira(ALTERNATIVE_PRODUCT_CONFIG.NORMAL_PRICE)}
+                                </span>
+                                <span className="text-[10px] font-bold bg-emerald-600 text-white px-2 py-0.5 rounded shadow-2xs">
+                                  Save Extra ₦20,000 Combo Bonus!
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-slate-600 mt-1 leading-snug">
+                                Compact 75 × 45 cm • 90° Hinges for 5-Second Wipe Down • 0–180m Auto-Off Timer • Tabletop or Built-in Dual-Purpose.
+                              </p>
+                            </div>
+                          </label>
+
+                          {onView2BurnerDetails && (
+                            <button
+                              type="button"
+                              onClick={onView2BurnerDetails}
+                              className="text-xs text-amber-900 underline font-bold whitespace-nowrap cursor-pointer hover:text-amber-700 shrink-0"
+                            >
+                              View Photos
+                            </button>
+                          )}
+                        </div>
+
+                        {qty2Burner > 0 && (
+                          <div className="mt-3 pt-3 border-t border-amber-300/80 flex items-center justify-between">
+                            <span className="text-xs font-bold text-amber-950">
+                              Alternative 2-Burner Quantity: <strong>{qty2Burner} unit(s)</strong>
+                            </span>
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() => setQty2Burner((q) => {
+                                  if (q <= 1) {
+                                    setSelectedModel('5-burner');
+                                    return 0;
+                                  }
+                                  return q - 1;
+                                })}
+                                className="w-7 h-7 rounded-lg bg-white border border-amber-300 hover:bg-amber-100 text-slate-800 flex items-center justify-center font-bold cursor-pointer"
+                                aria-label="Decrease alternative quantity"
+                              >
+                                <Minus className="w-3.5 h-3.5" />
+                              </button>
+                              <span className="font-mono font-bold text-sm w-6 text-center text-slate-900">{qty2Burner}</span>
+                              <button
+                                type="button"
+                                onClick={() => setQty2Burner((q) => q + 1)}
+                                className="w-7 h-7 rounded-lg bg-white border border-amber-300 hover:bg-amber-100 text-slate-800 flex items-center justify-center font-bold cursor-pointer"
+                                aria-label="Increase alternative quantity"
+                              >
+                                <Plus className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
-              )}
 
               {/* DYNAMIC ITEMIZED CALCULATION BANNER */}
               <div className={`border-2 rounded-2xl p-4 sm:p-5 shadow-sm ${
