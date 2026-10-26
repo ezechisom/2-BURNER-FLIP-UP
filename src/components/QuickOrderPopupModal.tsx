@@ -127,7 +127,7 @@ export const QuickOrderPopupModal: React.FC<QuickOrderPopupModalProps> = ({
     setIsSubmitting(true);
     setErrorMsg('');
 
-    const formspreeEndpoint = config.FORMSPREE_ENDPOINT || "https://formspree.io/f/xljevqpk";
+    const formspreeEndpoint = config.FORMSPREE_ENDPOINT || "https://formspree.io/f/mrpppkzp";
     const orderId = 'QCK-' + Date.now().toString().slice(-6);
 
     try {

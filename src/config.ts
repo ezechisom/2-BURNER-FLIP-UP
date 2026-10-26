@@ -7,7 +7,7 @@ export const INITIAL_CONFIG: LandingPageConfig = {
   PRICE_FOR_3_PLUS: 270000,
   COUNTDOWN_HOURS: 168, // 7 Days (7 x 24h = 168h) countdown
   COUNTDOWN_END_DATE: "", // Can be set to ISO date string e.g. "2026-10-15T23:59:59"
-  FORMSPREE_ENDPOINT: "https://formspree.io/f/xljevqpk", // Formspree notification endpoint for orders
+  FORMSPREE_ENDPOINT: "https://formspree.io/f/mrpppkzp", // Formspree notification endpoint for orders
   META_PIXEL_ID: "947636671276929", // Official Meta Pixel ID for tracking
   WHATSAPP_NUMBER: "09136827730", // Configurable seller WhatsApp
   PHONE_NUMBER: "09136827730",    // Configurable seller Phone

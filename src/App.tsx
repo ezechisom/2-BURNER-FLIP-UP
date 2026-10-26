@@ -58,7 +58,7 @@ export default function App() {
         if (parsed.WHATSAPP_NUMBER === '+2348123456789' || !parsed.WHATSAPP_NUMBER) {
           parsed.WHATSAPP_NUMBER = INITIAL_CONFIG.WHATSAPP_NUMBER;
         }
-        if (!parsed.FORMSPREE_ENDPOINT) {
+        if (!parsed.FORMSPREE_ENDPOINT || parsed.FORMSPREE_ENDPOINT.includes('xljevqpk')) {
           parsed.FORMSPREE_ENDPOINT = INITIAL_CONFIG.FORMSPREE_ENDPOINT;
         }
         if (!parsed.META_PIXEL_ID) {

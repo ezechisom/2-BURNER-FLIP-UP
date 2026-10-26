@@ -145,9 +145,9 @@ export const SellerConfigModal: React.FC<SellerConfigModalProps> = ({
               <input
                 type="text"
                 name="FORMSPREE_ENDPOINT"
-                value={localConfig.FORMSPREE_ENDPOINT || "https://formspree.io/f/xljevqpk"}
+                value={localConfig.FORMSPREE_ENDPOINT || "https://formspree.io/f/mrpppkzp"}
                 onChange={handleChange}
-                placeholder="https://formspree.io/f/xljevqpk"
+                placeholder="https://formspree.io/f/mrpppkzp"
                 className="w-full bg-white border border-slate-300 rounded-lg p-2.5 text-slate-900 font-mono text-xs focus:border-blue-600 focus:outline-none"
               />
               <p className="text-[11px] text-slate-500 mt-1">

@@ -131,7 +131,7 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
     setIsSubmitting(true);
     setErrorMsg('');
 
-    const formspreeEndpoint = config.FORMSPREE_ENDPOINT || "https://formspree.io/f/xljevqpk";
+    const formspreeEndpoint = config.FORMSPREE_ENDPOINT || "https://formspree.io/f/mrpppkzp";
     const orderId = 'ORD-' + Date.now().toString().slice(-6);
 
     try {
@@ -515,7 +515,7 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
             <div className="bg-white border-2 border-blue-200/90 rounded-3xl p-6 sm:p-8 shadow-xl">
               
               <form
-                action={config.FORMSPREE_ENDPOINT || "https://formspree.io/f/xljevqpk"}
+                action={config.FORMSPREE_ENDPOINT || "https://formspree.io/f/mrpppkzp"}
                 method="POST"
                 onSubmit={handleSubmit}
                 className="space-y-6"
