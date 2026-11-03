@@ -34,6 +34,7 @@ import { AlternativeProductModal } from './components/AlternativeProductModal';
 import { CriticalOrderWarningModal } from './components/CriticalOrderWarningModal';
 import { QuickOrderPopupModal } from './components/QuickOrderPopupModal';
 import { SuggestedProductPopupModal } from './components/SuggestedProductPopupModal';
+import { ChristmasSnowEffect } from './components/ChristmasSnowEffect';
 
 export default function App() {
   const [config, setConfig] = useState<LandingPageConfig>(() => {
@@ -41,11 +42,12 @@ export default function App() {
       const saved = localStorage.getItem('burner_store_config');
       if (saved) {
         const parsed = JSON.parse(saved);
-        // Force refresh to new 5-burner main product if old 2-burner was saved as main
+        // Force refresh to Christmas campaign settings if old 280k or old 2-burner was saved
         if (
           !parsed.PRODUCT_NAME ||
           parsed.PRODUCT_NAME.includes('2-FLIP-UP') ||
           parsed.NORMAL_PRICE === 170000 ||
+          parsed.NORMAL_PRICE === 280000 ||
           !parsed.PRODUCT_IMAGES ||
           parsed.PRODUCT_IMAGES[0]?.url !== INITIAL_CONFIG.PRODUCT_IMAGES[0]?.url
         ) {
@@ -262,29 +264,32 @@ export default function App() {
   }, [config.WHATSAPP_NUMBER, config.PRODUCT_NAME, selectedQuantity, lastOrderDetails, selectedModel]);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans antialiased selection:bg-blue-600 selection:text-white pb-16 sm:pb-0">
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans antialiased selection:bg-[#B71C1C] selection:text-white pb-16 sm:pb-0 relative">
       
+      {/* Subtle Christmas animated snowfall in background */}
+      <ChristmasSnowEffect />
+
       {/* STICKY TOP CONTAINER — ALWAYS VISIBLE ON THE TOP EVEN WHEN A CLIENT IS SCROLLING DOWN */}
       <div className="sticky top-0 z-40 shadow-md bg-white">
-        {/* SECTION 1 — TOP URGENCY BAR */}
+        {/* SECTION 1 — CHRISTMAS MEGA SALES ANNOUNCEMENT BAR */}
         <TopUrgencyBar
           countdownEndDate={config.COUNTDOWN_END_DATE}
           countdownHours={config.COUNTDOWN_HOURS}
         />
 
         {/* BRAND / NAVIGATION HEADER */}
-        <header className="bg-white border-b border-blue-100 px-4 py-2.5 backdrop-blur-md bg-opacity-95 shadow-xs">
+        <header className="bg-[#171717] border-b border-[#D4AF37]/50 px-4 py-2.5 backdrop-blur-md text-white shadow-sm">
           <div className="max-w-6xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-black shadow-sm">
+              <span className="w-8 h-8 rounded-lg bg-[#B71C1C] border border-[#D4AF37]/60 text-[#F4E07B] flex items-center justify-center font-black shadow-sm">
                 <Flame className="w-5 h-5 fill-current" />
               </span>
               <div>
-                <span className="font-extrabold tracking-tight text-slate-900 text-sm sm:text-base uppercase block leading-tight">
+                <span className="font-extrabold tracking-tight text-white text-sm sm:text-base uppercase block leading-tight">
                   5-BURNER HYBRID COOKER STORE
                 </span>
-                <span className="text-[10px] text-blue-600 font-mono tracking-widest hidden sm:block font-bold">
-                  EXECUTIVE DUAL-FUEL GAS & ELECTRIC COOKTOPS
+                <span className="text-[10px] text-[#F4E07B] font-mono tracking-widest hidden sm:block font-bold">
+                  🎄 CHRISTMAS MEGA SALES 2026 • ₦260,000
                 </span>
               </div>
             </div>
@@ -296,7 +301,7 @@ export default function App() {
                   href={whatsappConfirmUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-glow-emerald hidden sm:inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-all shadow-sm"
+                  className="hidden sm:inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-all shadow-sm border border-emerald-400"
                 >
                   <MessageCircle className="w-3.5 h-3.5 fill-current" />
                   <span>Confirm on WhatsApp</span>
@@ -306,12 +311,12 @@ export default function App() {
               <div className="flex flex-col items-end">
                 <button
                   onClick={() => scrollToOrderForm(1, '5-burner')}
-                  className="btn-glow bg-blue-600 hover:bg-blue-700 text-white text-xs font-black px-4 py-2 rounded-lg cursor-pointer transition-all shadow-md flex items-center gap-1.5"
+                  className="btn-xmas-gold text-[#171717] text-xs font-black px-4 py-2 rounded-lg cursor-pointer transition-all shadow-md flex items-center gap-1.5 border border-[#D4AF37]"
                 >
-                  <span>{hasPlacedOrder ? "ORDER MORE" : "ORDER NOW"}</span>
+                  <span>{hasPlacedOrder ? "ORDER MORE" : "🎄 ORDER NOW — ₦260,000"}</span>
                 </button>
-                <span className="text-[9px] font-bold text-emerald-700 hidden sm:flex items-center gap-0.5 mt-0.5 tracking-tight">
-                  <Truck className="w-2.5 h-2.5" /> FREE DELIVERY
+                <span className="text-[9px] font-bold text-[#F4E07B] hidden sm:flex items-center gap-0.5 mt-0.5 tracking-tight">
+                  <Truck className="w-2.5 h-2.5" /> FREE DELIVERY NATIONWIDE
                 </span>
               </div>
 

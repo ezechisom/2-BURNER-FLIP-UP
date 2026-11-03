@@ -1,12 +1,49 @@
 import { LandingPageConfig } from './types';
 
+// Christmas Mega Sales 2026 Campaign Configuration
+export const CHRISTMAS_CAMPAIGN = {
+  TITLE: "CHRISTMAS MEGA SALES 2026",
+  HEADLINE: "🎄 CHRISTMAS MEGA SALES!",
+  HERO_SUBTITLE: "Upgrade Your Kitchen This Christmas for Just ₦260,000!",
+  PROMO_LABEL: "🎄 CHRISTMAS MEGA SALES — SAVE ₦20,000!",
+  BANNER_TEXT: "🎄 CHRISTMAS MEGA SALES | WAS ₦280,000 — NOW ₦260,000 | SAVE ₦20,000 | ENDS DEC 20 🎁",
+  // Campaign deadline: December 20, 2026 at 11:59:59 PM West Africa Time (Africa/Lagos, UTC+1)
+  DEADLINE_ISO: "2026-12-20T23:59:59+01:00",
+  START_DATE_ISO: "2026-11-01T00:00:00+01:00",
+  EXPIRED_MESSAGE: "🎄 Our Christmas Promotion Has Ended. Thank You for Shopping With Us!",
+  ORIGINAL_PRICE: 280000,
+  PROMO_PRICE: 260000,
+  SAVINGS: 20000,
+  DISCOUNT_PERCENT: 7, // ~7% OFF
+  // Tiered pricing during Christmas campaign:
+  PROMO_PRICE_FOR_2: 255000,
+  PROMO_PRICE_FOR_3_PLUS: 250000,
+  // Standard prices (when campaign is expired):
+  STANDARD_PRICE: 280000,
+  STANDARD_PRICE_FOR_2: 275000,
+  STANDARD_PRICE_FOR_3_PLUS: 270000,
+  // High-conversion button labels
+  CTA_GET_DEAL: "🎁 GET CHRISTMAS DEAL — ₦260,000",
+  CTA_ORDER_NOW: "🔥 ORDER NOW & SAVE ₦20,000",
+  STICKY_MOBILE_CTA: "🎄 ORDER NOW — ₦260,000"
+};
+
+/**
+ * Checks whether the Christmas Mega Sales 2026 promotion is currently active.
+ * Accurately calculates against Africa/Lagos (UTC+1) deadline: Dec 20, 2026, 23:59:59 WAT.
+ */
+export function isChristmasCampaignActive(): boolean {
+  const deadline = new Date(CHRISTMAS_CAMPAIGN.DEADLINE_ISO).getTime();
+  return Date.now() <= deadline;
+}
+
 export const INITIAL_CONFIG: LandingPageConfig = {
   PRODUCT_NAME: "5-BURNER BUILT-IN GAS + ELECTRIC HYBRID COOKTOP (WITH DIGITAL TIMER & AUTO-OFF)",
-  NORMAL_PRICE: 280000,
-  PRICE_FOR_2: 275000,
-  PRICE_FOR_3_PLUS: 270000,
-  COUNTDOWN_HOURS: 168, // 7 Days (7 x 24h = 168h) countdown
-  COUNTDOWN_END_DATE: "", // Can be set to ISO date string e.g. "2026-10-15T23:59:59"
+  NORMAL_PRICE: 260000, // Christmas promotional price: ₦260,000 (was ₦280,000)
+  PRICE_FOR_2: 255000,
+  PRICE_FOR_3_PLUS: 250000,
+  COUNTDOWN_HOURS: 168, // 7 Days default fallback
+  COUNTDOWN_END_DATE: "2026-12-20T23:59:59+01:00", // December 20, 2026, 11:59:59 PM WAT
   FORMSPREE_ENDPOINT: "https://formspree.io/f/mrpppkzp", // Formspree notification endpoint for orders
   META_PIXEL_ID: "947636671276929", // Official Meta Pixel ID for tracking
   WHATSAPP_NUMBER: "09136827730", // Configurable seller WhatsApp
@@ -318,6 +355,7 @@ export interface CombinedPricingResult {
   totalQuantity: number;
   unitPrice2Burner: number;
   unitPrice5Burner: number;
+  originalUnitPrice5: number;
   subtotal2Burner: number;
   subtotal5Burner: number;
   comboDiscount: number;
@@ -327,6 +365,8 @@ export interface CombinedPricingResult {
   productName: string;
   shortName: string;
   itemsSummary: string;
+  isPromoActive: boolean;
+  promoLabel: string;
 }
 
 export function calculateCombinedPricing(
@@ -353,12 +393,20 @@ export function calculateCombinedPricing(
     q2 = 0;
   }
 
+  const isPromo = isChristmasCampaignActive();
+  const originalUnitPrice5 = CHRISTMAS_CAMPAIGN.ORIGINAL_PRICE; // 280,000
+
   // 5-Burner (Main Flagship Product) tiered pricing
-  let unitPrice5 = config.NORMAL_PRICE; // 280,000
-  if (q5 === 1) unitPrice5 = config.NORMAL_PRICE;
-  else if (q5 === 2) unitPrice5 = config.PRICE_FOR_2; // 275,000
-  else if (q5 === 3) unitPrice5 = config.PRICE_FOR_3_PLUS; // 270,000
-  else if (q5 >= 4) unitPrice5 = 265000; // Best tier
+  // Christmas promo: ₦260,000 (1 unit), ₦255,000 (2 units), ₦250,000 (3+ units)
+  // Standard post-promo: ₦280,000 (1 unit), ₦275,000 (2 units), ₦270,000 (3+ units)
+  let unitPrice5 = isPromo ? CHRISTMAS_CAMPAIGN.PROMO_PRICE : CHRISTMAS_CAMPAIGN.STANDARD_PRICE;
+  if (q5 === 1) {
+    unitPrice5 = isPromo ? CHRISTMAS_CAMPAIGN.PROMO_PRICE : CHRISTMAS_CAMPAIGN.STANDARD_PRICE;
+  } else if (q5 === 2) {
+    unitPrice5 = isPromo ? CHRISTMAS_CAMPAIGN.PROMO_PRICE_FOR_2 : CHRISTMAS_CAMPAIGN.STANDARD_PRICE_FOR_2;
+  } else if (q5 >= 3) {
+    unitPrice5 = isPromo ? CHRISTMAS_CAMPAIGN.PROMO_PRICE_FOR_3_PLUS : CHRISTMAS_CAMPAIGN.STANDARD_PRICE_FOR_3_PLUS;
+  }
 
   // 2-Burner (Alternative Compact Product) tiered pricing
   let unitPrice2 = ALTERNATIVE_PRODUCT_CONFIG.NORMAL_PRICE; // 170,000
@@ -405,6 +453,7 @@ export function calculateCombinedPricing(
     totalQuantity: q2 + q5,
     unitPrice2Burner: unitPrice2,
     unitPrice5Burner: unitPrice5,
+    originalUnitPrice5,
     subtotal2Burner: subtotal2,
     subtotal5Burner: subtotal5,
     comboDiscount,
@@ -413,7 +462,9 @@ export function calculateCombinedPricing(
     savings,
     productName,
     shortName,
-    itemsSummary
+    itemsSummary,
+    isPromoActive: isPromo,
+    promoLabel: CHRISTMAS_CAMPAIGN.PROMO_LABEL
   };
 }
 
@@ -475,7 +526,10 @@ export function generateWhatsAppLink(
   quantity: number = 1
 ): string {
   const cleanNumber = formatWhatsAppNumber(phoneNumber);
-  let message = `Hello, I'm interested in the ${productName}. I would like to place an order.`;
+  const isPromo = isChristmasCampaignActive();
+  let message = isPromo
+    ? `Hello, I'm interested in the ${productName} (Christmas Mega Sales deal at ₦260,000 - Save ₦20,000). I would like to place an order.`
+    : `Hello, I'm interested in the ${productName}. I would like to place an order.`;
   if (quantity > 1) {
     message += ` I would like to order ${quantity} unit(s).`;
   }

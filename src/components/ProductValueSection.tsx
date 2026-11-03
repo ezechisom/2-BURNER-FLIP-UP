@@ -102,14 +102,14 @@ export const ProductValueSection: React.FC<ProductValueSectionProps> = ({ config
             <div className="pt-4">
               <button
                 onClick={() => onOrderClick(1)}
-                className="btn-glow w-full sm:w-auto inline-flex flex-col items-center justify-center bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-black text-sm sm:text-base py-3.5 px-8 rounded-xl shadow-xl transition-all cursor-pointer"
+                className="btn-xmas-gold w-full sm:w-auto inline-flex flex-col items-center justify-center font-black text-sm sm:text-base py-4 px-8 rounded-2xl shadow-2xl transition-all cursor-pointer border border-[#D4AF37]"
               >
-                <div className="flex items-center gap-2">
-                  <span>ORDER NOW TODAY</span>
-                  <ArrowRight className="w-5 h-5 stroke-[2.5]" />
+                <div className="flex items-center gap-2 text-[#171717]">
+                  <span>🎁 GET CHRISTMAS DEAL — ₦260,000</span>
+                  <ArrowRight className="w-5 h-5 stroke-[3]" />
                 </div>
-                <div className="text-[11px] font-bold text-blue-100 uppercase tracking-wider flex items-center gap-1.5 mt-0.5">
-                  <Truck className="w-3.5 h-3.5" /> FREE DELIVERY NATIONWIDE
+                <div className="text-[11px] font-black text-slate-900/90 uppercase tracking-wider flex items-center gap-1.5 mt-0.5">
+                  <Truck className="w-3.5 h-3.5" /> FREE DELIVERY NATIONWIDE • PAY ON DELIVERY
                 </div>
               </button>
             </div>

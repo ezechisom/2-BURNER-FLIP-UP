@@ -1,93 +1,130 @@
 import React from 'react';
-import { Flame, Clock, RefreshCw, Maximize2, Sparkles, Zap, ShieldCheck } from 'lucide-react';
+import { Flame, Zap, Clock, Sparkles, RefreshCw, ChefHat, Check } from 'lucide-react';
 
 export const ProductBenefitsSection: React.FC = () => {
-  const benefits = [
+  const features = [
     {
-      title: "DUAL-FUEL PEACE OF MIND",
-      copy: "Never get stranded mid-cooking. Use 4 gas burners during outages, or switch instantly to the 2000W electric zone when gas runs out.",
-      icon: Zap,
-      number: "01"
-    },
-    {
-      title: "FLAME FAILURE DEVICE (FFD)",
-      copy: "Automatic thermocouple safety protection on every gas burner. If wind or boiling soup blows out the flame, gas is cut off in seconds to eliminate gas leak explosion risks.",
-      icon: ShieldCheck,
-      number: "02"
-    },
-    {
-      title: "DIGITAL TIMER & AUTO-CUTOFF",
-      copy: "Program cooking duration from 1 to 99 minutes. Power cuts off automatically the second time elapses, so stews and rice never overboil or burn.",
-      icon: Clock,
-      number: "03"
-    },
-    {
-      title: "EXECUTIVE 5-ZONE CAPACITY",
-      copy: "Spacious 90cm surface comfortably fits 5 large pots simultaneously so whole family banquets are prepared in half the time.",
-      icon: Maximize2,
-      number: "04"
-    },
-    {
-      title: "90° FLIP-UP HINGED BURNERS",
-      copy: "Articulated hinges tilt burners upright effortlessly. Wipe away soup and oil spills in 10 seconds without removing burner parts.",
-      icon: RefreshCw,
-      number: "05"
-    },
-    {
-      title: "2000W RADIANT CERAMIC ZONE",
-      copy: "Instant high-temperature ceramic burner that works with any flat-bottom pot—stainless steel, enamel, cast iron, or ceramic.",
+      title: "4 Powerful Gas Burners",
+      subtitle: "High-Efficiency Blue Flame",
+      desc: "Four robust gas burners engineered for rapid boiling, stewing, and frying without producing black soot on pots. Equipped with sensitive thermocouple Flame Failure Devices (FFD) that automatically shut off gas flow if a flame is accidentally blown out.",
       icon: Flame,
-      number: "06"
+      image: "/images/pure_blue_flame.jpg",
+      highlight: "Pure Blue Flame • Zero Soot"
+    },
+    {
+      title: "1 Electric Heating Plate",
+      subtitle: "Central 2000W Radiant Zone",
+      desc: "Heavy-duty central electric ceramic hotplate that powers on instantly using standard electricity or backup generators. Works seamlessly with any flat-bottom cookware—stainless steel, enamel, cast iron, or ceramic pots.",
+      icon: Zap,
+      image: "/images/alternative_5burner/cooktop_showroom_active.jpg",
+      highlight: "2000W Power • All Pots Compatible"
+    },
+    {
+      title: "Smart Digital Timer and Controls",
+      subtitle: "1–99 Minute Auto-Cutoff",
+      desc: "Illuminated digital LED touch display allows you to set precise countdown timers. The moment your set time elapses, the cooker automatically alerts you and shuts off power to prevent burnt meals and dry-boiled soups.",
+      icon: Clock,
+      image: "/images/cooker_blue_flames.jpg",
+      highlight: "LED Touch Control • Auto Shutoff"
+    },
+    {
+      title: "Premium Black Glass Finish",
+      subtitle: "Toughened High-Gloss Glass",
+      desc: "Sleek, heat-resistant black tempered glass with bevelled edges that instantly elevates your kitchen decor to modern executive standards. Impervious to heat, scratches, and stains for effortless maintenance.",
+      icon: Sparkles,
+      image: "/images/alternative_5burner/cooktop_kitchen_installed.jpeg",
+      highlight: "Toughened Glass • Scratch Resistant"
+    },
+    {
+      title: "Detachable Burner Design",
+      subtitle: "90° Flip-Up Articulated Hinges",
+      desc: "Innovative hinged burner mechanism tilts upright smoothly. When palm oil, stew, or boiling broth spills during cooking, lift the burners and wipe the flat glass clean in 10 seconds without disassembling parts.",
+      icon: RefreshCw,
+      image: "/images/alternative_5burner/cooktop_hinged_burners.png",
+      highlight: "10-Second Wipe • Heavy Duty Hinges"
+    },
+    {
+      title: "5 Cooking Zones",
+      subtitle: "Executive 90 × 51 cm Space",
+      desc: "Expansive 900 × 510 mm surface comfortably fits five family-sized pots simultaneously. Prepare fried chicken, jollof rice, pepper soup, plantains, and boil water all at once with zero pot crowding.",
+      icon: ChefHat,
+      image: "/images/alternative_5burner/cooktop_main_diagram.png",
+      highlight: "90cm Wide • 5 Large Pots Together"
     }
   ];
 
   return (
-    <section id="benefits-section" className="py-14 sm:py-20 px-4 bg-white text-slate-900 border-b border-blue-100">
+    <section id="features-section" className="py-14 sm:py-20 px-4 bg-white text-slate-900 border-b-2 border-[#D4AF37]/30">
       <div className="max-w-6xl mx-auto">
         
-        {/* Title */}
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <span className="text-blue-600 font-mono text-xs uppercase tracking-widest font-bold block mb-2">
-            Engineered For Excellence
-          </span>
+        {/* Section Header */}
+        <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
+          <div className="inline-flex items-center gap-1.5 bg-[#123B2A] text-[#F4E07B] text-xs font-bold uppercase tracking-widest px-3.5 py-1 rounded-full mb-3 border border-[#D4AF37]/40 shadow-sm">
+            <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
+            <span>Official Product Engineering</span>
+          </div>
           <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-3">
-            WHY YOU'LL LOVE THIS 5-BURNER HYBRID COOKTOP
+            HIGHLIGHTED PRODUCT FEATURES
           </h2>
-          <p className="text-slate-600 text-sm sm:text-base">
-            Every feature is designed to give you uninterrupted cooking power, spacious freedom, and effortless 1-wipe cleanups.
+          <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+            Real specifications and verified craftsmanship of the 5-in-1 Gas + Electric Cooktop, designed for reliable Nigerian family kitchens.
           </p>
         </div>
 
-        {/* 6 Benefit Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {benefits.map((item, idx) => {
-            const Icon = item.icon;
+        {/* 6 Feature Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          {features.map((feat, idx) => {
+            const Icon = feat.icon;
             return (
               <div
                 key={idx}
-                className="bg-slate-50 border border-slate-200 rounded-2xl p-6 hover:border-blue-300 hover:-translate-y-1 transition-all duration-300 shadow-sm hover:shadow-md flex flex-col justify-between"
+                className="group bg-white border border-slate-200 rounded-2xl overflow-hidden hover:border-[#D4AF37] hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
               >
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-blue-100 border border-blue-200 text-blue-700 flex items-center justify-center">
-                      <Icon className="w-6 h-6" />
-                    </div>
-                    <span className="text-xs font-mono font-bold text-slate-400">
-                      {item.number}
+                {/* Product Photograph Container */}
+                <div className="relative aspect-[16/10] bg-slate-900 overflow-hidden">
+                  <img
+                    src={feat.image}
+                    alt={feat.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                  
+                  {/* Badge */}
+                  <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-between text-xs">
+                    <span className="bg-[#123B2A]/90 backdrop-blur-md text-[#F4E07B] border border-[#D4AF37]/60 font-black text-[11px] px-2.5 py-0.5 rounded shadow">
+                      {feat.highlight}
                     </span>
                   </div>
-
-                  <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2 tracking-wide">
-                    {item.title}
-                  </h3>
-
-                  <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-                    {item.copy}
-                  </p>
                 </div>
 
-                <div className="mt-4 pt-4 border-t border-slate-200 flex items-center text-[11px] text-blue-700 font-bold uppercase tracking-wider">
-                  <span>Standard Feature</span>
+                {/* Card Body */}
+                <div className="p-5 flex-1 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-8 h-8 rounded-lg bg-[#123B2A] text-[#F4E07B] flex items-center justify-center shrink-0 border border-[#D4AF37]/40">
+                        <Icon className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h3 className="text-base font-bold text-slate-900 tracking-tight leading-tight">
+                          {feat.title}
+                        </h3>
+                        <span className="text-[11px] font-semibold text-[#B71C1C]">
+                          {feat.subtitle}
+                        </span>
+                      </div>
+                    </div>
+
+                    <p className="text-slate-600 text-xs sm:text-sm leading-relaxed mt-2.5">
+                      {feat.desc}
+                    </p>
+                  </div>
+
+                  {/* Bottom Verification Tag */}
+                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center gap-1.5 text-[11px] font-bold text-[#123B2A]">
+                    <Check className="w-3.5 h-3.5 text-emerald-600 stroke-[3]" />
+                    <span>Included in 5-in-1 Cooktop</span>
+                  </div>
                 </div>
               </div>
             );

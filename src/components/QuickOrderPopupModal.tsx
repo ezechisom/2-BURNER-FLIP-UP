@@ -231,22 +231,22 @@ export const QuickOrderPopupModal: React.FC<QuickOrderPopupModalProps> = ({
         onClick={(e) => e.stopPropagation()}
       >
         {/* MODAL HEADER */}
-        <div className="bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 p-3.5 sm:p-4 text-white flex items-start justify-between gap-3 shrink-0">
+        <div className="bg-gradient-to-r from-[#B71C1C] via-[#8B0000] to-[#123B2A] p-3.5 sm:p-4 text-white flex items-start justify-between gap-3 shrink-0 border-b-2 border-[#D4AF37]">
           <div className="flex items-center gap-2.5 sm:gap-3">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center shrink-0 shadow-md">
-              <Zap className="w-5 h-5 fill-current" />
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-[#D4AF37] text-[#171717] flex items-center justify-center shrink-0 shadow-md">
+              <span className="text-lg">🎄</span>
             </div>
             <div>
-              <div className="inline-flex items-center gap-1 bg-amber-400/20 text-amber-300 border border-amber-400/40 text-[9px] sm:text-[10px] font-mono font-black uppercase px-2 py-0.5 rounded tracking-wider mb-0.5">
-                <Sparkles className="w-3 h-3" />
-                <span>⚡ 30-SEC QUICK ORDER • FLASH SALE</span>
+              <div className="inline-flex items-center gap-1 bg-[#171717]/60 text-[#F4E07B] border border-[#D4AF37]/50 text-[9px] sm:text-[10px] font-mono font-black uppercase px-2 py-0.5 rounded tracking-wider mb-0.5">
+                <Sparkles className="w-3 h-3 text-[#D4AF37]" />
+                <span>CHRISTMAS MEGA SALES • SAVE ₦20,000</span>
               </div>
               <h3 className="text-xs sm:text-sm font-black text-white tracking-tight uppercase leading-snug">
                 {pricing.isCombo
                   ? 'COMBO ORDER: 5-BURNER + ALTERNATIVE 2-BURNER'
                   : selectedModel === '2-burner'
                   ? 'ALTERNATIVE PRODUCT: 2-FLIP-UP GAS COOKTOP (75 × 45 CM)'
-                  : '5-BURNER HYBRID COOKTOP (90 × 51 CM)'}
+                  : '5-BURNER HYBRID COOKTOP (CHRISTMAS DEAL: ₦260,000)'}
               </h3>
             </div>
           </div>
@@ -897,14 +897,14 @@ export const QuickOrderPopupModal: React.FC<QuickOrderPopupModalProps> = ({
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="btn-glow w-full py-3.5 px-5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-black text-sm sm:text-base flex items-center justify-center gap-2 shadow-xl cursor-pointer transition-all disabled:opacity-50 uppercase tracking-tight"
+                  className="btn-xmas-gold w-full py-4 px-5 rounded-2xl text-[#171717] font-black text-sm sm:text-base flex items-center justify-center gap-2 shadow-2xl cursor-pointer transition-all disabled:opacity-50 uppercase tracking-tight border-2 border-[#D4AF37]"
                 >
                   {isSubmitting ? (
-                    <span>Processing Order...</span>
+                    <span>Processing Christmas Order...</span>
                   ) : (
                     <>
-                      <span>SUBMIT QUICK ORDER ({formatNaira(pricing.total)})</span>
-                      <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+                      <span>🔥 ORDER NOW & SAVE ₦20,000 ({formatNaira(pricing.total)})</span>
+                      <ArrowRight className="w-4 h-4 stroke-[3] text-[#171717]" />
                     </>
                   )}
                 </button>

@@ -115,7 +115,7 @@ export const TopAlternativeProductScroll: React.FC<TopAlternativeProductScrollPr
 
   return (
     <div
-      className="relative z-30 bg-gradient-to-r from-slate-950 via-blue-950 to-slate-950 text-white border-y border-amber-400/30 overflow-hidden shadow-inner py-2"
+      className="relative z-30 bg-gradient-to-r from-[#171717] via-[#123B2A] to-[#171717] text-white border-y border-[#D4AF37]/40 overflow-hidden shadow-inner py-2"
       aria-label="Alternative Product Scrolling Banner"
     >
       <div className="flex items-center">

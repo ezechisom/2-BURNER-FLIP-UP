@@ -280,15 +280,15 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
         
         {/* Section Header */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 bg-blue-100 border border-blue-200 text-blue-700 text-xs font-bold uppercase tracking-wider px-3.5 py-1 rounded-full mb-3">
-            <ShoppingBag className="w-3.5 h-3.5" />
-            <span>Direct Order Request</span>
+          <div className="inline-flex items-center gap-2 bg-[#B71C1C] border border-[#D4AF37] text-white text-xs font-black uppercase tracking-wider px-3.5 py-1.5 rounded-full mb-3 shadow-md">
+            <span>🎄</span>
+            <span>CHRISTMAS MEGA SALES — SAVE ₦20,000!</span>
           </div>
           <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-3">
-            PLACE YOUR ORDER NOW
+            PLACE YOUR CHRISTMAS ORDER NOW
           </h2>
-          <p className="text-slate-600 text-sm sm:text-base max-w-xl mx-auto">
-            Choose your preferred model or order both cookers together with our special combo discount. Free nationwide delivery across Nigeria.
+          <p className="text-slate-600 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
+            Upgrade your kitchen for just <strong>₦260,000</strong> (was ₦280,000). Free nationwide delivery across all 36 states & FCT Abuja. Inspect physically before paying on delivery!
           </p>
         </div>
 
@@ -571,11 +571,16 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
                           <Flame className="w-5 h-5 fill-current" />
                         </div>
                         <div className="min-w-0">
-                          <span className="text-xs font-extrabold block text-slate-900 truncate">
-                            5-Burner Hybrid
-                          </span>
-                          <span className="text-[11px] text-slate-500 block">
-                            90 × 51 cm • From {formatNaira(config.NORMAL_PRICE)}
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="text-xs font-extrabold text-slate-900 truncate">
+                              5-Burner Hybrid
+                            </span>
+                            <span className="text-[10px] font-black bg-[#B71C1C] text-white px-1.5 py-0.2 rounded">
+                              Save ₦20k
+                            </span>
+                          </div>
+                          <span className="text-[11px] text-slate-600 block mt-0.5">
+                            90 × 51 cm • <strong className="text-[#B71C1C] font-black">{formatNaira(pricing.unitPrice5Burner)}</strong> <span className="line-through text-slate-400">₦280,000</span>
                           </span>
                         </div>
                       </button>
@@ -1108,26 +1113,20 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
                   type="submit"
                   disabled={isSubmitting}
                   id="submit-order-btn"
-                  className={`btn-glow w-full font-black text-base sm:text-lg py-4 px-6 rounded-xl shadow-xl transition-all flex flex-col items-center justify-center cursor-pointer ${
-                    pricing.isCombo || (qty2Burner > 0 && qty5Burner > 0)
-                      ? 'bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white disabled:bg-slate-400'
-                      : selectedModel === '5-burner'
-                      ? 'bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 disabled:bg-slate-400'
-                      : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white disabled:bg-slate-400'
-                  }`}
+                  className="btn-xmas-gold w-full font-black text-base sm:text-lg py-4 px-6 rounded-2xl shadow-2xl transition-all flex flex-col items-center justify-center cursor-pointer border-2 border-[#D4AF37] disabled:opacity-60"
                 >
                   {isSubmitting ? (
-                    <span className="flex items-center gap-2 text-white">
-                      Processing Your Order...
+                    <span className="flex items-center gap-2 text-[#171717]">
+                      Processing Your Christmas Order...
                     </span>
                   ) : (
                     <>
-                      <div className="flex items-center gap-2">
-                        <span>CONFIRM ORDER ({formatNaira(pricing.total)})</span>
-                        <ArrowRight className="w-5 h-5 stroke-[2.5]" />
+                      <div className="flex items-center gap-2 text-[#171717]">
+                        <span>🔥 ORDER NOW & SAVE ₦20,000 ({formatNaira(pricing.total)})</span>
+                        <ArrowRight className="w-5 h-5 stroke-[3]" />
                       </div>
-                      <div className="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 mt-0.5 opacity-90">
-                        <Truck className="w-3.5 h-3.5" /> FREE NATIONWIDE DELIVERY • PAY ON DELIVERY
+                      <div className="text-xs font-black uppercase tracking-wider flex items-center gap-1.5 mt-0.5 text-slate-900/90">
+                        <Truck className="w-3.5 h-3.5" /> FREE NATIONWIDE DELIVERY • PAYMENT ON ARRIVAL
                       </div>
                     </>
                   )}

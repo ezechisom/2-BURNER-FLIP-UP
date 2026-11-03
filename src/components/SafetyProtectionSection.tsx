@@ -191,13 +191,13 @@ export const SafetyProtectionSection: React.FC<SafetyProtectionSectionProps> = (
           <button
             type="button"
             onClick={onOrderClick}
-            className="btn-glow-amber bg-amber-400 hover:bg-amber-300 active:bg-amber-500 text-slate-950 font-black py-4 px-8 rounded-xl text-sm sm:text-base cursor-pointer shadow-xl transition-all inline-flex items-center gap-2"
+            className="btn-xmas-gold text-[#171717] font-black py-4 px-8 rounded-2xl text-sm sm:text-base cursor-pointer shadow-2xl transition-all inline-flex items-center gap-2 border border-[#D4AF37]"
           >
-            <span>ORDER THIS SAFE HYBRID COOKTOP NOW</span>
-            <ArrowRight className="w-5 h-5 stroke-[2.5]" />
+            <span>🎁 GET CHRISTMAS DEAL — ₦260,000</span>
+            <ArrowRight className="w-5 h-5 stroke-[3] text-[#171717]" />
           </button>
           <p className="text-[11px] text-slate-400 mt-2">
-            Pay on delivery nationwide • Complete manufacturer warranty included
+            Free delivery & pay on delivery nationwide • 12 Months official warranty included
           </p>
         </div>
 

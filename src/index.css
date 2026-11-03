@@ -13,20 +13,131 @@
   }
 }
 
+:root {
+  --xmas-red: #B71C1C;
+  --xmas-red-dark: #8B0000;
+  --xmas-green: #123B2A;
+  --xmas-green-dark: #0A2218;
+  --xmas-gold: #D4AF37;
+  --xmas-gold-light: #F4E07B;
+  --xmas-charcoal: #171717;
+  --xmas-white: #FFFFFF;
+}
+
+/* Christmas Luxury Fairy Lights */
+@keyframes twinkleLights {
+  0%, 100% {
+    opacity: 0.9;
+    filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.8));
+  }
+  50% {
+    opacity: 0.45;
+    filter: drop-shadow(0 0 1px rgba(212, 175, 55, 0.3));
+  }
+}
+
+@keyframes twinkleLightsRed {
+  0%, 100% {
+    opacity: 0.4;
+    filter: drop-shadow(0 0 2px rgba(183, 28, 28, 0.4));
+  }
+  50% {
+    opacity: 0.95;
+    filter: drop-shadow(0 0 6px rgba(183, 28, 28, 0.85));
+  }
+}
+
+@keyframes twinkleLightsGreen {
+  0%, 100% {
+    opacity: 0.85;
+    filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.7));
+  }
+  50% {
+    opacity: 0.35;
+    filter: drop-shadow(0 0 1px rgba(34, 197, 94, 0.2));
+  }
+}
+
+.fairy-light-gold {
+  animation: twinkleLights 2.2s infinite ease-in-out;
+}
+.fairy-light-red {
+  animation: twinkleLightsRed 2.8s infinite ease-in-out;
+}
+.fairy-light-green {
+  animation: twinkleLightsGreen 2.5s infinite ease-in-out;
+}
+
+/* Christmas Gold Button Animation */
+@keyframes blinkXmasGoldAction {
+  0%, 100% {
+    transform: scale(1);
+    filter: brightness(1);
+    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7), 0 4px 18px rgba(212, 175, 55, 0.4);
+  }
+  15% {
+    transform: scale(1.025);
+    filter: brightness(1.22);
+    box-shadow: 0 0 0 5px rgba(244, 224, 123, 0.35), 0 0 24px rgba(212, 175, 55, 0.85), 0 6px 20px rgba(183, 28, 28, 0.35);
+  }
+  30% {
+    transform: scale(0.995);
+    filter: brightness(0.98);
+    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.1), 0 2px 10px rgba(212, 175, 55, 0.3);
+  }
+  45% {
+    transform: scale(1.035);
+    filter: brightness(1.28);
+    box-shadow: 0 0 0 7px rgba(244, 224, 123, 0.4), 0 0 30px rgba(212, 175, 55, 0.95), 0 8px 24px rgba(183, 28, 28, 0.45);
+  }
+  65% {
+    transform: scale(1.01);
+    filter: brightness(1.05);
+    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2), 0 4px 14px rgba(212, 175, 55, 0.4);
+  }
+}
+
+.btn-xmas-gold {
+  background: linear-gradient(135deg, #F4E07B 0%, #D4AF37 50%, #AA820A 100%);
+  color: #171717;
+  animation: blinkXmasGoldAction 1.6s infinite ease-in-out;
+  transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+  will-change: transform, filter, box-shadow;
+}
+
+.btn-xmas-gold:hover {
+  transform: translateY(-2px) scale(1.02);
+  filter: brightness(1.15);
+  box-shadow: 0 0 28px rgba(212, 175, 55, 0.9), 0 0 45px rgba(244, 224, 123, 0.6);
+}
+
+.btn-xmas-red {
+  background: linear-gradient(135deg, #D32F2F 0%, #B71C1C 60%, #8B0000 100%);
+  color: #FFFFFF;
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-xmas-red:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+  box-shadow: 0 0 24px rgba(183, 28, 28, 0.6), 0 0 12px rgba(212, 175, 55, 0.4);
+}
+
 /* Custom subtle scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #eff6ff;
+  background: #123B2A;
 }
 ::-webkit-scrollbar-thumb {
-  background: #93c5fd;
+  background: #D4AF37;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3b82f6;
+  background: #F4E07B;
 }
 
 /* High-Energy Blinking Action Button Keyframes */

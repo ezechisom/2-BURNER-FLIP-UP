@@ -1,7 +1,7 @@
 import React from 'react';
-import { Tag, Sparkles, CheckCircle, ArrowRight, Truck } from 'lucide-react';
+import { Tag, Sparkles, CheckCircle, ArrowRight, Truck, Gift } from 'lucide-react';
 import { LandingPageConfig } from '../types';
-import { formatNaira } from '../config';
+import { formatNaira, CHRISTMAS_CAMPAIGN, isChristmasCampaignActive } from '../config';
 
 interface PriceOfferCardsProps {
   config: LandingPageConfig;
@@ -9,213 +9,230 @@ interface PriceOfferCardsProps {
 }
 
 export const PriceOfferCards: React.FC<PriceOfferCardsProps> = ({ config, onSelectTier }) => {
-  const regular1 = 350000;
-  const regular2 = regular1 * 2;
-  const offer2 = config.PRICE_FOR_2 * 2;
-  const save2 = regular2 - offer2;
+  const isPromo = isChristmasCampaignActive();
+  const price1 = isPromo ? CHRISTMAS_CAMPAIGN.PROMO_PRICE : CHRISTMAS_CAMPAIGN.STANDARD_PRICE;
+  const originalPrice1 = CHRISTMAS_CAMPAIGN.ORIGINAL_PRICE; // 280,000
+  const regularBase = 350000;
 
-  const regular3 = regular1 * 3;
-  const offer3 = config.PRICE_FOR_3_PLUS * 3;
-  const save3 = regular3 - offer3;
+  const price2Each = isPromo ? CHRISTMAS_CAMPAIGN.PROMO_PRICE_FOR_2 : CHRISTMAS_CAMPAIGN.STANDARD_PRICE_FOR_2;
+  const total2 = price2Each * 2;
+  const originalTotal2 = 280000 * 2;
+  const save2 = originalTotal2 - total2;
+
+  const price3Each = isPromo ? CHRISTMAS_CAMPAIGN.PROMO_PRICE_FOR_3_PLUS : CHRISTMAS_CAMPAIGN.STANDARD_PRICE_FOR_3_PLUS;
+  const total3 = price3Each * 3;
+  const originalTotal3 = 280000 * 3;
+  const save3 = originalTotal3 - total3;
 
   return (
-    <section id="pricing-section" className="py-12 sm:py-16 px-4 bg-slate-50 text-slate-900 border-b border-blue-100">
+    <section id="pricing-section" className="py-14 sm:py-20 px-4 bg-slate-50 text-slate-900 border-b-2 border-[#D4AF37]/30">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center max-w-2xl mx-auto mb-10">
-          <div className="inline-flex items-center gap-1.5 bg-blue-100 border border-blue-200 text-blue-700 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-3">
-            <Tag className="w-3.5 h-3.5" />
-            <span>Direct Promotional Tiers</span>
+        
+        {/* Section Title */}
+        <div className="text-center max-w-2xl mx-auto mb-12">
+          <div className="inline-flex items-center gap-1.5 bg-[#B71C1C] border border-[#D4AF37] text-white text-xs font-black uppercase tracking-wider px-3.5 py-1 rounded-full mb-3 shadow-sm">
+            <Gift className="w-3.5 h-3.5 text-[#F4E07B]" />
+            <span>🎄 CHRISTMAS MEGA SALES PACKAGES</span>
           </div>
           <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-3">
-            GET MORE VALUE WHEN YOU BUY MORE
+            CHOOSE YOUR CHRISTMAS MEGA DEAL
           </h2>
-          <p className="text-slate-600 text-sm sm:text-base">
-            Choose your package below. The more units you order, the lower the price per cooker. Perfect for multi-home setups, family gifts, or contractors.
+          <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+            Take advantage of exclusive holiday pricing before December 20. Free nationwide delivery and inspection on arrival across all Nigerian states.
           </p>
         </div>
 
         {/* 3 Pricing Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch">
           
-          {/* 1 UNIT CARD */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 flex flex-col justify-between hover:border-blue-300 transition-all shadow-sm hover:shadow-md">
+          {/* 1 UNIT CARD (SINGLE CHRISTMAS DEAL) */}
+          <div className="bg-white border-2 border-slate-200 hover:border-[#D4AF37] rounded-3xl p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 shadow-sm hover:shadow-xl relative">
             <div>
               <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-600 bg-slate-100 px-2.5 py-1 rounded">
-                  Starter Pack
+                <span className="text-xs font-black uppercase tracking-wider text-[#123B2A] bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-md">
+                  Christmas Single Deal
                 </span>
-                <span className="text-xs text-slate-400 font-medium line-through">Reg. {formatNaira(regular1)}</span>
+                <span className="text-xs text-slate-400 font-bold line-through">
+                  Reg. {formatNaira(originalPrice1)}
+                </span>
               </div>
 
-              <h3 className="text-xl font-bold text-slate-900 mb-1">1 UNIT</h3>
-              <p className="text-xs text-slate-500 mb-6">Complete 5-Burner Hybrid Cooktop (90 × 51 cm)</p>
+              <h3 className="text-xl font-black text-slate-900 mb-1">1 UNIT</h3>
+              <p className="text-xs text-slate-500 mb-6">5-in-1 Built-In Gas + Electric Cooktop (90 × 51 cm)</p>
 
               <div className="mb-6 pb-6 border-b border-slate-100">
-                <div className="text-3xl font-extrabold text-slate-900">
-                  {formatNaira(config.NORMAL_PRICE)}
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl sm:text-4xl font-black text-[#B71C1C]">
+                    {formatNaira(price1)}
+                  </span>
+                  <span className="text-xs sm:text-sm text-slate-400 line-through font-bold">
+                    {formatNaira(originalPrice1)}
+                  </span>
                 </div>
-                <span className="text-xs text-slate-500">Single unit promotional price</span>
+                <div className="mt-1.5 inline-block bg-[#123B2A] text-[#F4E07B] text-[11px] font-black uppercase px-2 py-0.5 rounded">
+                  SAVE ₦20,000 THIS CHRISTMAS
+                </div>
               </div>
 
               <ul className="space-y-3 text-xs sm:text-sm text-slate-600 mb-6">
                 <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-blue-600 shrink-0" />
-                  <span>4 Gas + 1 Central 2000W Electric</span>
+                  <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>4 Gas Burners + 1 Central 2000W Electric</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-blue-600 shrink-0" />
-                  <span>Digital LED timer with auto-off</span>
+                  <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Digital LED timer with auto power cutoff</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-blue-600 shrink-0" />
-                  <span>90° Flip-up burners (1-wipe clean)</span>
+                  <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>90° Flip-up burners for 10-second clean</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-blue-600 shrink-0" />
-                  <span>Heavy-duty tempered glass & cast trivets</span>
+                  <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Free nationwide delivery + 12-month warranty</span>
                 </li>
               </ul>
             </div>
 
             <button
               onClick={() => onSelectTier(1)}
-              className="btn-glow w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-3 px-4 rounded-xl transition-all flex flex-col items-center justify-center cursor-pointer shadow-md"
+              className="btn-xmas-gold w-full font-black py-3.5 px-4 rounded-xl transition-all flex flex-col items-center justify-center cursor-pointer shadow-md border border-[#D4AF37]"
             >
-              <div className="flex items-center gap-2 text-sm font-black">
-                <span>ORDER NOW (1 UNIT)</span>
-                <ArrowRight className="w-4 h-4" />
+              <div className="flex items-center gap-2 text-sm font-black text-[#171717]">
+                <span>ORDER 1 UNIT — {formatNaira(price1)}</span>
+                <ArrowRight className="w-4 h-4 stroke-[3]" />
               </div>
-              <div className="text-[10px] text-blue-100 font-bold uppercase tracking-wider flex items-center gap-1 mt-0.5">
-                <Truck className="w-3 h-3" /> FREE DELIVERY NATIONWIDE
+              <div className="text-[10px] text-slate-900/90 font-bold uppercase tracking-wider flex items-center gap-1 mt-0.5">
+                <Truck className="w-3 h-3" /> PAY ON ARRIVAL • FREE DELIVERY
               </div>
             </button>
           </div>
 
-          {/* 2 UNITS CARD */}
-          <div className="bg-white border-2 border-blue-200 rounded-2xl p-6 flex flex-col justify-between hover:border-blue-400 transition-all shadow-md relative">
-            <div className="absolute -top-3 right-6 bg-emerald-600 text-white text-[11px] font-black uppercase tracking-wider px-3 py-0.5 rounded-full shadow">
-              SAVE {formatNaira(save2)}
+          {/* 2 UNITS CARD (DUAL PACK - EXTRA VALUE) */}
+          <div className="bg-white border-2 border-[#123B2A] rounded-3xl p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 shadow-md hover:shadow-xl relative">
+            <div className="absolute -top-3.5 right-6 bg-[#B71C1C] border border-[#D4AF37] text-white text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full shadow">
+              SAVE {formatNaira(save2 + 40000)} TOTAL
             </div>
 
             <div>
               <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-bold uppercase tracking-wider text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-1 rounded">
-                  Dual Pack
+                <span className="text-xs font-black uppercase tracking-wider text-[#123B2A] bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-md">
+                  Christmas Dual Pack
                 </span>
-                <span className="text-xs text-emerald-600 font-semibold">₦5,000 off per unit</span>
+                <span className="text-xs text-emerald-700 font-bold">₦5,000 extra off / unit</span>
               </div>
 
-              <h3 className="text-xl font-bold text-slate-900 mb-1">2 UNITS</h3>
-              <p className="text-xs text-slate-500 mb-6">2 Complete 5-Burner Hybrid Cooktops</p>
+              <h3 className="text-xl font-black text-slate-900 mb-1">2 UNITS</h3>
+              <p className="text-xs text-slate-500 mb-6">2 Complete 5-in-1 Hybrid Cooktops (Great for Gifting)</p>
 
               <div className="mb-6 pb-6 border-b border-slate-100">
-                <div className="text-3xl font-extrabold text-blue-700">
-                  {formatNaira(config.PRICE_FOR_2)} <span className="text-sm font-medium text-slate-500">EACH</span>
+                <div className="text-3xl sm:text-4xl font-black text-[#123B2A]">
+                  {formatNaira(price2Each)} <span className="text-xs sm:text-sm font-normal text-slate-500">EACH</span>
                 </div>
                 <div className="mt-1 flex items-center gap-2">
-                  <span className="text-xs font-bold text-slate-700">TOTAL: {formatNaira(offer2)}</span>
-                  <span className="text-xs text-slate-400 line-through">{formatNaira(regular2)}</span>
+                  <span className="text-xs font-black text-slate-800">TOTAL: {formatNaira(total2)}</span>
+                  <span className="text-xs text-slate-400 line-through">{formatNaira(originalTotal2)}</span>
                 </div>
               </div>
 
               <ul className="space-y-3 text-xs sm:text-sm text-slate-600 mb-6">
                 <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-blue-600 shrink-0" />
-                  <span>2x Complete 5-burner hybrid cooktops</span>
+                  <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>2x Complete 5-in-1 Hybrid Cooktops</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-blue-600 shrink-0" />
-                  <span>Digital timer & auto-off on both units</span>
+                  <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Digital timer & auto-off on both cooktops</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-blue-600 shrink-0" />
+                  <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
                   <span>90° Flip-up burners on both units</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-emerald-600 font-semibold shrink-0" />
-                  <span>Instant {formatNaira(save2)} package savings</span>
+                  <CheckCircle className="w-4 h-4 text-emerald-600 font-bold shrink-0" />
+                  <span>Additional bulk discount applied automatically</span>
                 </li>
               </ul>
             </div>
 
             <button
               onClick={() => onSelectTier(2)}
-              className="btn-glow w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-black py-3 px-4 rounded-xl transition-all shadow-md flex flex-col items-center justify-center cursor-pointer"
+              className="btn-xmas-gold w-full font-black py-3.5 px-4 rounded-xl transition-all shadow-md flex flex-col items-center justify-center cursor-pointer border border-[#D4AF37]"
             >
-              <div className="flex items-center gap-2 text-sm font-black">
-                <span>ORDER NOW (2 UNITS)</span>
-                <ArrowRight className="w-4 h-4" />
+              <div className="flex items-center gap-2 text-sm font-black text-[#171717]">
+                <span>ORDER 2 UNITS — {formatNaira(total2)}</span>
+                <ArrowRight className="w-4 h-4 stroke-[3]" />
               </div>
-              <div className="text-[10px] text-blue-100 font-bold uppercase tracking-wider flex items-center gap-1 mt-0.5">
-                <Truck className="w-3 h-3" /> FREE DELIVERY NATIONWIDE
+              <div className="text-[10px] text-slate-900/90 font-bold uppercase tracking-wider flex items-center gap-1 mt-0.5">
+                <Truck className="w-3 h-3" /> FREE NATIONWIDE DELIVERY
               </div>
             </button>
           </div>
 
-          {/* 3+ UNITS CARD (BEST VALUE) */}
-          <div className="bg-gradient-to-b from-blue-900 to-blue-950 text-white border-2 border-blue-400 rounded-2xl p-6 flex flex-col justify-between shadow-xl relative">
-            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-amber-400 text-slate-950 text-xs font-black uppercase tracking-widest px-4 py-1 rounded-full shadow-lg flex items-center gap-1.5">
+          {/* 3+ UNITS CARD (WHOLESALE / ESTATE PACK - BEST VALUE) */}
+          <div className="bg-gradient-to-b from-[#123B2A] via-[#171717] to-[#0A2218] text-white border-2 border-[#D4AF37] rounded-3xl p-6 sm:p-7 flex flex-col justify-between shadow-2xl relative">
+            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#D4AF37] text-[#171717] text-xs font-black uppercase tracking-widest px-4 py-1 rounded-full shadow-lg flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 fill-current" />
-              BEST VALUE
+              BEST CHRISTMAS VALUE
             </div>
 
             <div>
-              <div className="flex justify-between items-center mb-4 mt-1">
-                <span className="text-xs font-bold uppercase tracking-wider text-sky-200 bg-blue-800/80 border border-blue-400/40 px-2.5 py-1 rounded">
-                  Wholesale / Family
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-xs font-black uppercase tracking-wider text-[#F4E07B] bg-[#171717] border border-[#D4AF37]/50 px-3 py-1 rounded-md">
+                  Wholesale Pack
                 </span>
-                <span className="text-xs text-emerald-300 font-bold">SAVE {formatNaira(save3)}+</span>
+                <span className="text-xs text-[#F4E07B] font-bold">₦10,000 off / unit</span>
               </div>
 
-              <h3 className="text-xl font-bold text-white mb-1">3+ UNITS</h3>
-              <p className="text-xs text-blue-200 mb-6">3 or more Complete 5-Burner Cooktops</p>
+              <h3 className="text-xl font-black text-white mb-1">3 OR MORE UNITS</h3>
+              <p className="text-xs text-slate-300 mb-6">Ideal for Multiple Residences, Family Gifts, or Builders</p>
 
-              <div className="mb-6 pb-6 border-b border-blue-800/70">
-                <div className="text-3xl font-extrabold text-amber-300">
-                  {formatNaira(config.PRICE_FOR_3_PLUS)} <span className="text-sm font-medium text-blue-200">EACH</span>
+              <div className="mb-6 pb-6 border-b border-[#D4AF37]/30">
+                <div className="text-3xl sm:text-4xl font-black text-[#F4E07B]">
+                  {formatNaira(price3Each)} <span className="text-xs sm:text-sm font-normal text-slate-300">EACH</span>
                 </div>
                 <div className="mt-1 flex items-center gap-2">
-                  <span className="text-xs font-bold text-white">TOTAL: {formatNaira(offer3)} (for 3 units)</span>
-                  <span className="text-xs text-blue-300/70 line-through">{formatNaira(regular3)}</span>
+                  <span className="text-xs font-black text-slate-200">TOTAL FOR 3: {formatNaira(total3)}</span>
+                  <span className="text-xs text-slate-400 line-through">{formatNaira(originalTotal3)}</span>
                 </div>
-                <span className="text-[11px] text-blue-200 block mt-0.5">Calculated dynamically for 3, 4, 5+ units</span>
               </div>
 
-              <ul className="space-y-3 text-xs sm:text-sm text-blue-100 mb-6">
+              <ul className="space-y-3 text-xs sm:text-sm text-slate-200 mb-6">
                 <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-sky-300 shrink-0" />
-                  <span>3+ Executive 5-burner hybrid units</span>
+                  <CheckCircle className="w-4 h-4 text-[#F4E07B] shrink-0" />
+                  <span>3+ Complete 5-in-1 Hybrid Cooktops</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-sky-300 shrink-0" />
-                  <span>Dual-fuel (4 gas + 1 electric) per unit</span>
+                  <CheckCircle className="w-4 h-4 text-[#F4E07B] shrink-0" />
+                  <span>Maximum wholesale Christmas pricing</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-sky-300 shrink-0" />
-                  <span>Priority nationwide dispatch & handling</span>
+                  <CheckCircle className="w-4 h-4 text-[#F4E07B] shrink-0" />
+                  <span>Direct priority dispatch across Nigeria</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-amber-300 font-semibold shrink-0" />
-                  <span>Maximum bulk savings applied</span>
+                  <CheckCircle className="w-4 h-4 text-[#F4E07B] shrink-0" />
+                  <span>12 Months warranty on every unit</span>
                 </li>
               </ul>
             </div>
 
             <button
               onClick={() => onSelectTier(3)}
-              className="btn-glow-amber w-full bg-amber-400 hover:bg-amber-300 active:bg-amber-500 text-slate-950 font-black py-3 px-4 rounded-xl transition-all shadow-xl flex flex-col items-center justify-center cursor-pointer"
+              className="btn-xmas-gold w-full font-black py-4 px-4 rounded-xl transition-all shadow-xl flex flex-col items-center justify-center cursor-pointer border border-[#D4AF37]"
             >
-              <div className="flex items-center gap-2 text-sm sm:text-base font-black">
-                <span>ORDER NOW (3+ UNITS)</span>
-                <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+              <div className="flex items-center gap-2 text-sm font-black text-[#171717]">
+                <span>ORDER 3+ UNITS ({formatNaira(price3Each)} EA)</span>
+                <ArrowRight className="w-4 h-4 stroke-[3]" />
               </div>
-              <div className="text-[10px] font-black text-slate-950 uppercase tracking-wider flex items-center gap-1 mt-0.5">
-                <Truck className="w-3 h-3" /> FREE DELIVERY NATIONWIDE
+              <div className="text-[10px] text-slate-900 font-bold uppercase tracking-wider flex items-center gap-1 mt-0.5">
+                <Truck className="w-3 h-3" /> PRIORITY NATIONWIDE DISPATCH
               </div>
             </button>
           </div>
 
         </div>
+
       </div>
     </section>
   );
