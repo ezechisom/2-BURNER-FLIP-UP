@@ -3,6 +3,7 @@ import { Check, MessageCircle, ArrowRight, Truck, PackageCheck, PhoneCall, Shiel
 import { LandingPageConfig } from '../types';
 import { formatNaira, generateWhatsAppLink, CHRISTMAS_CAMPAIGN, isChristmasCampaignActive } from '../config';
 import { ChristmasCountdown } from './ChristmasCountdown';
+import { ChristmasHangingBalls } from './ChristmasHangingBalls';
 
 interface HeroSectionProps {
   config: LandingPageConfig;
@@ -91,6 +92,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
       {/* Subtle ambient warm golden glow */}
       <div className="absolute top-12 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#D4AF37]/10 blur-3xl pointer-events-none rounded-full z-0" />
+
+      {/* Colourful Christmas Hanging Balls Clustered in Top Corners */}
+      <ChristmasHangingBalls variant="cluster-left" className="absolute top-0 left-2 hidden md:block" />
+      <ChristmasHangingBalls variant="cluster-right" className="absolute top-0 right-2 hidden md:block" />
 
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Top Campaign Ribbon Kicker */}

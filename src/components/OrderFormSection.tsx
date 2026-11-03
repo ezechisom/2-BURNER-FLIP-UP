@@ -10,6 +10,7 @@ import {
   ALTERNATIVE_PRODUCT_CONFIG,
   TWO_BURNER_CONFIG
 } from '../config';
+import { ChristmasHangingBalls } from './ChristmasHangingBalls';
 
 interface OrderFormSectionProps {
   config: LandingPageConfig;
@@ -265,7 +266,7 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
       itemsText = `${pricing.qty2Burner} unit(s) of 2-Flip-Up Double Gas Burner (75 × 45 cm)`;
     }
 
-    const msg = `Hello! I just placed an order on your website.\n\nOrder ID: #${'ORD-' + Date.now().toString().slice(-6)}\nProduct: ${itemsText}\nTotal Payable: ${formatNaira(pricing.total)}\nName: ${formData.fullName}\nPhone: ${formData.phoneNumber}\nDelivery Destination: ${formData.deliveryAddress}, ${formData.city}, ${formData.state}\n\nPlease confirm my delivery dispatch.`;
+    const msg = `Hello! I just placed an order on your website.\n\n🎄 Merry Christmas in Advance! 🎅✨\n\nOrder ID: #${'ORD-' + Date.now().toString().slice(-6)}\nProduct: ${itemsText}\nTotal Payable: ${formatNaira(pricing.total)}\nName: ${formData.fullName}\nPhone: ${formData.phoneNumber}\nDelivery Destination: ${formData.deliveryAddress}, ${formData.city}, ${formData.state}\n\nPlease confirm my delivery dispatch.`;
     return `https://wa.me/${cleanNumber}?text=${encodeURIComponent(msg)}`;
   };
 
@@ -275,8 +276,12 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
   };
 
   return (
-    <section id="order-form-section" className="py-14 sm:py-20 px-4 bg-slate-50 text-slate-900 relative">
-      <div className="max-w-3xl mx-auto">
+    <section id="order-form-section" className="py-14 sm:py-20 px-4 bg-slate-50 text-slate-900 relative overflow-hidden">
+      {/* Colourful Festive Christmas Hanging Balls on Corners */}
+      <ChristmasHangingBalls variant="cluster-left" className="absolute top-2 left-2 hidden md:block opacity-85" />
+      <ChristmasHangingBalls variant="cluster-right" className="absolute top-2 right-2 hidden md:block opacity-85" />
+
+      <div className="max-w-3xl mx-auto relative z-10">
         
         {/* Section Header */}
         <div className="text-center mb-10">
@@ -295,19 +300,38 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
         {/* ORDER SUCCESS DISPLAY */}
         {isSubmitted ? (
           <div className="bg-white border-2 border-emerald-500 rounded-3xl p-6 sm:p-10 shadow-2xl text-center animate-in fade-in zoom-in duration-300">
-            <div className="w-16 h-16 rounded-full bg-emerald-100 border-2 border-emerald-500 text-emerald-600 flex items-center justify-center mx-auto mb-5">
+            <div className="w-16 h-16 rounded-full bg-emerald-100 border-2 border-emerald-500 text-emerald-600 flex items-center justify-center mx-auto mb-4">
               <CheckCircle2 className="w-9 h-9" />
             </div>
 
             <span className="text-xs font-mono font-bold text-emerald-700 uppercase tracking-widest block mb-1">
               Order Registered Successfully
             </span>
-            <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-3">
+            <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-4">
               ORDER RECEIVED!
             </h3>
 
-            <p className="text-slate-600 text-sm sm:text-base max-w-lg mx-auto mb-6 leading-relaxed">
-              Thank you for your order. Our team will contact you shortly on your phone number to confirm your order details and delivery dispatch timeline.
+            {/* HEARTFELT CHRISTMAS IN ADVANCE GREETING CARD */}
+            <div className="mb-6 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#B71C1C] via-[#8B0000] to-[#123B2A] text-white border-2 border-[#D4AF37] shadow-xl relative overflow-hidden text-center">
+              <div className="absolute top-0 right-0 transform translate-x-4 -translate-y-4 w-28 h-28 bg-[#D4AF37]/20 rounded-full blur-xl pointer-events-none" />
+              <div className="relative z-10 flex flex-col items-center">
+                <div className="inline-flex items-center gap-1.5 bg-[#D4AF37] text-[#171717] px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-2 shadow-md">
+                  <span>🎄</span>
+                  <span>SEASON'S GREETINGS</span>
+                  <span>✨</span>
+                </div>
+                <h4 className="text-xl sm:text-2xl font-black text-[#F4E07B] tracking-tight uppercase mb-1.5 flex items-center justify-center gap-2">
+                  <span>MERRY CHRISTMAS IN ADVANCE!</span>
+                  <span className="text-2xl">🎅🎁</span>
+                </h4>
+                <p className="text-xs sm:text-sm text-slate-100 max-w-md leading-relaxed font-medium">
+                  Thank you for celebrating with us during our <strong>Christmas Mega Sales 2026</strong>! We pray this holiday season fills your home with immense joy, peace, sound health, and unforgettable festive meals cooked with your brand-new premium cooktop!
+                </p>
+              </div>
+            </div>
+
+            <p className="text-slate-600 text-xs sm:text-sm max-w-lg mx-auto mb-6 leading-relaxed">
+              Our dispatch logistics coordinator will contact you shortly on your phone number to confirm your order details and delivery dispatch timeline.
             </p>
 
             {/* Order Summary Receipt Box */}

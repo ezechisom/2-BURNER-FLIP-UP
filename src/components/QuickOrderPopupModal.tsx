@@ -12,11 +12,13 @@ import {
   PhoneCall,
   Tag,
   Check,
-  Info
+  Info,
+  MessageCircle
 } from 'lucide-react';
 import { LandingPageConfig, CookerModel } from '../types';
 import {
   formatNaira,
+  formatWhatsAppNumber,
   NIGERIAN_STATES,
   getStateDeliveryTimeline,
   calculateCombinedPricing,
@@ -219,6 +221,12 @@ export const QuickOrderPopupModal: React.FC<QuickOrderPopupModalProps> = ({
 
   const timeline = getStateDeliveryTimeline(formData.state);
 
+  const quickWhatsAppUrl = () => {
+    const cleanNumber = formatWhatsAppNumber(config.WHATSAPP_NUMBER);
+    const msg = `Hello! I just placed a Quick Order on your website.\n\n🎄 Merry Christmas in Advance! 🎅✨\n\nProduct: ${pricing.shortName}\nTotal Payable: ${formatNaira(pricing.total)}\nName: ${formData.fullName}\nPhone: ${formData.phoneNumber}\nAddress: ${formData.deliveryAddress}, ${formData.city || formData.state}, ${formData.state}\n\nPlease confirm my delivery dispatch.`;
+    return `https://wa.me/${cleanNumber}?text=${encodeURIComponent(msg)}`;
+  };
+
   return (
     <div
       role="dialog"
@@ -272,6 +280,23 @@ export const QuickOrderPopupModal: React.FC<QuickOrderPopupModalProps> = ({
               <h3 className="text-xl sm:text-2xl font-black text-slate-900">
                 QUICK ORDER RECEIVED!
               </h3>
+
+              {/* FESTIVE CHRISTMAS GREETING IN QUICK ORDER THANK YOU */}
+              <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-[#B71C1C] via-[#8B0000] to-[#123B2A] text-white border-2 border-[#D4AF37] shadow-lg text-center max-w-sm mx-auto">
+                <div className="inline-flex items-center gap-1 bg-[#D4AF37] text-[#171717] px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider mb-1 shadow-sm">
+                  <span>🎄</span>
+                  <span>SEASON'S GREETINGS</span>
+                  <span>✨</span>
+                </div>
+                <h4 className="text-base sm:text-lg font-black text-[#F4E07B] uppercase mb-1 flex items-center justify-center gap-1.5">
+                  <span>MERRY CHRISTMAS IN ADVANCE!</span>
+                  <span>🎅🎁</span>
+                </h4>
+                <p className="text-[11px] sm:text-xs text-slate-100 leading-snug">
+                  Wishing you and your family immense joy, happiness, and delicious festive cooking with your new cooktop!
+                </p>
+              </div>
+
               <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
                 Thank you <strong>{formData.fullName}</strong>! Our dispatch coordinator will call you on{' '}
                 <strong>{formData.phoneNumber}</strong> shortly to confirm your delivery to{' '}
@@ -296,13 +321,25 @@ export const QuickOrderPopupModal: React.FC<QuickOrderPopupModalProps> = ({
                   <span className="text-emerald-700">{formatNaira(pricing.total)}</span>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={onClose}
-                className="btn-glow px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase cursor-pointer"
-              >
-                Close & Return to Page
-              </button>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-2 pt-1 max-w-sm mx-auto">
+                <a
+                  href={quickWhatsAppUrl()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-glow-emerald w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase shadow-md transition-all"
+                >
+                  <MessageCircle className="w-4 h-4 fill-current" />
+                  <span>Confirm on WhatsApp</span>
+                </a>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="w-full sm:w-auto px-5 py-3 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs uppercase cursor-pointer transition-colors"
+                >
+                  Close
+                </button>
+              </div>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-3.5">

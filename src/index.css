@@ -318,5 +318,54 @@
   animation-play-state: paused;
 }
 
+/* Christmas Hanging Baubles Pendulum Sway Animation */
+@keyframes xmasBaubleSway1 {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(3.5deg);
+  }
+  75% {
+    transform: rotate(-3.5deg);
+  }
+}
 
+@keyframes xmasBaubleSway2 {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  30% {
+    transform: rotate(-4.2deg);
+  }
+  70% {
+    transform: rotate(4.2deg);
+  }
+}
 
+@keyframes xmasBaubleSway3 {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(2.8deg);
+  }
+  80% {
+    transform: rotate(-2.8deg);
+  }
+}
+
+.xmas-bauble-sway-1 {
+  transform-origin: top center;
+  animation: xmasBaubleSway1 4.2s ease-in-out infinite;
+}
+
+.xmas-bauble-sway-2 {
+  transform-origin: top center;
+  animation: xmasBaubleSway2 3.6s ease-in-out infinite;
+}
+
+.xmas-bauble-sway-3 {
+  transform-origin: top center;
+  animation: xmasBaubleSway3 4.8s ease-in-out infinite;
+}

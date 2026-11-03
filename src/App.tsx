@@ -253,7 +253,7 @@ export default function App() {
     const cleanNumber = formatWhatsAppNumber(config.WHATSAPP_NUMBER);
     if (lastOrderDetails) {
       const prodName = lastOrderDetails.productName || (lastOrderDetails.productModel === '5-burner' ? '5-Burner Built-In Gas + Electric Cooktop' : '2-Flip-Up Double Gas Burner');
-      const msg = `Hello! I just completed the order form for ${lastOrderDetails.quantity} unit(s) of ${prodName} on your website.\n\nOrder ID: #${lastOrderDetails.orderId}\nName: ${lastOrderDetails.fullName}\nPhone: ${lastOrderDetails.phoneNumber}\nAddress: ${lastOrderDetails.city}, ${lastOrderDetails.state}\nTotal: ${formatNaira(lastOrderDetails.total)}\n\nPlease confirm my order dispatch.`;
+      const msg = `Hello! I just completed the order form for ${lastOrderDetails.quantity} unit(s) of ${prodName} on your website.\n\n🎄 Merry Christmas in Advance! 🎅✨\n\nOrder ID: #${lastOrderDetails.orderId}\nName: ${lastOrderDetails.fullName}\nPhone: ${lastOrderDetails.phoneNumber}\nAddress: ${lastOrderDetails.city}, ${lastOrderDetails.state}\nTotal: ${formatNaira(lastOrderDetails.total)}\n\nPlease confirm my order dispatch.`;
       return `https://wa.me/${cleanNumber}?text=${encodeURIComponent(msg)}`;
     }
     return generateWhatsAppLink(
@@ -449,7 +449,7 @@ export default function App() {
         >
           <div className="bg-white text-slate-800 text-xs font-bold py-1.5 px-3 rounded-full shadow-lg border border-emerald-200 flex items-center gap-1.5 shadow-slate-900/10">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-            <span>Order Placed! Click to confirm on WhatsApp</span>
+            <span>🎄 Merry Christmas in Advance! Click to confirm on WhatsApp</span>
           </div>
           <a
             href={whatsappConfirmUrl}
