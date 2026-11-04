@@ -48,7 +48,7 @@ export const INITIAL_CONFIG: LandingPageConfig = {
   META_PIXEL_ID: "947636671276929", // Official Meta Pixel ID for tracking
   WHATSAPP_NUMBER: "09136827730", // Configurable seller WhatsApp
   PHONE_NUMBER: "09136827730",    // Configurable seller Phone
-  DELIVERY_INFORMATION: "FREE NATIONWIDE DELIVERY across all 36 Nigerian states and FCT Abuja. Delivery typically takes 1 to 3 business days. Our dispatch rider contacts you prior to arrival.",
+  DELIVERY_INFORMATION: "FREE NATIONWIDE DELIVERY across all 36 Nigerian states and FCT Abuja (Standard station/hub pickup is 100% Free; optional direct doorstep home delivery attracts extra ₦5,000 logistics). Delivery typically takes 1 to 3 business days. Our dispatch rider contacts you prior to arrival.",
   PAYMENT_INFORMATION: "PAYMENT ON DELIVERY available nationwide. Inspect your cooker physically upon delivery before making payment via cash or instant bank transfer.",
   RETURN_POLICY: "Every unit undergoes physical inspection prior to dispatch. If you notice any transit defect upon unboxing, contact our customer support team immediately for prompt resolution.",
   WARRANTY_INFORMATION: "12 MONTHS OFFICIAL WARRANTY included. Complete coverage with free replacement and repair guarantee against all manufacturer defects.",

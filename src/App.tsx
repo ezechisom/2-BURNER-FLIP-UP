@@ -105,6 +105,8 @@ export default function App() {
     orderId: string;
     productModel?: CookerModel;
     productName?: string;
+    deliveryOption?: string;
+    deliveryFee?: number;
   } | null>(() => {
     try {
       const saved = sessionStorage.getItem('burner_last_order');
@@ -177,6 +179,8 @@ export default function App() {
     orderId: string;
     productModel?: CookerModel;
     productName?: string;
+    deliveryOption?: string;
+    deliveryFee?: number;
   }) => {
     setHasPlacedOrder(true);
     setLastOrderDetails(details);
@@ -253,7 +257,10 @@ export default function App() {
     const cleanNumber = formatWhatsAppNumber(config.WHATSAPP_NUMBER);
     if (lastOrderDetails) {
       const prodName = lastOrderDetails.productName || (lastOrderDetails.productModel === '5-burner' ? '5-Burner Built-In Gas + Electric Cooktop' : '2-Flip-Up Double Gas Burner');
-      const msg = `Hello! I just completed the order form for ${lastOrderDetails.quantity} unit(s) of ${prodName} on your website.\n\n🎄 Merry Christmas in Advance! 🎅✨\n\nOrder ID: #${lastOrderDetails.orderId}\nName: ${lastOrderDetails.fullName}\nPhone: ${lastOrderDetails.phoneNumber}\nAddress: ${lastOrderDetails.city}, ${lastOrderDetails.state}\nTotal: ${formatNaira(lastOrderDetails.total)}\n\nPlease confirm my order dispatch.`;
+      const deliveryText = lastOrderDetails.deliveryFee && lastOrderDetails.deliveryFee > 0
+        ? 'Direct Doorstep Home Delivery (+₦5,000)'
+        : 'Standard Delivery (FREE Nationwide)';
+      const msg = `Hello! I just completed the order form for ${lastOrderDetails.quantity} unit(s) of ${prodName} on your website.\n\n🎄 Merry Christmas in Advance! 🎅✨\n\nOrder ID: #${lastOrderDetails.orderId}\nName: ${lastOrderDetails.fullName}\nPhone: ${lastOrderDetails.phoneNumber}\nAddress: ${lastOrderDetails.city}, ${lastOrderDetails.state}\nDelivery Option: ${deliveryText}\nTotal Payable on Delivery: ${formatNaira(lastOrderDetails.total)}\n\nPlease confirm my order dispatch.`;
       return `https://wa.me/${cleanNumber}?text=${encodeURIComponent(msg)}`;
     }
     return generateWhatsAppLink(

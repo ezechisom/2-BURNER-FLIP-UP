@@ -42,6 +42,8 @@ export interface LandingPageConfig {
   FAQS: FAQItem[];
 }
 
+export type DeliveryOptionType = 'standard' | 'home';
+
 export interface OrderFormData {
   fullName: string;
   phoneNumber: string;
@@ -54,5 +56,8 @@ export interface OrderFormData {
   productModel?: CookerModel;
   qty2Burner?: number;
   qty5Burner?: number;
+  deliveryOption?: DeliveryOptionType;
+  deliveryFee?: number;
+  motorPark?: string;
 }
 

@@ -13,9 +13,10 @@ import {
   Tag,
   Check,
   Info,
-  MessageCircle
+  MessageCircle,
+  Home
 } from 'lucide-react';
-import { LandingPageConfig, CookerModel } from '../types';
+import { LandingPageConfig, CookerModel, DeliveryOptionType } from '../types';
 import {
   formatNaira,
   formatWhatsAppNumber,
@@ -40,6 +41,8 @@ interface QuickOrderPopupModalProps {
     orderId: string;
     productModel?: CookerModel;
     productName?: string;
+    deliveryOption?: DeliveryOptionType;
+    deliveryFee?: number;
   }) => void;
   onView2BurnerDetails?: () => void;
 }
@@ -57,12 +60,14 @@ export const QuickOrderPopupModal: React.FC<QuickOrderPopupModalProps> = ({
   const [qty2Burner, setQty2Burner] = useState<number>(1);
   const [includeAlternativeIn5Burner, setIncludeAlternativeIn5Burner] = useState<boolean>(false);
   const [include5BurnerIn2Burner, setInclude5BurnerIn2Burner] = useState<boolean>(false);
+  const [deliveryOption, setDeliveryOption] = useState<DeliveryOptionType>('standard');
 
   const [formData, setFormData] = useState({
     fullName: '',
     phoneNumber: '',
     deliveryAddress: '',
     city: '',
+    motorPark: '',
     state: 'Lagos'
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -97,6 +102,8 @@ export const QuickOrderPopupModal: React.FC<QuickOrderPopupModalProps> = ({
   }
 
   const pricing = calculateCombinedPricing(effectiveMode, effectiveQty2, effectiveQty5, config);
+  const deliveryFee = deliveryOption === 'home' ? 5000 : 0;
+  const finalTotal = pricing.total + deliveryFee;
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -117,12 +124,20 @@ export const QuickOrderPopupModal: React.FC<QuickOrderPopupModalProps> = ({
       setErrorMsg('Please enter your active phone number.');
       return;
     }
-    if (!formData.deliveryAddress.trim()) {
-      setErrorMsg('Please provide your complete delivery street address and city/town.');
-      return;
-    }
     if (!formData.state) {
       setErrorMsg('Please select your state.');
+      return;
+    }
+    if (!formData.city.trim()) {
+      setErrorMsg('Please enter your city or town.');
+      return;
+    }
+    if (deliveryOption === 'home' && !formData.deliveryAddress.trim()) {
+      setErrorMsg('Please provide your complete doorstep delivery street address.');
+      return;
+    }
+    if (deliveryOption === 'standard' && (!formData.motorPark || !formData.motorPark.trim())) {
+      setErrorMsg('Please provide your preferred motor park or bus terminal for pickup.');
       return;
     }
 
@@ -151,12 +166,19 @@ export const QuickOrderPopupModal: React.FC<QuickOrderPopupModalProps> = ({
           unitPrice5Burner: pricing.unitPrice5Burner,
           unitPrice2Burner: pricing.unitPrice2Burner,
           comboDiscount: pricing.comboDiscount,
-          totalPrice: pricing.total,
-          fullName: formData.fullName,
-          phoneNumber: formData.phoneNumber,
-          deliveryAddress: formData.deliveryAddress,
-          city: formData.city || formData.state,
+          cookerSubtotal: formatNaira(pricing.total),
+          deliveryOption: deliveryOption === 'home' ? 'Direct Doorstep Home Delivery (+₦5,000 Extra)' : 'Motor Park Delivery (FREE Nationwide)',
+          deliveryFee: deliveryFee > 0 ? formatNaira(deliveryFee) : 'FREE (₦0)',
+          totalPrice: finalTotal,
+          fullName: formData.fullName.trim(),
+          phoneNumber: formData.phoneNumber.trim(),
+          deliveryAddress: deliveryOption === 'home' ? formData.deliveryAddress.trim() : 'N/A (Motor Park Delivery)',
+          motorPark: deliveryOption === 'standard' ? (formData.motorPark || '').trim() : 'N/A (Home Delivery)',
+          city: formData.city.trim(),
           state: formData.state,
+          deliveryDestination: deliveryOption === 'home'
+            ? `${formData.deliveryAddress.trim()}, ${formData.city.trim()}, ${formData.state}`
+            : `Motor Park: ${formData.motorPark?.trim()}, City: ${formData.city.trim()}, State: ${formData.state}`,
           paymentMethod: 'Payment on Delivery',
           timestamp: new Date().toISOString()
         })
@@ -166,7 +188,7 @@ export const QuickOrderPopupModal: React.FC<QuickOrderPopupModalProps> = ({
       if (typeof window !== 'undefined' && (window as any).fbq) {
         try {
           (window as any).fbq('track', 'Purchase', {
-            value: pricing.total,
+            value: finalTotal,
             currency: 'NGN',
             content_name: pricing.shortName + ' (Quick Order)',
             content_type: 'product',
@@ -185,14 +207,14 @@ export const QuickOrderPopupModal: React.FC<QuickOrderPopupModalProps> = ({
             content_type: 'product',
             content_name: pricing.shortName + ' (Quick Order)',
             quantity: pricing.totalQuantity,
-            price: pricing.total,
-            value: pricing.total,
+            price: finalTotal,
+            value: finalTotal,
             currency: 'NGN'
           });
           (window as any).ttq.track('CompletePayment', {
             content_id: orderId,
             content_name: pricing.shortName + ' (Quick Order)',
-            value: pricing.total,
+            value: finalTotal,
             currency: 'NGN'
           });
         } catch {
@@ -202,15 +224,17 @@ export const QuickOrderPopupModal: React.FC<QuickOrderPopupModalProps> = ({
 
       setIsSubmitted(true);
       onOrderSuccess?.({
-        fullName: formData.fullName,
-        phoneNumber: formData.phoneNumber,
+        fullName: formData.fullName.trim(),
+        phoneNumber: formData.phoneNumber.trim(),
         state: formData.state,
-        city: formData.city || formData.state,
+        city: formData.city.trim() || formData.state,
         quantity: pricing.totalQuantity,
-        total: pricing.total,
+        total: finalTotal,
         orderId,
         productModel: pricing.mode,
-        productName: pricing.productName
+        productName: pricing.productName,
+        deliveryOption,
+        deliveryFee
       });
     } catch {
       setErrorMsg('Network error. Please try again or contact us via WhatsApp.');
@@ -223,7 +247,13 @@ export const QuickOrderPopupModal: React.FC<QuickOrderPopupModalProps> = ({
 
   const quickWhatsAppUrl = () => {
     const cleanNumber = formatWhatsAppNumber(config.WHATSAPP_NUMBER);
-    const msg = `Hello! I just placed a Quick Order on your website.\n\n🎄 Merry Christmas in Advance! 🎅✨\n\nProduct: ${pricing.shortName}\nTotal Payable: ${formatNaira(pricing.total)}\nName: ${formData.fullName}\nPhone: ${formData.phoneNumber}\nAddress: ${formData.deliveryAddress}, ${formData.city || formData.state}, ${formData.state}\n\nPlease confirm my delivery dispatch.`;
+    const deliveryText = deliveryOption === 'home'
+      ? 'Direct Doorstep Home Delivery (+₦5,000)'
+      : 'Motor Park Delivery (FREE Nationwide)';
+    const destinationText = deliveryOption === 'home'
+      ? `${formData.deliveryAddress}, ${formData.city || formData.state}, ${formData.state}`
+      : `Motor Park: ${formData.motorPark || 'To be specified'}, City: ${formData.city || formData.state}, State: ${formData.state}`;
+    const msg = `Hello! I just placed a Quick Order on your website.\n\n🎄 Merry Christmas in Advance! 🎅✨\n\nProduct: ${pricing.shortName}\nDelivery Option: ${deliveryText}\nTotal Payable on Delivery: ${formatNaira(finalTotal)}\nName: ${formData.fullName}\nPhone: ${formData.phoneNumber}\nDelivery Destination: ${destinationText}\n\nPlease confirm my delivery dispatch.`;
     return `https://wa.me/${cleanNumber}?text=${encodeURIComponent(msg)}`;
   };
 
@@ -300,7 +330,11 @@ export const QuickOrderPopupModal: React.FC<QuickOrderPopupModalProps> = ({
               <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
                 Thank you <strong>{formData.fullName}</strong>! Our dispatch coordinator will call you on{' '}
                 <strong>{formData.phoneNumber}</strong> shortly to confirm your delivery to{' '}
-                <strong>{formData.deliveryAddress}, {formData.city || formData.state}, {formData.state}</strong>.
+                <strong>
+                  {deliveryOption === 'home'
+                    ? `${formData.deliveryAddress}, ${formData.city || formData.state}, ${formData.state}`
+                    : `Motor Park: ${formData.motorPark || 'Terminal Hub'}, ${formData.city || formData.state}, ${formData.state}`}
+                </strong>.
               </p>
               <div className="p-3 bg-slate-50 border border-slate-200 rounded-2xl max-w-sm mx-auto text-xs space-y-1.5 text-left">
                 <div className="flex justify-between font-bold text-slate-900 border-b border-slate-200 pb-1">
@@ -316,9 +350,23 @@ export const QuickOrderPopupModal: React.FC<QuickOrderPopupModalProps> = ({
                     <span>-₦20,000</span>
                   </div>
                 )}
+                <div className="flex justify-between text-[11px] text-slate-700 pt-0.5 border-t border-slate-200">
+                  <span>Delivery Method:</span>
+                  <span className={deliveryOption === 'home' ? 'font-bold text-amber-900 bg-amber-100 px-1.5 py-0.2 rounded text-[10px]' : 'font-medium text-emerald-700'}>
+                    {deliveryOption === 'home' ? 'Doorstep Home Delivery (+₦5,000)' : 'Motor Park Delivery (FREE)'}
+                  </span>
+                </div>
+                <div className="flex justify-between text-[11px] text-slate-700 pt-0.5 border-t border-slate-200">
+                  <span>{deliveryOption === 'home' ? 'Delivery Address:' : 'Motor Park Hub:'}</span>
+                  <span className="font-semibold text-slate-900 text-right max-w-[60%]">
+                    {deliveryOption === 'home'
+                      ? `${formData.deliveryAddress}, ${formData.city}`
+                      : `${formData.motorPark || 'Designated Park'}, ${formData.city}`}
+                  </span>
+                </div>
                 <div className="flex justify-between font-black text-slate-900 pt-1 text-sm border-t border-slate-200">
                   <span>Amount to Pay on Delivery:</span>
-                  <span className="text-emerald-700">{formatNaira(pricing.total)}</span>
+                  <span className="text-emerald-700">{formatNaira(finalTotal)}</span>
                 </div>
               </div>
 
@@ -866,56 +914,196 @@ export const QuickOrderPopupModal: React.FC<QuickOrderPopupModalProps> = ({
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
-                      Phone Number (Active) <span className="text-rose-600">*</span>
-                    </label>
-                    <input
-                      type="tel"
-                      name="phoneNumber"
-                      required
-                      value={formData.phoneNumber}
-                      onChange={handleInputChange}
-                      placeholder="e.g. 0801 234 5678 (Active for calls)"
-                      className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-blue-600 focus:bg-white"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
-                      State <span className="text-rose-600">*</span>
-                    </label>
-                    <select
-                      name="state"
-                      required
-                      value={formData.state}
-                      onChange={handleInputChange}
-                      className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-blue-600 focus:bg-white"
-                    >
-                      {NIGERIAN_STATES.map((st) => (
-                        <option key={st} value={st}>
-                          {st} ({getStateDeliveryTimeline(st).days})
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
                 <div>
                   <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    Delivery Street Address & City / Town <span className="text-rose-600">*</span>
+                    Phone Number (Active for calls) <span className="text-rose-600">*</span>
                   </label>
-                  <textarea
-                    name="deliveryAddress"
-                    rows={2}
+                  <input
+                    type="tel"
+                    name="phoneNumber"
                     required
-                    value={formData.deliveryAddress}
+                    value={formData.phoneNumber}
                     onChange={handleInputChange}
-                    placeholder="Enter house/flat number, street name, nearest landmark / bus stop, and city/town"
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-blue-600 focus:bg-white resize-none"
+                    placeholder="e.g. 0801 234 5678 (Active for calls & dispatch)"
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-blue-600 focus:bg-white"
                   />
                 </div>
+
+                {/* DELIVERY OPTION SELECTOR IN QUICK ORDER POPUP */}
+                <div className="space-y-1.5 pt-0.5">
+                  <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-slate-700">
+                    <span>Select Delivery Option:</span>
+                    <span className="text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-300 font-bold">
+                      Home Delivery Attracts ₦5k Extra
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {/* OPTION 1: MOTOR PARK (FREE) */}
+                    <button
+                      type="button"
+                      onClick={() => setDeliveryOption('standard')}
+                      className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-center gap-2 ${
+                        deliveryOption === 'standard'
+                          ? 'border-blue-600 bg-blue-50/90 shadow-xs ring-1 ring-blue-500/30'
+                          : 'border-slate-200 bg-white hover:border-slate-300'
+                      }`}
+                    >
+                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
+                        deliveryOption === 'standard' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'
+                      }`}>
+                        <Truck className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-[11px] font-black text-slate-900 flex items-center gap-1">
+                          <span>Motor Park</span>
+                          <span className="text-[9px] font-bold text-emerald-700 bg-emerald-100 px-1 rounded">FREE</span>
+                        </div>
+                        <span className="text-[9px] text-slate-500 block truncate">Park / Terminal Hub</span>
+                      </div>
+                    </button>
+
+                    {/* OPTION 2: HOME DELIVERY (+₦5K) */}
+                    <button
+                      type="button"
+                      onClick={() => setDeliveryOption('home')}
+                      className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-center gap-2 ${
+                        deliveryOption === 'home'
+                          ? 'border-amber-500 bg-amber-50/95 shadow-xs ring-1 ring-amber-400/40'
+                          : 'border-slate-200 bg-white hover:border-amber-300'
+                      }`}
+                    >
+                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
+                        deliveryOption === 'home' ? 'bg-amber-500 text-slate-950 font-bold' : 'bg-amber-100 text-amber-800'
+                      }`}>
+                        <Home className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-[11px] font-black text-slate-900 flex items-center gap-1">
+                          <span>Home Delivery</span>
+                          <span className="text-[9px] font-bold text-amber-900 bg-amber-300 px-1 rounded">+₦5k</span>
+                        </div>
+                        <span className="text-[9px] text-slate-500 block truncate">Direct Doorstep</span>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
+                {/* CONDITIONAL DELIVERY FIELDS */}
+                {deliveryOption === 'standard' ? (
+                  /* MOTOR PARK DELIVERY: STATE, CITY, & PREFERRED PARK (NO STREET ADDRESS) */
+                  <div className="space-y-3 pt-0.5 animate-in fade-in duration-200">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+                          State <span className="text-rose-600">*</span>
+                        </label>
+                        <select
+                          name="state"
+                          required
+                          value={formData.state}
+                          onChange={handleInputChange}
+                          className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-blue-600 focus:bg-white"
+                        >
+                          {NIGERIAN_STATES.map((st) => (
+                            <option key={st} value={st}>
+                              {st} ({getStateDeliveryTimeline(st).days})
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+                          City / Town <span className="text-rose-600">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          name="city"
+                          required
+                          value={formData.city}
+                          onChange={handleInputChange}
+                          placeholder="e.g. Ikeja, Ibadan, Onitsha"
+                          className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-blue-600 focus:bg-white"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+                        Preferred Motor Park / Bus Terminal <span className="text-rose-600">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="motorPark"
+                        required
+                        value={formData.motorPark || ''}
+                        onChange={handleInputChange}
+                        placeholder="e.g. Jibowu Park, Maza Maza, Peace Mass Transit, Central Park"
+                        className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-blue-600 focus:bg-white"
+                      />
+                      <p className="text-[10px] text-slate-500 mt-1">
+                        📍 100% Free Nationwide delivery to your preferred motor park/terminal hub.
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  /* HOME DELIVERY: STATE, CITY, & DELIVERY STREET ADDRESS (NO PARK) */
+                  <div className="space-y-3 pt-0.5 animate-in fade-in duration-200">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+                          State <span className="text-rose-600">*</span>
+                        </label>
+                        <select
+                          name="state"
+                          required
+                          value={formData.state}
+                          onChange={handleInputChange}
+                          className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-blue-600 focus:bg-white"
+                        >
+                          {NIGERIAN_STATES.map((st) => (
+                            <option key={st} value={st}>
+                              {st} ({getStateDeliveryTimeline(st).days})
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+                          City / Town <span className="text-rose-600">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          name="city"
+                          required
+                          value={formData.city}
+                          onChange={handleInputChange}
+                          placeholder="e.g. Lekki Phase 1, Wuse 2, Bodija"
+                          className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-blue-600 focus:bg-white"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+                        Delivery Street Address & Nearest Landmark <span className="text-rose-600">*</span>
+                      </label>
+                      <textarea
+                        name="deliveryAddress"
+                        rows={2}
+                        required
+                        value={formData.deliveryAddress}
+                        onChange={handleInputChange}
+                        placeholder="Enter house/flat number, street name, and nearest landmark / bus stop"
+                        className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-blue-600 focus:bg-white resize-none"
+                      />
+                      <p className="text-[10px] text-slate-500 mt-1">
+                        🏠 Direct delivery to your house/compound (+₦5,000 fee).
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Delivery Timeline Pill */}
@@ -940,7 +1128,7 @@ export const QuickOrderPopupModal: React.FC<QuickOrderPopupModalProps> = ({
                     <span>Processing Christmas Order...</span>
                   ) : (
                     <>
-                      <span>🔥 ORDER NOW & SAVE ₦20,000 ({formatNaira(pricing.total)})</span>
+                      <span>🔥 ORDER NOW & SAVE ₦20,000 ({formatNaira(finalTotal)})</span>
                       <ArrowRight className="w-4 h-4 stroke-[3] text-[#171717]" />
                     </>
                   )}

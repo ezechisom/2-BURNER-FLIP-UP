@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingBag, CheckCircle2, MessageCircle, ArrowRight, ShieldCheck, AlertCircle, AlertTriangle, Ban, Plus, Minus, Truck, Sparkles, Flame, Zap, Layers, PhoneCall } from 'lucide-react';
-import { LandingPageConfig, OrderFormData, CookerModel } from '../types';
+import { ShoppingBag, CheckCircle2, MessageCircle, ArrowRight, ShieldCheck, AlertCircle, AlertTriangle, Ban, Plus, Minus, Truck, Sparkles, Flame, Zap, Layers, PhoneCall, Home } from 'lucide-react';
+import { LandingPageConfig, OrderFormData, CookerModel, DeliveryOptionType } from '../types';
 import {
   formatNaira,
   calculateCombinedPricing,
@@ -28,6 +28,10 @@ interface OrderFormSectionProps {
     productName: string;
     qty2Burner?: number;
     qty5Burner?: number;
+    deliveryOption?: DeliveryOptionType;
+    deliveryFee?: number;
+    motorPark?: string;
+    deliveryAddress?: string;
   }) => void;
   onResetOrder?: () => void;
   onView2BurnerDetails?: () => void;
@@ -55,6 +59,7 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
     whatsappNumber: '',
     deliveryAddress: '',
     city: '',
+    motorPark: '',
     state: 'Lagos',
     email: ''
   });
@@ -92,7 +97,11 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
     }
   };
 
+  const [deliveryOption, setDeliveryOption] = useState<DeliveryOptionType>('standard');
+
   const pricing = calculateCombinedPricing(selectedModel, qty2Burner, qty5Burner, config);
+  const deliveryFee = deliveryOption === 'home' ? 5000 : 0;
+  const finalTotal = pricing.total + deliveryFee;
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -120,12 +129,20 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
       setErrorMsg('Please provide your active phone number.');
       return;
     }
-    if (!formData.deliveryAddress.trim()) {
-      setErrorMsg('Please provide your complete delivery street address and city/town.');
-      return;
-    }
     if (!formData.state) {
       setErrorMsg('Please select your state.');
+      return;
+    }
+    if (!formData.city.trim()) {
+      setErrorMsg('Please enter your city or town.');
+      return;
+    }
+    if (deliveryOption === 'home' && !formData.deliveryAddress.trim()) {
+      setErrorMsg('Please provide your complete doorstep delivery street address.');
+      return;
+    }
+    if (deliveryOption === 'standard' && (!formData.motorPark || !formData.motorPark.trim())) {
+      setErrorMsg('Please provide your preferred motor park or bus terminal for pickup.');
       return;
     }
 
@@ -152,15 +169,22 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
           qty5Burner: `${pricing.qty5Burner} unit(s)`,
           totalQuantity: `${pricing.totalQuantity} unit(s)`,
           comboDiscount: pricing.comboDiscount > 0 ? formatNaira(pricing.comboDiscount) : 'None',
-          totalAmount: formatNaira(pricing.total),
+          cookerSubtotal: formatNaira(pricing.total),
+          deliveryOption: deliveryOption === 'home' ? 'Direct Doorstep Home Delivery (+₦5,000 Extra)' : 'Motor Park Delivery (FREE Nationwide)',
+          deliveryFee: deliveryFee > 0 ? formatNaira(deliveryFee) : 'FREE (₦0)',
+          totalAmount: formatNaira(finalTotal),
           fullName: formData.fullName.trim(),
           phoneNumber: formData.phoneNumber.trim(),
           whatsappNumber: (formData.whatsappNumber || formData.phoneNumber).trim(),
-          deliveryAddress: formData.deliveryAddress.trim(),
+          deliveryAddress: deliveryOption === 'home' ? formData.deliveryAddress.trim() : 'N/A (Motor Park Delivery)',
+          motorPark: deliveryOption === 'standard' ? (formData.motorPark || '').trim() : 'N/A (Home Delivery)',
           city: formData.city.trim(),
           state: formData.state,
+          deliveryDestination: deliveryOption === 'home'
+            ? `${formData.deliveryAddress.trim()}, ${formData.city.trim()}, ${formData.state}`
+            : `Motor Park: ${formData.motorPark?.trim()}, City: ${formData.city.trim()}, State: ${formData.state}`,
           email: formData.email ? formData.email.trim() : 'Not provided',
-          _subject: `New Order #${orderId}: ${pricing.shortName} (${pricing.totalQuantity} units) - ${formData.fullName.trim()} (${formData.city.trim()}, ${formData.state})`
+          _subject: `New Order #${orderId}: ${pricing.shortName} (${pricing.totalQuantity} units) - ${formData.fullName.trim()} (${formData.city.trim()}, ${formData.state}) [${deliveryOption === 'home' ? 'HOME DELIVERY +5K' : 'MOTOR PARK FREE'}]`
         })
       });
     } catch (err) {
@@ -178,7 +202,10 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
           qty2Burner: pricing.qty2Burner,
           qty5Burner: pricing.qty5Burner,
           quantity: pricing.totalQuantity,
-          totalPrice: pricing.total,
+          cookerSubtotal: pricing.total,
+          deliveryOption,
+          deliveryFee,
+          totalPrice: finalTotal,
           comboDiscount: pricing.comboDiscount,
           createdAt: new Date().toISOString()
         };
@@ -192,7 +219,7 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
       if (typeof window !== 'undefined' && (window as any).fbq) {
         try {
           (window as any).fbq('track', 'Purchase', {
-            value: pricing.total,
+            value: finalTotal,
             currency: 'NGN',
             content_name: pricing.productName,
             content_type: 'product',
@@ -213,14 +240,14 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
             content_type: 'product',
             content_name: pricing.productName,
             quantity: pricing.totalQuantity,
-            price: pricing.total,
-            value: pricing.total,
+            price: finalTotal,
+            value: finalTotal,
             currency: 'NGN'
           });
           (window as any).ttq.track('CompletePayment', {
             content_id: orderId,
             content_name: pricing.productName,
-            value: pricing.total,
+            value: finalTotal,
             currency: 'NGN'
           });
         } catch (tiktokErr) {
@@ -236,13 +263,17 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
         phoneNumber: formData.phoneNumber.trim(),
         state: formData.state,
         city: formData.city.trim(),
+        deliveryAddress: deliveryOption === 'home' ? formData.deliveryAddress.trim() : undefined,
+        motorPark: deliveryOption === 'standard' ? formData.motorPark?.trim() : undefined,
         quantity: pricing.totalQuantity,
-        total: pricing.total,
+        total: finalTotal,
         orderId,
         productModel: pricing.mode,
         productName: pricing.productName,
         qty2Burner: pricing.qty2Burner,
-        qty5Burner: pricing.qty5Burner
+        qty5Burner: pricing.qty5Burner,
+        deliveryOption,
+        deliveryFee
       });
 
       // Smooth scroll to success message
@@ -266,7 +297,15 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
       itemsText = `${pricing.qty2Burner} unit(s) of 2-Flip-Up Double Gas Burner (75 × 45 cm)`;
     }
 
-    const msg = `Hello! I just placed an order on your website.\n\n🎄 Merry Christmas in Advance! 🎅✨\n\nOrder ID: #${'ORD-' + Date.now().toString().slice(-6)}\nProduct: ${itemsText}\nTotal Payable: ${formatNaira(pricing.total)}\nName: ${formData.fullName}\nPhone: ${formData.phoneNumber}\nDelivery Destination: ${formData.deliveryAddress}, ${formData.city}, ${formData.state}\n\nPlease confirm my delivery dispatch.`;
+    const deliveryText = deliveryOption === 'home'
+      ? 'Direct Doorstep Home Delivery (+₦5,000)'
+      : 'Motor Park Delivery (FREE Nationwide)';
+
+    const destinationText = deliveryOption === 'home'
+      ? `${formData.deliveryAddress}, ${formData.city}, ${formData.state}`
+      : `Motor Park: ${formData.motorPark || 'To be specified'}, City: ${formData.city}, State: ${formData.state}`;
+
+    const msg = `Hello! I just placed an order on your website.\n\n🎄 Merry Christmas in Advance! 🎅✨\n\nOrder ID: #${'ORD-' + Date.now().toString().slice(-6)}\nProduct: ${itemsText}\nDelivery Option: ${deliveryText}\nTotal Payable on Delivery: ${formatNaira(finalTotal)}\nName: ${formData.fullName}\nPhone: ${formData.phoneNumber}\nDelivery Destination: ${destinationText}\n\nPlease confirm my delivery dispatch.`;
     return `https://wa.me/${cleanNumber}?text=${encodeURIComponent(msg)}`;
   };
 
@@ -376,15 +415,27 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
                 <span className="font-semibold text-slate-900">{formData.phoneNumber}</span>
               </div>
               <div className="flex justify-between pb-2 border-b border-slate-200">
-                <span className="text-slate-500">Delivery Destination:</span>
-                <span className="font-semibold text-slate-900">{formData.city}, {formData.state}</span>
+                <span className="text-slate-500">Delivery Method:</span>
+                <span className={deliveryOption === 'home' ? 'font-bold text-amber-900 bg-amber-100 px-2 py-0.5 rounded text-xs' : 'font-semibold text-emerald-700'}>
+                  {deliveryOption === 'home' ? 'Doorstep Home Delivery (+₦5,000)' : 'Motor Park Delivery (FREE)'}
+                </span>
+              </div>
+              <div className="flex justify-between pb-2 border-b border-slate-200">
+                <span className="text-slate-500">
+                  {deliveryOption === 'home' ? 'Delivery Address:' : 'Motor Park Hub:'}
+                </span>
+                <span className="font-semibold text-slate-900 text-right max-w-[60%]">
+                  {deliveryOption === 'home'
+                    ? `${formData.deliveryAddress}, ${formData.city}, ${formData.state}`
+                    : `${formData.motorPark || 'Designated Park Hub'}, ${formData.city}, ${formData.state}`}
+                </span>
               </div>
               <div className="flex justify-between pt-1 text-sm sm:text-base">
-                <span className="font-bold text-slate-700">Total Payable:</span>
-                <span className="font-black text-blue-700">{formatNaira(pricing.total)}</span>
+                <span className="font-bold text-slate-700">Total Payable on Delivery:</span>
+                <span className="font-black text-blue-700">{formatNaira(finalTotal)}</span>
               </div>
               <div className="text-[11px] text-emerald-700 font-semibold text-center pt-1">
-                ✓ Free Nationwide Delivery Included • Pay on Delivery
+                ✓ {deliveryOption === 'home' ? 'Direct Doorstep Home Delivery (+₦5,000 Included)' : 'Free Nationwide Delivery Included'} • Pay on Delivery
               </div>
             </div>
 
@@ -982,13 +1033,18 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
                       {pricing.comboDiscount > 0 && (
                         <div className="text-emerald-700 font-bold">• Combo Bundle Bonus Discount: -{formatNaira(pricing.comboDiscount)}</div>
                       )}
+                      {deliveryOption === 'home' ? (
+                        <div className="text-amber-900 font-bold">• Home Delivery Fee: +₦5,000 (Direct Doorstep Service)</div>
+                      ) : (
+                        <div className="text-emerald-700 font-medium">• Standard Delivery: FREE Nationwide Included</div>
+                      )}
                     </div>
                   </div>
 
                   <div className="sm:text-right">
-                    <span className="text-[11px] text-slate-500 block font-semibold uppercase">TOTAL PAYABLE</span>
+                    <span className="text-[11px] text-slate-500 block font-semibold uppercase">TOTAL PAYABLE ON ARRIVAL</span>
                     <div className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">
-                      {formatNaira(pricing.total)}
+                      {formatNaira(finalTotal)}
                     </div>
                     {pricing.savings > 0 && (
                       <span className="inline-block text-[11px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">
@@ -999,8 +1055,18 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
                 </div>
 
                 <div className="pt-2 flex flex-wrap items-center justify-between text-xs text-slate-600 gap-2">
-                  <span className="flex items-center gap-1 text-emerald-700 font-semibold">
-                    <Truck className="w-3.5 h-3.5" /> FREE Nationwide Delivery Included
+                  <span className={`flex items-center gap-1 font-semibold ${
+                    deliveryOption === 'home' ? 'text-amber-900' : 'text-emerald-700'
+                  }`}>
+                    {deliveryOption === 'home' ? (
+                      <>
+                        <Home className="w-3.5 h-3.5" /> Doorstep Home Delivery (+₦5,000) Selected
+                      </>
+                    ) : (
+                      <>
+                        <Truck className="w-3.5 h-3.5" /> FREE Nationwide Delivery Included
+                      </>
+                    )}
                   </span>
                   <span className="text-slate-500 font-medium">
                     Pay on Delivery Available
@@ -1048,46 +1114,216 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
                   />
                 </div>
 
-                {/* DELIVERY STREET ADDRESS & CITY/TOWN */}
-                <div>
-                  <label htmlFor="deliveryAddress" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    DELIVERY STREET ADDRESS & CITY / TOWN <span className="text-rose-600">*</span>
+                {/* DELIVERY METHOD SELECTOR: MOTOR PARK (FREE) vs HOME DELIVERY (+₦5,000) */}
+                <div className="pt-1">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 flex items-center justify-between">
+                    <span>Step 3A: Select Delivery Option:</span>
+                    <span className="text-[11px] font-bold text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded border border-amber-300 flex items-center gap-1">
+                      <span>⚡ Home Delivery Attracts ₦5k Extra</span>
+                    </span>
                   </label>
-                  <textarea
-                    id="deliveryAddress"
-                    name="deliveryAddress"
-                    rows={3}
-                    required
-                    value={formData.deliveryAddress}
-                    onChange={handleInputChange}
-                    placeholder="Enter your house/flat number, street name, nearest landmark / bus stop, and city/town"
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-blue-600 focus:bg-white transition-colors resize-none"
-                  />
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {/* OPTION 1: MOTOR PARK DELIVERY (FREE) */}
+                    <button
+                      type="button"
+                      onClick={() => setDeliveryOption('standard')}
+                      className={`p-3.5 rounded-2xl border-2 text-left transition-all cursor-pointer flex items-start gap-3 relative ${
+                        deliveryOption === 'standard'
+                          ? 'border-blue-600 bg-blue-50/90 shadow-md ring-2 ring-blue-500/20'
+                          : 'border-slate-200 bg-white hover:border-slate-300'
+                      }`}
+                    >
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                        deliveryOption === 'standard' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'
+                      }`}>
+                        <Truck className="w-5 h-5 stroke-[2.3]" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="text-xs font-black uppercase text-slate-900">Motor Park Delivery</span>
+                          <span className="text-[10px] font-black text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">
+                            FREE
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-slate-600 leading-tight mt-1">
+                          Delivery to your preferred motor park / bus terminal hub. 100% Free nationwide.
+                        </p>
+                      </div>
+                    </button>
+
+                    {/* OPTION 2: DIRECT DOORSTEP HOME DELIVERY (+₦5,000) */}
+                    <button
+                      type="button"
+                      onClick={() => setDeliveryOption('home')}
+                      className={`p-3.5 rounded-2xl border-2 text-left transition-all cursor-pointer flex items-start gap-3 relative ${
+                        deliveryOption === 'home'
+                          ? 'border-amber-500 bg-amber-50/95 shadow-md ring-2 ring-amber-400/40'
+                          : 'border-slate-200 bg-white hover:border-amber-300'
+                      }`}
+                    >
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                        deliveryOption === 'home' ? 'bg-amber-500 text-slate-950 font-black' : 'bg-amber-100 text-amber-800'
+                      }`}>
+                        <Home className="w-5 h-5 stroke-[2.3]" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="text-xs font-black uppercase text-slate-900">Home Delivery</span>
+                          <span className="text-[10px] font-black text-amber-900 bg-amber-300 px-2 py-0.5 rounded border border-amber-400">
+                            +₦5,000
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-slate-600 leading-tight mt-1">
+                          Dedicated dispatch rider delivers directly to your house/compound doorstep. Attracts extra ₦5k.
+                        </p>
+                      </div>
+                    </button>
+                  </div>
                 </div>
 
-                {/* STATE */}
-                <div>
-                  <label htmlFor="state" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    SELECT STATE <span className="text-rose-600">*</span>
-                  </label>
-                  <select
-                    id="state"
-                    name="state"
-                    required
-                    value={formData.state}
-                    onChange={handleInputChange}
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-slate-900 text-sm focus:outline-none focus:border-blue-600 focus:bg-white transition-colors"
-                  >
-                    {NIGERIAN_STATES.map((st) => {
-                      const info = getStateDeliveryTimeline(st);
-                      return (
-                        <option key={st} value={st}>
-                          {st} — Estimated: {info.days}
-                        </option>
-                      );
-                    })}
-                  </select>
-                </div>
+                {/* CONDITIONAL DELIVERY FIELDS */}
+                {deliveryOption === 'standard' ? (
+                  /* MOTOR PARK DELIVERY: STATE, CITY, & PREFERRED PARK (NO STREET ADDRESS) */
+                  <div className="space-y-4 pt-1 animate-in fade-in duration-200">
+                    <div className="p-3 bg-blue-50/80 border border-blue-200 rounded-xl text-xs text-blue-900 flex items-center gap-2">
+                      <Truck className="w-4 h-4 text-blue-600 shrink-0" />
+                      <span><strong>Motor Park Delivery Selected:</strong> Enter your State, City/Town, and the Motor Park or Terminal where you will pick up your cooker. Nationwide delivery is 100% FREE!</span>
+                    </div>
+
+                    {/* STATE & CITY GRID */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label htmlFor="state" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                          SELECT STATE <span className="text-rose-600">*</span>
+                        </label>
+                        <select
+                          id="state"
+                          name="state"
+                          required
+                          value={formData.state}
+                          onChange={handleInputChange}
+                          className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-slate-900 text-sm focus:outline-none focus:border-blue-600 focus:bg-white transition-colors"
+                        >
+                          {NIGERIAN_STATES.map((st) => {
+                            const info = getStateDeliveryTimeline(st);
+                            return (
+                              <option key={st} value={st}>
+                                {st} — Estimated: {info.days}
+                              </option>
+                            );
+                          })}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label htmlFor="city" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                          CITY / TOWN <span className="text-rose-600">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          id="city"
+                          name="city"
+                          required
+                          value={formData.city}
+                          onChange={handleInputChange}
+                          placeholder="e.g. Ikeja, Ibadan, Onitsha, Benin City, Kano"
+                          className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-blue-600 focus:bg-white transition-colors"
+                        />
+                      </div>
+                    </div>
+
+                    {/* PREFERRED MOTOR PARK / BUS TERMINAL */}
+                    <div>
+                      <label htmlFor="motorPark" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                        PREFERRED MOTOR PARK / BUS TERMINAL <span className="text-rose-600">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="motorPark"
+                        name="motorPark"
+                        required
+                        value={formData.motorPark || ''}
+                        onChange={handleInputChange}
+                        placeholder="e.g. Jibowu Park, Maza Maza, Peace Mass Transit, Central Park, Young Shall Grow"
+                        className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-blue-600 focus:bg-white transition-colors"
+                      />
+                      <p className="text-[11px] text-slate-500 mt-1">
+                        📍 The cooker will be dispatched safely to this park/terminal hub in your city.
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  /* HOME DELIVERY: STATE, CITY, & DELIVERY STREET ADDRESS (NO PARK) */
+                  <div className="space-y-4 pt-1 animate-in fade-in duration-200">
+                    <div className="p-3 bg-amber-50/80 border border-amber-200 rounded-xl text-xs text-amber-950 flex items-center gap-2">
+                      <Home className="w-4 h-4 text-amber-600 shrink-0" />
+                      <span><strong>Doorstep Home Delivery Selected:</strong> A dispatch rider will deliver directly to your house/compound. (₦5,000 delivery fee applies).</span>
+                    </div>
+
+                    {/* STATE & CITY GRID */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label htmlFor="state" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                          SELECT STATE <span className="text-rose-600">*</span>
+                        </label>
+                        <select
+                          id="state"
+                          name="state"
+                          required
+                          value={formData.state}
+                          onChange={handleInputChange}
+                          className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-slate-900 text-sm focus:outline-none focus:border-blue-600 focus:bg-white transition-colors"
+                        >
+                          {NIGERIAN_STATES.map((st) => {
+                            const info = getStateDeliveryTimeline(st);
+                            return (
+                              <option key={st} value={st}>
+                                {st} — Estimated: {info.days}
+                              </option>
+                            );
+                          })}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label htmlFor="city" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                          CITY / TOWN <span className="text-rose-600">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          id="city"
+                          name="city"
+                          required
+                          value={formData.city}
+                          onChange={handleInputChange}
+                          placeholder="e.g. Lekki Phase 1, Wuse 2, Bodija, GRA"
+                          className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-blue-600 focus:bg-white transition-colors"
+                        />
+                      </div>
+                    </div>
+
+                    {/* DELIVERY STREET ADDRESS & LANDMARK */}
+                    <div>
+                      <label htmlFor="deliveryAddress" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                        DELIVERY STREET ADDRESS & NEAREST LANDMARK <span className="text-rose-600">*</span>
+                      </label>
+                      <textarea
+                        id="deliveryAddress"
+                        name="deliveryAddress"
+                        rows={3}
+                        required
+                        value={formData.deliveryAddress}
+                        onChange={handleInputChange}
+                        placeholder="Enter your house/flat number, street name, and nearest landmark / bus stop"
+                        className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-blue-600 focus:bg-white transition-colors resize-none"
+                      />
+                      <p className="text-[11px] text-slate-500 mt-1">
+                        🏠 Please provide full details so our dispatch rider can locate your compound easily.
+                      </p>
+                    </div>
+                  </div>
+                )}
 
                 {/* DYNAMIC ESTIMATED DELIVERY TIMELINE FOR SELECTED STATE */}
                 {formData.state && (
@@ -1146,11 +1382,11 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
                   ) : (
                     <>
                       <div className="flex items-center gap-2 text-[#171717]">
-                        <span>🔥 ORDER NOW & SAVE ₦20,000 ({formatNaira(pricing.total)})</span>
+                        <span>🔥 ORDER NOW & SAVE ₦20,000 ({formatNaira(finalTotal)})</span>
                         <ArrowRight className="w-5 h-5 stroke-[3]" />
                       </div>
                       <div className="text-xs font-black uppercase tracking-wider flex items-center gap-1.5 mt-0.5 text-slate-900/90">
-                        <Truck className="w-3.5 h-3.5" /> FREE NATIONWIDE DELIVERY • PAYMENT ON ARRIVAL
+                        <Truck className="w-3.5 h-3.5" /> {deliveryOption === 'home' ? 'DIRECT DOORSTEP HOME DELIVERY (+₦5,000) • PAYMENT ON ARRIVAL' : 'FREE NATIONWIDE DELIVERY • PAYMENT ON ARRIVAL'}
                       </div>
                     </>
                   )}
