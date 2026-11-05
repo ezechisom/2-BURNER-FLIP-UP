@@ -745,3 +745,63 @@ export function getStateDeliveryTimeline(state: string): DeliveryTimelineInfo {
     note: "Dispatched promptly via verified courier. Doorstep delivery with payment on delivery."
   };
 }
+
+/**
+ * Designated Motor Park and Terminal Delivery Hubs per Nigerian State.
+ * Includes user-specified locations:
+ * - Abia: Aba or Umuahia
+ * - Akwa Ibom: Uyo
+ * - Anambra: Onitsha and Awka
+ * - Cross River: Calabar
+ * - Delta: Asaba, Warri, Ughelli, Sapele
+ * - Abuja (FCT): Utako and Gwagwalada
+ * - Imo: Owerri
+ * - Kaduna: Mando (Mondo), Zaria
+ * - Oyo (Ibadan): Ojoo, Challenge, Iwo Road
+ * - Rivers: Rumuokoro, Waterline
+ */
+export const STATE_MOTOR_PARKS: Record<string, string[]> = {
+  "Abia": ["Aba", "Umuahia"],
+  "Akwa Ibom": ["Uyo"],
+  "Anambra": ["Onitsha", "Awka"],
+  "Cross River": ["Calabar"],
+  "Delta": ["Asaba", "Warri", "Ughelli", "Sapele"],
+  "FCT - Abuja": ["Utako", "Gwagwalada"],
+  "Imo": ["Owerri"],
+  "Kaduna": ["Mando (Mondo)", "Zaria"],
+  "Oyo": ["Ojoo", "Challenge", "Iwo Road"],
+  "Rivers": ["Rumuokoro", "Waterline"],
+  "Lagos": ["Jibowu", "Maza Maza", "Ojota", "Oshodi", "Berger"],
+  "Edo": ["Benin Central / Ring Road", "Uselu", "Auchi"],
+  "Enugu": ["Holy Ghost Park", "Okpara Avenue", "Nsukka"],
+  "Ogun": ["Abeokuta", "Sagamu", "Ijebu-Ode"],
+  "Kano": ["Sabon Gari", "Naibawa"],
+  "Kwara": ["Ilorin (Post Office)", "Maraba"],
+  "Osun": ["Osogbo (Old Garage)", "Ile-Ife"],
+  "Ondo": ["Akure (Oja Oba)", "Ondo Town"],
+  "Bayelsa": ["Yenagoa (Tombia)", "Swali"],
+  "Ebonyi": ["Abakaliki (Water Works)"],
+  "Plateau": ["Jos (Terminus)"],
+  "Benue": ["Makurdi (Wurukum)"],
+  "Kogi": ["Lokoja (Ganaja Park)"],
+  "Niger": ["Minna", "Suleja"],
+  "Ekiti": ["Ado-Ekiti (Old Garage)"]
+};
+
+export function getStateMotorParks(state: string): string[] {
+  if (!state) return ["Central Motor Park"];
+  const cleanState = state.trim();
+  if (cleanState === "Abuja" || cleanState === "FCT" || cleanState === "FCT - Abuja") {
+    return STATE_MOTOR_PARKS["FCT - Abuja"] || ["Utako", "Gwagwalada"];
+  }
+  if (STATE_MOTOR_PARKS[cleanState]) {
+    return STATE_MOTOR_PARKS[cleanState];
+  }
+  // Fallback for other states
+  return [
+    `${cleanState} Central Motor Park`,
+    "Peace Mass Transit Terminal",
+    "Young Shall Grow Terminal"
+  ];
+}
+

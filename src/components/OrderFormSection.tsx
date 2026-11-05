@@ -7,6 +7,7 @@ import {
   formatWhatsAppNumber,
   NIGERIAN_STATES,
   getStateDeliveryTimeline,
+  getStateMotorParks,
   ALTERNATIVE_PRODUCT_CONFIG,
   TWO_BURNER_CONFIG
 } from '../config';
@@ -102,12 +103,22 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
   const pricing = calculateCombinedPricing(selectedModel, qty2Burner, qty5Burner, config);
   const deliveryFee = deliveryOption === 'home' ? 5000 : 0;
   const finalTotal = pricing.total + deliveryFee;
+  const stateParks = getStateMotorParks(formData.state);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (name === 'state') {
+      const newParks = getStateMotorParks(value);
+      setFormData((prev) => ({
+        ...prev,
+        state: value,
+        motorPark: newParks[0] ? `${newParks[0]} Motor Park` : ''
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
     if (errorMsg) setErrorMsg('');
   };
 
@@ -177,12 +188,12 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
           phoneNumber: formData.phoneNumber.trim(),
           whatsappNumber: (formData.whatsappNumber || formData.phoneNumber).trim(),
           deliveryAddress: deliveryOption === 'home' ? formData.deliveryAddress.trim() : 'N/A (Motor Park Delivery)',
-          motorPark: deliveryOption === 'standard' ? (formData.motorPark || '').trim() : 'N/A (Home Delivery)',
+          motorPark: formData.motorPark ? formData.motorPark.trim() : (deliveryOption === 'standard' ? `${stateParks[0]} Motor Park` : 'None specified'),
           city: formData.city.trim(),
           state: formData.state,
           deliveryDestination: deliveryOption === 'home'
-            ? `${formData.deliveryAddress.trim()}, ${formData.city.trim()}, ${formData.state}`
-            : `Motor Park: ${formData.motorPark?.trim()}, City: ${formData.city.trim()}, State: ${formData.state}`,
+            ? `${formData.deliveryAddress.trim()}, ${formData.city.trim()}, ${formData.state}${formData.motorPark ? ` (Nearest Park Hub: ${formData.motorPark.trim()})` : ''}`
+            : `Motor Park: ${formData.motorPark?.trim() || `${stateParks[0]} Motor Park`}, City: ${formData.city.trim()}, State: ${formData.state}`,
           email: formData.email ? formData.email.trim() : 'Not provided',
           _subject: `New Order #${orderId}: ${pricing.shortName} (${pricing.totalQuantity} units) - ${formData.fullName.trim()} (${formData.city.trim()}, ${formData.state}) [${deliveryOption === 'home' ? 'HOME DELIVERY +5K' : 'MOTOR PARK FREE'}]`
         })
@@ -302,8 +313,8 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
       : 'Motor Park Delivery (FREE Nationwide)';
 
     const destinationText = deliveryOption === 'home'
-      ? `${formData.deliveryAddress}, ${formData.city}, ${formData.state}`
-      : `Motor Park: ${formData.motorPark || 'To be specified'}, City: ${formData.city}, State: ${formData.state}`;
+      ? `${formData.deliveryAddress}, ${formData.city}, ${formData.state}${formData.motorPark ? ` (Nearest Hub: ${formData.motorPark})` : ''}`
+      : `Motor Park: ${formData.motorPark || `${stateParks[0]} Motor Park`}, City: ${formData.city}, State: ${formData.state}`;
 
     const msg = `Hello! I just placed an order on your website.\n\n🎄 Merry Christmas in Advance! 🎅✨\n\nOrder ID: #${'ORD-' + Date.now().toString().slice(-6)}\nProduct: ${itemsText}\nDelivery Option: ${deliveryText}\nTotal Payable on Delivery: ${formatNaira(finalTotal)}\nName: ${formData.fullName}\nPhone: ${formData.phoneNumber}\nDelivery Destination: ${destinationText}\n\nPlease confirm my delivery dispatch.`;
     return `https://wa.me/${cleanNumber}?text=${encodeURIComponent(msg)}`;
@@ -427,9 +438,17 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
                 <span className="font-semibold text-slate-900 text-right max-w-[60%]">
                   {deliveryOption === 'home'
                     ? `${formData.deliveryAddress}, ${formData.city}, ${formData.state}`
-                    : `${formData.motorPark || 'Designated Park Hub'}, ${formData.city}, ${formData.state}`}
+                    : `${formData.motorPark || `${stateParks[0]} Motor Park`}, ${formData.city}, ${formData.state}`}
                 </span>
               </div>
+              {deliveryOption === 'home' && formData.motorPark && (
+                <div className="flex justify-between pb-2 border-b border-slate-200">
+                  <span className="text-slate-500">Closest Hub / Park:</span>
+                  <span className="font-semibold text-amber-900 text-right">
+                    {formData.motorPark}
+                  </span>
+                </div>
+              )}
               <div className="flex justify-between pt-1 text-sm sm:text-base">
                 <span className="font-bold text-slate-700">Total Payable on Delivery:</span>
                 <span className="font-black text-blue-700">{formatNaira(finalTotal)}</span>
@@ -1233,11 +1252,44 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
                       </div>
                     </div>
 
-                    {/* PREFERRED MOTOR PARK / BUS TERMINAL */}
+                    {/* PREFERRED MOTOR PARK / BUS TERMINAL WITH PRE-SET OPTIONS */}
                     <div>
-                      <label htmlFor="motorPark" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                        PREFERRED MOTOR PARK / BUS TERMINAL <span className="text-rose-600">*</span>
+                      <label htmlFor="motorPark" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1 flex items-center justify-between">
+                        <span>Select Motor Park in {formData.state}: <span className="text-rose-600">*</span></span>
+                        <span className="text-[10px] text-blue-700 font-bold bg-blue-100 px-2 py-0.5 rounded">
+                          Tap to Select
+                        </span>
                       </label>
+
+                      {/* QUICK-TAP CHIPS FOR STATE MOTOR PARKS */}
+                      <div className="flex flex-wrap gap-1.5 mb-2">
+                        {stateParks.map((park) => {
+                          const isSelected = formData.motorPark?.toLowerCase().includes(park.toLowerCase());
+                          return (
+                            <button
+                              key={park}
+                              type="button"
+                              onClick={() => {
+                                setFormData(prev => ({
+                                  ...prev,
+                                  motorPark: `${park} Motor Park`,
+                                  city: prev.city || park.split(' ')[0]
+                                }));
+                                if (errorMsg) setErrorMsg('');
+                              }}
+                              className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer flex items-center gap-1.5 ${
+                                isSelected
+                                  ? 'bg-blue-600 text-white border-blue-700 shadow-sm ring-2 ring-blue-400/50'
+                                  : 'bg-white text-slate-700 border-slate-300 hover:border-blue-400 hover:bg-blue-50/70'
+                              }`}
+                            >
+                              <span>📍</span>
+                              <span>{park}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+
                       <input
                         type="text"
                         id="motorPark"
@@ -1245,16 +1297,16 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
                         required
                         value={formData.motorPark || ''}
                         onChange={handleInputChange}
-                        placeholder="e.g. Jibowu Park, Maza Maza, Peace Mass Transit, Central Park, Young Shall Grow"
+                        placeholder={`e.g. ${stateParks.join(' or ')} (or specify preferred terminal)`}
                         className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-blue-600 focus:bg-white transition-colors"
                       />
                       <p className="text-[11px] text-slate-500 mt-1">
-                        📍 The cooker will be dispatched safely to this park/terminal hub in your city.
+                        📍 Tap any park hub above or type your preferred bus terminal (e.g. Peace Mass, Young Shall Grow, GIGM). 100% Free delivery to this hub.
                       </p>
                     </div>
                   </div>
                 ) : (
-                  /* HOME DELIVERY: STATE, CITY, & DELIVERY STREET ADDRESS (NO PARK) */
+                  /* HOME DELIVERY: STATE, CITY, DELIVERY STREET ADDRESS & NEAREST PARK */
                   <div className="space-y-4 pt-1 animate-in fade-in duration-200">
                     <div className="p-3 bg-amber-50/80 border border-amber-200 rounded-xl text-xs text-amber-950 flex items-center gap-2">
                       <Home className="w-4 h-4 text-amber-600 shrink-0" />
@@ -1320,6 +1372,57 @@ export const OrderFormSection: React.FC<OrderFormSectionProps> = ({
                       />
                       <p className="text-[11px] text-slate-500 mt-1">
                         🏠 Please provide full details so our dispatch rider can locate your compound easily.
+                      </p>
+                    </div>
+
+                    {/* NEAREST MOTOR PARK / TERMINAL CLOSER TO YOUR DELIVERY ADDRESS */}
+                    <div className="pt-1">
+                      <label htmlFor="motorParkHome" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1 flex items-center justify-between">
+                        <span>Nearest Motor Park / Hub Closer to Your Address:</span>
+                        <span className="text-[10px] text-amber-900 font-bold bg-amber-100 px-2 py-0.5 rounded border border-amber-300">
+                          Regional Hub Closer to You
+                        </span>
+                      </label>
+
+                      {/* QUICK-TAP CHIPS FOR STATE MOTOR PARKS */}
+                      <div className="flex flex-wrap gap-1.5 mb-2">
+                        {stateParks.map((park) => {
+                          const isSelected = formData.motorPark?.toLowerCase().includes(park.toLowerCase());
+                          return (
+                            <button
+                              key={park}
+                              type="button"
+                              onClick={() => {
+                                setFormData(prev => ({
+                                  ...prev,
+                                  motorPark: `${park} Hub (Closest to Address)`
+                                }));
+                                if (errorMsg) setErrorMsg('');
+                              }}
+                              className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer flex items-center gap-1.5 ${
+                                isSelected
+                                  ? 'bg-amber-600 text-white border-amber-700 shadow-sm ring-2 ring-amber-400/50'
+                                  : 'bg-white text-slate-700 border-slate-300 hover:border-amber-400 hover:bg-amber-50/70'
+                              }`}
+                            >
+                              <span>📍</span>
+                              <span>{park}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      <input
+                        type="text"
+                        id="motorParkHome"
+                        name="motorPark"
+                        value={formData.motorPark || ''}
+                        onChange={handleInputChange}
+                        placeholder={`e.g. ${stateParks.join(' or ')} (or specify nearest hub)`}
+                        className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-blue-600 focus:bg-white transition-colors"
+                      />
+                      <p className="text-[11px] text-slate-500 mt-1">
+                        🚚 Tap the park closest to your delivery address. Our logistics team routes your cooktop through this hub for direct doorstep delivery by our local rider.
                       </p>
                     </div>
                   </div>

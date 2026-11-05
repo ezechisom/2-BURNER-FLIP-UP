@@ -22,6 +22,7 @@ import {
   formatWhatsAppNumber,
   NIGERIAN_STATES,
   getStateDeliveryTimeline,
+  getStateMotorParks,
   calculateCombinedPricing,
   ALTERNATIVE_PRODUCT_CONFIG
 } from '../config';
@@ -104,12 +105,22 @@ export const QuickOrderPopupModal: React.FC<QuickOrderPopupModalProps> = ({
   const pricing = calculateCombinedPricing(effectiveMode, effectiveQty2, effectiveQty5, config);
   const deliveryFee = deliveryOption === 'home' ? 5000 : 0;
   const finalTotal = pricing.total + deliveryFee;
+  const stateParks = getStateMotorParks(formData.state);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (name === 'state') {
+      const newParks = getStateMotorParks(value);
+      setFormData((prev) => ({
+        ...prev,
+        state: value,
+        motorPark: newParks[0] ? `${newParks[0]} Motor Park` : ''
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
     if (errorMsg) setErrorMsg('');
   };
 
@@ -173,12 +184,12 @@ export const QuickOrderPopupModal: React.FC<QuickOrderPopupModalProps> = ({
           fullName: formData.fullName.trim(),
           phoneNumber: formData.phoneNumber.trim(),
           deliveryAddress: deliveryOption === 'home' ? formData.deliveryAddress.trim() : 'N/A (Motor Park Delivery)',
-          motorPark: deliveryOption === 'standard' ? (formData.motorPark || '').trim() : 'N/A (Home Delivery)',
+          motorPark: formData.motorPark ? formData.motorPark.trim() : (deliveryOption === 'standard' ? `${stateParks[0]} Motor Park` : 'None specified'),
           city: formData.city.trim(),
           state: formData.state,
           deliveryDestination: deliveryOption === 'home'
-            ? `${formData.deliveryAddress.trim()}, ${formData.city.trim()}, ${formData.state}`
-            : `Motor Park: ${formData.motorPark?.trim()}, City: ${formData.city.trim()}, State: ${formData.state}`,
+            ? `${formData.deliveryAddress.trim()}, ${formData.city.trim()}, ${formData.state}${formData.motorPark ? ` (Nearest Park Hub: ${formData.motorPark.trim()})` : ''}`
+            : `Motor Park: ${formData.motorPark?.trim() || `${stateParks[0]} Motor Park`}, City: ${formData.city.trim()}, State: ${formData.state}`,
           paymentMethod: 'Payment on Delivery',
           timestamp: new Date().toISOString()
         })
@@ -251,8 +262,8 @@ export const QuickOrderPopupModal: React.FC<QuickOrderPopupModalProps> = ({
       ? 'Direct Doorstep Home Delivery (+₦5,000)'
       : 'Motor Park Delivery (FREE Nationwide)';
     const destinationText = deliveryOption === 'home'
-      ? `${formData.deliveryAddress}, ${formData.city || formData.state}, ${formData.state}`
-      : `Motor Park: ${formData.motorPark || 'To be specified'}, City: ${formData.city || formData.state}, State: ${formData.state}`;
+      ? `${formData.deliveryAddress}, ${formData.city || formData.state}, ${formData.state}${formData.motorPark ? ` (Nearest Hub: ${formData.motorPark})` : ''}`
+      : `Motor Park: ${formData.motorPark || `${stateParks[0]} Motor Park`}, City: ${formData.city || formData.state}, State: ${formData.state}`;
     const msg = `Hello! I just placed a Quick Order on your website.\n\n🎄 Merry Christmas in Advance! 🎅✨\n\nProduct: ${pricing.shortName}\nDelivery Option: ${deliveryText}\nTotal Payable on Delivery: ${formatNaira(finalTotal)}\nName: ${formData.fullName}\nPhone: ${formData.phoneNumber}\nDelivery Destination: ${destinationText}\n\nPlease confirm my delivery dispatch.`;
     return `https://wa.me/${cleanNumber}?text=${encodeURIComponent(msg)}`;
   };
@@ -361,9 +372,17 @@ export const QuickOrderPopupModal: React.FC<QuickOrderPopupModalProps> = ({
                   <span className="font-semibold text-slate-900 text-right max-w-[60%]">
                     {deliveryOption === 'home'
                       ? `${formData.deliveryAddress}, ${formData.city}`
-                      : `${formData.motorPark || 'Designated Park'}, ${formData.city}`}
+                      : `${formData.motorPark || `${stateParks[0]} Motor Park`}, ${formData.city}`}
                   </span>
                 </div>
+                {deliveryOption === 'home' && formData.motorPark && (
+                  <div className="flex justify-between text-[11px] text-slate-700 pt-0.5 border-t border-slate-200">
+                    <span>Closest Hub / Park:</span>
+                    <span className="font-semibold text-amber-900 text-right">
+                      {formData.motorPark}
+                    </span>
+                  </div>
+                )}
                 <div className="flex justify-between font-black text-slate-900 pt-1 text-sm border-t border-slate-200">
                   <span>Amount to Pay on Delivery:</span>
                   <span className="text-emerald-700">{formatNaira(finalTotal)}</span>
@@ -1029,25 +1048,58 @@ export const QuickOrderPopupModal: React.FC<QuickOrderPopupModalProps> = ({
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
-                        Preferred Motor Park / Bus Terminal <span className="text-rose-600">*</span>
+                      <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1 flex items-center justify-between">
+                        <span>Select Motor Park in {formData.state} <span className="text-rose-600">*</span></span>
+                        <span className="text-[10px] text-blue-700 font-bold bg-blue-100 px-1.5 py-0.2 rounded">
+                          Tap to Select
+                        </span>
                       </label>
+
+                      {/* QUICK-TAP CHIPS FOR STATE MOTOR PARKS */}
+                      <div className="flex flex-wrap gap-1 mb-2">
+                        {stateParks.map((park) => {
+                          const isSelected = formData.motorPark?.toLowerCase().includes(park.toLowerCase());
+                          return (
+                            <button
+                              key={park}
+                              type="button"
+                              onClick={() => {
+                                setFormData(prev => ({
+                                  ...prev,
+                                  motorPark: `${park} Motor Park`,
+                                  city: prev.city || park.split(' ')[0]
+                                }));
+                                if (errorMsg) setErrorMsg('');
+                              }}
+                              className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-all cursor-pointer flex items-center gap-1 ${
+                                isSelected
+                                  ? 'bg-blue-600 text-white border-blue-700 shadow-xs ring-1 ring-blue-400'
+                                  : 'bg-white text-slate-700 border-slate-300 hover:border-blue-400 hover:bg-blue-50'
+                              }`}
+                            >
+                              <span>📍</span>
+                              <span>{park}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+
                       <input
                         type="text"
                         name="motorPark"
                         required
                         value={formData.motorPark || ''}
                         onChange={handleInputChange}
-                        placeholder="e.g. Jibowu Park, Maza Maza, Peace Mass Transit, Central Park"
+                        placeholder={`e.g. ${stateParks.join(' or ')} (or specify preferred terminal)`}
                         className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-blue-600 focus:bg-white"
                       />
                       <p className="text-[10px] text-slate-500 mt-1">
-                        📍 100% Free Nationwide delivery to your preferred motor park/terminal hub.
+                        📍 Tap any park hub above or type your preferred terminal (e.g. Peace Mass, Young Shall Grow, GIGM). 100% Free delivery.
                       </p>
                     </div>
                   </div>
                 ) : (
-                  /* HOME DELIVERY: STATE, CITY, & DELIVERY STREET ADDRESS (NO PARK) */
+                  /* HOME DELIVERY: STATE, CITY, DELIVERY STREET ADDRESS & NEAREST PARK */
                   <div className="space-y-3 pt-0.5 animate-in fade-in duration-200">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                       <div>
@@ -1100,6 +1152,56 @@ export const QuickOrderPopupModal: React.FC<QuickOrderPopupModalProps> = ({
                       />
                       <p className="text-[10px] text-slate-500 mt-1">
                         🏠 Direct delivery to your house/compound (+₦5,000 fee).
+                      </p>
+                    </div>
+
+                    {/* NEAREST MOTOR PARK / TERMINAL CLOSER TO YOUR DELIVERY ADDRESS */}
+                    <div className="pt-0.5">
+                      <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1 flex items-center justify-between">
+                        <span>Nearest Motor Park / Hub Closer to Your Address:</span>
+                        <span className="text-[10px] text-amber-900 font-bold bg-amber-100 px-1.5 py-0.2 rounded border border-amber-300">
+                          Regional Hub Closer to You
+                        </span>
+                      </label>
+
+                      {/* QUICK-TAP CHIPS FOR STATE MOTOR PARKS */}
+                      <div className="flex flex-wrap gap-1 mb-2">
+                        {stateParks.map((park) => {
+                          const isSelected = formData.motorPark?.toLowerCase().includes(park.toLowerCase());
+                          return (
+                            <button
+                              key={park}
+                              type="button"
+                              onClick={() => {
+                                setFormData(prev => ({
+                                  ...prev,
+                                  motorPark: `${park} Hub (Closest to Address)`
+                                }));
+                                if (errorMsg) setErrorMsg('');
+                              }}
+                              className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-all cursor-pointer flex items-center gap-1 ${
+                                isSelected
+                                  ? 'bg-amber-600 text-white border-amber-700 shadow-xs ring-1 ring-amber-400'
+                                  : 'bg-white text-slate-700 border-slate-300 hover:border-amber-400 hover:bg-amber-50'
+                              }`}
+                            >
+                              <span>📍</span>
+                              <span>{park}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      <input
+                        type="text"
+                        name="motorPark"
+                        value={formData.motorPark || ''}
+                        onChange={handleInputChange}
+                        placeholder={`e.g. ${stateParks.join(' or ')} (or specify nearest hub)`}
+                        className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-blue-600 focus:bg-white"
+                      />
+                      <p className="text-[10px] text-slate-500 mt-1">
+                        🚚 Tap the park closest to your delivery address. Our logistics team routes your cooktop to this hub for swift doorstep delivery.
                       </p>
                     </div>
                   </div>
